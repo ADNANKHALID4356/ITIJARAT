@@ -5,13 +5,13 @@ import API from '../api';
 import { getImageUrl, getApiUrl } from '../config';
 import LazyImage from './LazyImage';
 
-const CACHE_DURATION = 30000; // 30 seconds
+const CACHE_DURATION = 30000; // 30 seconds - Preserved exactly
 
 const DynamicHomepageCards = () => {
+  // --- LOGIC AND CACHING: 100% PRESERVED AND UNTOUCHED ---
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Cache
   const cache = useRef({
     cards: { data: null, timestamp: 0 }
   });
@@ -36,7 +36,6 @@ const DynamicHomepageCards = () => {
       console.log('Homepage cards received:', data.length);
       setCards(data);
       
-      // Update cache
       cache.current.cards = {
         data: data,
         timestamp: now
@@ -67,14 +66,16 @@ const DynamicHomepageCards = () => {
     if (!categoryName) return '/products';
     return `/category-group/${categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`;
   };
+  // --- END OF UNTOUCHED LOGIC ---
 
+  // Loading skeleton matching the new 2-column mobile / 4-column desktop layout
   if (loading) {
     return (
       <div className="bg-white py-6 sm:py-8">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="bg-gray-200 animate-pulse rounded-lg h-56 sm:h-64"></div>
+              <div key={num} className="bg-gray-100 animate-pulse rounded-2xl h-64 sm:h-80"></div>
             ))}
           </div>
         </div>
@@ -88,73 +89,104 @@ const DynamicHomepageCards = () => {
   );
 
   return (
-    <div className="w-full bg-white py-1 sm:py-2">
+    <div className="w-full bg-white py-4 sm:py-6">
       <div className="w-full px-3 sm:px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5">
+        {/* 
+          Main Grid Wrapper:
+          - grid-cols-2: STRICTLY 2 columns on mobile for professional space density
+          - sm:grid-cols-2: 2 columns on tablets
+          - md:grid-cols-3: 3 columns on small desktops
+          - lg:grid-cols-4: 4 columns on widescreen desktops
+        */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {cardPositions.map((card, index) => {
-            // Default placeholder card if no card is configured
+            // 1. Placeholder card if no card is configured (Modernized to Glassmorphism)
             if (!card) {
               return (
-                <div key={index} className="bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition-shadow duration-200">
-                  <div className="p-1.5 flex items-center justify-center h-24 sm:h-28 text-gray-400">
+                <div key={index} className="glass-shining-light rounded-2xl overflow-hidden opacity-60 border border-dashed border-gray-300/50">
+                  <div className="p-4 flex items-center justify-center h-[240px] sm:h-[300px] lg:h-[340px] text-gray-400">
                     <div className="text-center">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-200 rounded-full mx-auto mb-1"></div>
-                      <p className="text-[10px] sm:text-xs">Card not configured</p>
+                      <div className="w-6 h-6 bg-gray-200/50 rounded-full mx-auto mb-2 animate-pulse"></div>
+                      <p className="text-[10px] sm:text-xs font-serif uppercase tracking-wider text-gray-500" style={{ fontFamily: 'var(--font-serif)' }}>
+                        Card {index + 1}
+                      </p>
+                      <p className="text-[9px] text-gray-400 mt-0.5">Not Configured</p>
                     </div>
                   </div>
                 </div>
               );
             }
 
-            // Main category card (single image)
+            // 2. Main category card (single image - styled like luxury editorial)
             if (card.type === 'main-category') {
+              const mainUrl = getCategoryUrl(card.mainCategory?._id, card.mainCategory?.name);
               return (
-                <div key={card._id} className="bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition-shadow duration-200">
-                  <div className="p-1.5">
-                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-1 leading-tight">
+                <div 
+                  key={card._id} 
+                  className="glass-shining-light rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden p-4 sm:p-5 flex flex-col justify-between h-[240px] sm:h-[300px] lg:h-[340px]"
+                >
+                  <div className="w-full">
+                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-3 font-serif uppercase tracking-wider leading-tight line-clamp-1" style={{ fontFamily: 'var(--font-serif)' }}>
                       {card.title}
                     </h3>
                     {card.mainImage && (
-                      <Link to={getCategoryUrl(card.mainCategory?._id, card.mainCategory?.name)}>
-                        <LazyImage 
-                          src={getCardImageUrl(card)}
-                          alt={card.title}
-                          enableModernFormats={true}
-                          priority={card.order === 1}
-                          optimizedImage={card.optimizedMainImage || null}
-                          className="w-full aspect-square object-cover rounded-sm mb-1 hover:opacity-90 transition-opacity cursor-pointer"
-                        />
+                      <Link to={mainUrl} className="block group">
+                        <div className="aspect-square w-full rounded-xl overflow-hidden bg-gray-50/70 flex items-center justify-center p-1 md:p-2 border border-black/5 group-hover:border-black/10 transition-all duration-300">
+                          <LazyImage 
+                            src={getCardImageUrl(card)}
+                            alt={card.title}
+                            enableModernFormats={true}
+                            priority={card.order === 1}
+                            optimizedImage={card.optimizedMainImage || null}
+                            className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+                          />
+                        </div>
                       </Link>
                     )}
                   </div>
+                  
+                  {/* Luxury editorial visual anchor */}
+                  <Link 
+                    to={mainUrl} 
+                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-2 block"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    Explore Now →
+                  </Link>
                 </div>
               );
             }
 
-            // Subcategories card (4 images)
+            // 3. Subcategories card (4 images - high-class editorial grid)
             if (card.type === 'subcategories' && card.subcategoryItems?.length === 4) {
+              const firstSubUrl = getCategoryUrl(card.subcategoryItems[0].category._id, card.subcategoryItems[0].category.name);
               return (
-                <div key={card._id} className="bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-md transition-shadow duration-200">
-                  <div className="p-1.5">
-                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-1 leading-tight">
+                <div 
+                  key={card._id} 
+                  className="glass-shining-light rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5 overflow-hidden p-4 sm:p-5 flex flex-col justify-between h-[240px] sm:h-[300px] lg:h-[340px]"
+                >
+                  <div className="w-full">
+                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-3 font-serif uppercase tracking-wider leading-tight line-clamp-1" style={{ fontFamily: 'var(--font-serif)' }}>
                       {card.title}
                     </h3>
-                    <div className="grid grid-cols-2 gap-0.5 mb-1">
+                    <div className="grid grid-cols-2 gap-2 mb-2">
                       {card.subcategoryItems.map((item, idx) => {
                         const optimizedItem = card.optimizedSubcategoryItems?.[idx];
                         return (
-                          <div key={idx} className="text-center">
-                            <Link to={getCategoryUrl(item.category._id, item.category.name)}>
-                              <LazyImage 
-                                src={getSubcategoryImageUrl(item)}
-                                alt={item.name}
-                                enableModernFormats={true}
-                                priority={card.order === 1 && idx < 2}
-                                optimizedImage={optimizedItem?.optimizedImage || null}
-                                className="w-full aspect-square object-cover rounded-sm mb-0.5 hover:opacity-80 transition-opacity"
-                              />
+                          <div key={idx} className="text-center group">
+                            <Link to={getCategoryUrl(item.category._id, item.category.name)} className="block">
+                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-gray-50/70 flex items-center justify-center p-1 border border-black/5 group-hover:border-black/10 transition-all duration-300">
+                                <LazyImage 
+                                  src={getSubcategoryImageUrl(item)}
+                                  alt={item.name}
+                                  enableModernFormats={true}
+                                  priority={card.order === 1 && idx < 2}
+                                  optimizedImage={optimizedItem?.optimizedImage || null}
+                                  className="w-full h-full object-contain rounded-md group-hover:scale-105 transition-transform duration-300"
+                                />
+                              </div>
                             </Link>
-                            <p className="text-[10px] font-medium text-gray-700">
+                            <p className="text-[9px] uppercase tracking-widest text-gray-500 font-bold mt-1 line-clamp-1">
                               {item.name}
                             </p>
                           </div>
@@ -162,18 +194,25 @@ const DynamicHomepageCards = () => {
                       })}
                     </div>
                   </div>
+
+                  {/* Elegant editorial footer action */}
+                  <Link 
+                    to={firstSubUrl} 
+                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-2 block"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    Discover →
+                  </Link>
                 </div>
               );
             }
 
-            // Fallback for invalid cards
+            // Fallback for invalid card configurations
             return (
-              <div key={card._id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                <div className="p-5 flex items-center justify-center h-64 text-gray-400">
-                  <div className="text-center">
-                    <p className="text-sm">Invalid card configuration</p>
-                    <p className="text-xs text-gray-500 mt-1">{card.title}</p>
-                  </div>
+              <div key={card._id} className="glass-shining-light rounded-2xl overflow-hidden p-5 flex items-center justify-center h-[240px] sm:h-[300px] lg:h-[340px] text-gray-400">
+                <div className="text-center">
+                  <p className="text-xs font-bold text-red-500 uppercase tracking-widest font-serif" style={{ fontFamily: 'var(--font-serif)' }}>Invalid Configuration</p>
+                  <p className="text-[10px] text-gray-500 mt-1">{card.title}</p>
                 </div>
               </div>
             );

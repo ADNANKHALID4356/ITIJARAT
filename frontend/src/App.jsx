@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 
-// Phase 4.3: Optimized QueryClient with balanced caching
+// Optimized QueryClient with balanced caching
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -30,16 +30,16 @@ import Navbar from './components/Navbar';
 import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
-// Loading component for better UX
+// MODERN AESTHETIC LOADER: Google-style shimmer
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen bg-gray-50">
-    <div className="text-center">
-      <div className="relative w-16 h-16 mx-auto mb-6">
-        <div className="absolute top-0 left-0 w-full h-full border-4 border-orange-200 rounded-full"></div>
-        <div className="absolute top-0 left-0 w-full h-full border-4 border-orange-600 rounded-full animate-spin border-t-transparent"></div>
-      </div>
-      <p className="text-gray-600 text-sm font-medium">Loading page...</p>
+  <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+    <div className="relative w-24 h-1 shimmer-bg rounded-full overflow-hidden mb-4">
+      <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
     </div>
+    <p className="text-black text-xs tracking-widest uppercase font-medium animate-pulse" 
+       style={{ fontFamily: 'var(--font-serif)' }}>
+      Loading Excellence
+    </p>
   </div>
 );
 

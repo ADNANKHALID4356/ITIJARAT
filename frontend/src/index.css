@@ -1,5 +1,118 @@
 @import "tailwindcss";
 
+:root {
+  /* Google-inspired Professional Palette */
+  --google-blue: #4285F4;
+  --google-red: #DB4437;
+  --google-yellow: #F4B400;
+  --google-green: #0F9D58;
+  
+  /* Multi-color Diffused Shimmer Gradient */
+  --shimmer-gradient: linear-gradient(
+    -45deg, 
+    #4285f4, #db4437, #f4b400, #0f9d58, #4285f4
+  );
+
+  /* Typography */
+  --font-serif: "Times New Roman", Times, serif;
+  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+}
+
+/* Base Body Styles */
+body {
+  font-family: var(--font-sans);
+  color: #1f2937;
+  background-color: #ffffff;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Smooth scrolling behavior */
+html, * {
+  scroll-behavior: smooth;
+}
+
+/* Professional Headings (Bold & Serif) */
+h1, h2, h3, h4, .section-heading {
+  font-family: var(--font-serif);
+  font-weight: 700 !important; /* Headings must be bold */
+  letter-spacing: -0.01em;
+  color: #000;
+}
+
+/* Logic for Product Prices (Strictly NOT bold as requested) */
+.product-price {
+  font-family: var(--font-sans);
+  font-weight: 400 !important; /* Regular weight for prices */
+  color: #374151;
+}
+
+/* The Google-Style Shimmering Animation */
+.shimmer-bg {
+  background: var(--shimmer-gradient);
+  background-size: 400% 400%;
+  animation: diffusedShimmer 15s ease infinite;
+}
+
+@keyframes diffusedShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Premium Header Glass (No overflow clipping, so dropdowns expand fully!) */
+/* Premium Header Glass (No overflow clipping, so dropdowns expand fully!) */
+.header-glass-dark {
+  background: rgba(15, 23, 42, 0.95) !important; /* Premium Slate-900 with opacity */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  /* NO overflow: hidden here! Dropdowns can render fully. */
+}
+
+/* Shining "Glass" Effect for Light UI Elements (Cards/Modals - safe for overflow clipping) */
+.glass-shining-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shining "Glass" Effect for small Dark UI Elements (Buttons/Badges) */
+.glass-shining-dark {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-shining-light::after,
+.glass-shining-dark::after {
+  content: "";
+  position: absolute;
+  top: -110%; left: -110%;
+  width: 200%; height: 200%;
+  background: linear-gradient(rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(30deg);
+  animation: reflection 5s infinite;
+}
+
+@keyframes reflection {
+  0% { top: -110%; left: -110%; }
+  30% { top: 110%; left: 110%; }
+  100% { top: 110%; left: 110%; }
+}
+
+/* Prevent layout shift for images */
+img {
+  content-visibility: auto;
+}
+
+/* --- MERGED ORIGINAL STYLES FOR COMPATIBILITY --- */
+
 /* Hide scrollbar utility */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -15,22 +128,60 @@
   scrollbar-gutter: stable;
 }
 
-/* Make scrollbar not interfere with hover */
+/* Custom scrollbars scrollbar-thin styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #cbd5e0;
+  background: #f3f4f6;
   border-radius: 3px;
 }
 
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0;
+  background: #9ca3af;
+}
+
+/* Dark theme scrollbar */
+.scrollbar-thumb-gray-700 {
+  scrollbar-color: #374151 #1f2937;
+}
+
+.scrollbar-thumb-gray-700::-webkit-scrollbar-thumb {
+  background: #374151;
+}
+
+.scrollbar-thumb-gray-700::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+.scrollbar-track-gray-900::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+/* Professional scrollbar for light themes */
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background: #f3f4f6;
 }
 
 /* Line clamping utilities */
@@ -87,93 +238,6 @@
 
 .animate-slide-out-right {
   animation: slide-out-right 0.3s ease-in;
-}
-
-/* Line clamp utilities for text truncation */
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-}
-
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.line-clamp-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-
-/* Enhanced Scrollbar Styles for Professional UI */
-.scrollbar-thin {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f3f4f6;
-}
-
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: #f3f4f6;
-  border-radius: 3px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
-  transition: background-color 0.2s ease;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Dark theme scrollbar */
-.scrollbar-thumb-gray-700 {
-  scrollbar-color: #374151 #1f2937;
-}
-
-.scrollbar-thumb-gray-700::-webkit-scrollbar-thumb {
-  background: #374151;
-}
-
-.scrollbar-thumb-gray-700::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
-}
-
-.scrollbar-track-gray-900::-webkit-scrollbar-track {
-  background: #1f2937;
-}
-
-/* Professional scrollbar for light themes */
-.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-}
-
-.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-.scrollbar-track-gray-100::-webkit-scrollbar-track {
-  background: #f3f4f6;
-}
-
-/* Smooth scrolling behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-* {
-  scroll-behavior: smooth;
 }
 
 /* Enhanced focus styles for accessibility */
