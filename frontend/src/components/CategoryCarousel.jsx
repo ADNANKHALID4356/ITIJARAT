@@ -1,76 +1,119 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config';
 
 // Fallback high quality category images if none configured in admin
 const DEFAULT_FALLBACK_CATEGORIES = [
-  { id: 'fb-1', name: 'Electronics', src: '/IT Images/1.jpeg' },
-  { id: 'fb-2', name: 'Fashion', src: '/IT Images/2.jpeg' },
-  { id: 'fb-3', name: 'Home & Living', src: '/IT Images/3.jpeg' },
-  { id: 'fb-4', name: 'Beauty & Care', src: '/IT Images/4.jpeg' },
-  { id: 'fb-5', name: 'Sports & Fitness', src: '/IT Images/5.jpeg' },
-  { id: 'fb-6', name: 'Luxury Watches', src: '/IT Images/6.jpeg' },
-  { id: 'fb-7', name: 'Perfumery', src: '/IT Images/7.jpeg' }
+  { id: 'fb-1', name: 'Shawls & Apparel', src: '/IT Images/1.jpeg' },
+  { id: 'fb-2', name: 'Leather Goods', src: '/IT Images/2.jpeg' },
+  { id: 'fb-3', name: '48 Hours Plus', src: '/IT Images/3.jpeg' },
+  { id: 'fb-4', name: 'Luxury Watches', src: '/IT Images/4.jpeg' },
+  { id: 'fb-5', name: 'Designer Belts', src: '/IT Images/5.jpeg' },
+  { id: 'fb-6', name: 'Fragrances & Perfumery', src: '/IT Images/6.jpeg' },
+  { id: 'fb-7', name: 'Traditional Wear', src: '/IT Images/7.jpeg' }
 ];
 
 const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(false);
 
-  // Prepare categories list (ensure at least 7 items for seamless circular buffer slots)
-  const items = useMemo(() => {
-    const validProps = Array.isArray(homepageCategoriesProp) && homepageCategoriesProp.length > 0
+  // Primary categories list
+  const baseItems = useMemo(() => {
+    const valid = Array.isArray(homepageCategoriesProp) && homepageCategoriesProp.length > 0
       ? homepageCategoriesProp
       : DEFAULT_FALLBACK_CATEGORIES;
 
-    let list = [...validProps];
-    if (list.length > 0 && list.length < 7) {
-      while (list.length < 7) {
-        list = [...list, ...validProps];
-      }
+    // Ensure at least 6 base items so loop is seamless across wide screens
+    let list = [...valid];
+    while (list.length < 6) {
+      list = [...list, ...valid];
     }
     return list;
   }, [homepageCategoriesProp]);
 
-  const total = items.length;
+  // Triple items for continuous infinite seamless wrap
+  const displayItems = useMemo(() => {
+    return [...baseItems, ...baseItems, ...baseItems];
+  }, [baseItems]);
 
-  // Initialize slots: [0, 1, 2, 3, -3, -2, -1] for N=7
-  const initSlots = useCallback((count) => {
-    const half = Math.floor(count / 2);
-    return Array.from({ length: count }, (_, i) => (i <= half ? i : i - count));
+  // Animation & control state
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [direction, setDirection] = useState(1); // 1 = Left-to-Right (as requested), -1 = Right-to-Left
+
+  const trackRef = useRef(null);
+  const posRef = useRef(0);
+  const rafIdRef = useRef(null);
+  const isHoveredRef = useRef(false);
+  const isPlayingRef = useRef(true);
+  const directionRef = useRef(1);
+  const singleSetWidthRef = useRef(0);
+
+  // Sync refs with state
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    directionRef.current = direction;
+  }, [direction]);
+
+  // Measure single-set width for seamless pixel-perfect wrapping
+  const measureWidth = useCallback(() => {
+    if (!trackRef.current) return;
+    const totalScrollWidth = trackRef.current.scrollWidth;
+    // Since displayItems has 3 duplicates of baseItems:
+    singleSetWidthRef.current = totalScrollWidth / 3;
+
+    // Initialize position centered on the middle set so it can scroll in either direction seamlessly
+    if (posRef.current === 0) {
+      posRef.current = -singleSetWidthRef.current;
+      trackRef.current.style.transform = `translate3d(${posRef.current}px, 0, 0)`;
+    }
   }, []);
 
-  const [slots, setSlots] = useState(() => initSlots(total));
-  const [instantCard, setInstantCard] = useState(null);
-
-  const isAnimatingRef = useRef(false);
-  const isPausedRef = useRef(false);
-  const autoplayTimerRef = useRef(null);
-
-  // Touch gesture refs
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const isSwiping = useRef(false);
-
-  // Sync slots if total items count changes
   useEffect(() => {
-    setSlots(initSlots(total));
-    setInstantCard(null);
-    isAnimatingRef.current = false;
-  }, [total, initSlots]);
+    measureWidth();
+    window.addEventListener('resize', measureWidth);
+    return () => window.removeEventListener('resize', measureWidth);
+  }, [measureWidth, displayItems]);
 
-  // Detect mobile viewport
+  // 60FPS Silky Continuous Ticker Loop
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
+    const speed = 0.85; // Elegant, steady luxury glide speed (pixels per frame)
+
+    const tick = () => {
+      if (trackRef.current && singleSetWidthRef.current > 0) {
+        if (isPlayingRef.current && !isHoveredRef.current) {
+          // Move smoothly by speed * direction
+          // direction = 1 means moving from left to right (translate3d increases)
+          // direction = -1 means moving from right to left (translate3d decreases)
+          posRef.current += speed * directionRef.current;
+
+          const setWidth = singleSetWidthRef.current;
+
+          // Seamless infinite wrap-around
+          if (directionRef.current > 0 && posRef.current >= 0) {
+            // Reached right boundary -> seamlessly shift back by one set width
+            posRef.current -= setWidth;
+          } else if (directionRef.current < 0 && posRef.current <= -setWidth * 2) {
+            // Reached left boundary -> seamlessly shift forward by one set width
+            posRef.current += setWidth;
+          }
+
+          trackRef.current.style.transform = `translate3d(${posRef.current}px, 0, 0)`;
+        }
+      }
+      rafIdRef.current = requestAnimationFrame(tick);
     };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    rafIdRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    };
   }, []);
 
-  // Resolve image source cleanly
+  // Image URL Resolver
   const resolveImageUrl = useCallback((category) => {
     if (!category) return '/placeholder-image.jpg';
 
@@ -98,322 +141,134 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
     return `${config.BASE_URL}/${raw}`;
   }, []);
 
-  // Smooth forward step: all cards glide left simultaneously
-  const stepForward = useCallback(() => {
-    if (isAnimatingRef.current) return;
-    isAnimatingRef.current = true;
-    setInstantCard(null);
+  // Card click navigates to category group
+  const handleCardClick = (category) => {
+    const rawName = category.name || category.categoryId?.name || '';
+    const slug = rawName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
 
-    // 1. Shift all cards left by 1 position (monotonic, parallel 700ms glide)
-    setSlots((prev) => prev.map((s) => s - 1));
-
-    // 2. Once animation completes, quietly wrap the off-screen exit card to the entry buffer
-    setTimeout(() => {
-      setSlots((prev) => {
-        const next = [...prev];
-        const half = Math.floor(next.length / 2);
-        const wrappedIdx = next.indexOf(-half - 1);
-        if (wrappedIdx !== -1) {
-          next[wrappedIdx] = half;
-          setInstantCard(wrappedIdx);
-        }
-        return next;
-      });
-      isAnimatingRef.current = false;
-    }, 710);
-  }, []);
-
-  // Smooth backward step: all cards glide right simultaneously
-  const stepBackward = useCallback(() => {
-    if (isAnimatingRef.current) return;
-    isAnimatingRef.current = true;
-    setInstantCard(null);
-
-    // 1. Shift all cards right by 1 position (monotonic, parallel 700ms glide)
-    setSlots((prev) => prev.map((s) => s + 1));
-
-    // 2. Once animation completes, quietly wrap the off-screen exit card to the entry buffer
-    setTimeout(() => {
-      setSlots((prev) => {
-        const next = [...prev];
-        const half = Math.floor(next.length / 2);
-        const wrappedIdx = next.indexOf(half + 1);
-        if (wrappedIdx !== -1) {
-          next[wrappedIdx] = -half;
-          setInstantCard(wrappedIdx);
-        }
-        return next;
-      });
-      isAnimatingRef.current = false;
-    }, 710);
-  }, []);
-
-  // Periodic auto-rotation
-  useEffect(() => {
-    if (total === 0) return;
-
-    if (autoplayTimerRef.current) clearInterval(autoplayTimerRef.current);
-
-    autoplayTimerRef.current = setInterval(() => {
-      if (!isPausedRef.current && !isAnimatingRef.current) {
-        stepForward();
-      }
-    }, 3800);
-
-    return () => {
-      if (autoplayTimerRef.current) clearInterval(autoplayTimerRef.current);
-    };
-  }, [total, stepForward]);
-
-  // Card click: center card navigates, side cards smoothly glide to center
-  const handleCardClick = (e, idx, category) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const currentSlot = slots[idx];
-
-    if (currentSlot === 0) {
-      // Center card clicked -> Navigate to category products collection
-      const rawName = category.name || category.categoryId?.name || '';
-      const slug = rawName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-
-      if (slug) {
-        navigate(`/category-group/${slug}`);
-      } else {
-        navigate('/shop');
-      }
-    } else if (currentSlot === 1) {
-      stepForward();
-    } else if (currentSlot === -1) {
-      stepBackward();
-    } else if (currentSlot === 2) {
-      stepForward();
-      setTimeout(() => stepForward(), 730);
-    } else if (currentSlot === -2) {
-      stepBackward();
-      setTimeout(() => stepBackward(), 730);
+    if (slug) {
+      navigate(`/category-group/${slug}`);
+    } else {
+      navigate('/shop');
     }
   };
 
-  // Touch swipe support
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    isSwiping.current = true;
-    isPausedRef.current = true;
+  // Toggle Direction (Left-to-Right <-> Right-to-Left)
+  const toggleDirection = () => {
+    setDirection((prev) => (prev === 1 ? -1 : 1));
   };
-
-  const handleTouchMove = (e) => {
-    if (!isSwiping.current) return;
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!isSwiping.current) return;
-    isSwiping.current = false;
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) {
-        stepForward();
-      } else {
-        stepBackward();
-      }
-    }
-    setTimeout(() => {
-      isPausedRef.current = false;
-    }, 2000);
-  };
-
-  // Helper to compute CSS style for each slot
-  const getSlotStyle = (slot, isInstant) => {
-    const step1X = isMobile ? 38 : 46;
-    const step2X = isMobile ? 68 : 90;
-    const step3X = isMobile ? 98 : 130;
-    const centerDown = isMobile ? 12 : 22;
-    const stepUp = isMobile ? 12 : 26;
-
-    // Use transition for visible/entering/exiting cards; disable for instant buffer wraps
-    const transition = isInstant
-      ? 'none'
-      : 'transform 700ms cubic-bezier(0.25, 1, 0.5, 1), opacity 700ms ease';
-
-    if (slot === 0) {
-      // CENTER CARD (Front, lowest top edge, highest z-index)
-      return {
-        transform: `translate(-50%, ${centerDown}px) scale(1.0)`,
-        opacity: 1.0,
-        zIndex: 30,
-        pointerEvents: 'auto',
-        cursor: 'pointer',
-        transition
-      };
-    }
-
-    if (slot === -1) {
-      // MID LEFT CARD
-      return {
-        transform: `translate(calc(-50% - ${step1X}%), 0px) scale(0.90)`,
-        opacity: 0.88,
-        zIndex: 20,
-        pointerEvents: 'auto',
-        cursor: 'pointer',
-        transition
-      };
-    }
-
-    if (slot === 1) {
-      // MID RIGHT CARD
-      return {
-        transform: `translate(calc(-50% + ${step1X}%), 0px) scale(0.90)`,
-        opacity: 0.88,
-        zIndex: 20,
-        pointerEvents: 'auto',
-        cursor: 'pointer',
-        transition
-      };
-    }
-
-    if (slot === -2) {
-      // OUTER LEFT CARD
-      return {
-        transform: `translate(calc(-50% - ${step2X}%), ${-stepUp}px) scale(0.80)`,
-        opacity: isMobile ? 0 : 0.65,
-        zIndex: 10,
-        pointerEvents: isMobile ? 'none' : 'auto',
-        cursor: isMobile ? 'default' : 'pointer',
-        transition
-      };
-    }
-
-    if (slot === 2) {
-      // OUTER RIGHT CARD
-      return {
-        transform: `translate(calc(-50% + ${step2X}%), ${-stepUp}px) scale(0.80)`,
-        opacity: isMobile ? 0 : 0.65,
-        zIndex: 10,
-        pointerEvents: isMobile ? 'none' : 'auto',
-        cursor: isMobile ? 'default' : 'pointer',
-        transition
-      };
-    }
-
-    if (slot <= -3) {
-      // OFF-SCREEN LEFT BUFFER
-      return {
-        transform: `translate(calc(-50% - ${step3X}%), ${-stepUp - 6}px) scale(0.70)`,
-        opacity: 0,
-        zIndex: 0,
-        pointerEvents: 'none',
-        cursor: 'default',
-        transition
-      };
-    }
-
-    // OFF-SCREEN RIGHT BUFFER (slot >= 3)
-    return {
-      transform: `translate(calc(-50% + ${step3X}%), ${-stepUp - 6}px) scale(0.70)`,
-      opacity: 0,
-      zIndex: 0,
-      pointerEvents: 'none',
-      cursor: 'default',
-      transition
-    };
-  };
-
-  if (total === 0) return null;
 
   return (
     <section 
-      className="relative w-full overflow-hidden select-none bg-white py-0 my-0"
-      onMouseEnter={() => { isPausedRef.current = true; }}
-      onMouseLeave={() => { isPausedRef.current = false; }}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      aria-label="Category Carousel"
+      className="relative w-full overflow-hidden select-none bg-white py-2 sm:py-3 my-0"
+      onMouseEnter={() => { isHoveredRef.current = true; }}
+      onMouseLeave={() => { isHoveredRef.current = false; }}
+      onTouchStart={() => { isHoveredRef.current = true; }}
+      onTouchEnd={() => { isHoveredRef.current = false; }}
+      aria-label="Continuous Category Carousel"
     >
-      {/* 3D Stepped Cascade Container - Snug, seamlessly attached to upper cards */}
-      <div className="relative w-full max-w-7xl mx-auto px-4 h-[190px] xs:h-[220px] sm:h-[270px] md:h-[320px] lg:h-[360px] xl:h-[385px] flex items-center justify-center">
-        {items.map((category, idx) => {
-          const imgSrc = resolveImageUrl(category);
-          const currentSlot = slots[idx];
-          const isInstant = instantCard === idx;
-          const slotStyle = getSlotStyle(currentSlot, isInstant);
+      {/* Moving Ribbon Track Wrapper */}
+      <div className="relative w-full overflow-hidden">
+        <div
+          ref={trackRef}
+          className="flex items-center gap-3 sm:gap-4 md:gap-5 will-change-transform py-1"
+          style={{ width: 'max-content' }}
+        >
+          {displayItems.map((category, idx) => {
+            const imgSrc = resolveImageUrl(category);
 
-          return (
-            <div
-              key={`${category._id || category.id || idx}-${idx}`}
-              onClick={(e) => handleCardClick(e, idx, category)}
-              style={slotStyle}
-              className="absolute left-1/2 top-0 sm:top-1 will-change-transform"
-            >
-              {/* Card Container - Strict Image Only, rounded corners, glass border & subtle reflection */}
+            return (
               <div
-                className={`
-                  relative overflow-hidden rounded-2xl sm:rounded-3xl
-                  w-[230px] h-[145px]
-                  xs:w-[260px] xs:h-[165px]
-                  sm:w-[310px] sm:h-[195px]
-                  md:w-[370px] md:h-[235px]
-                  lg:w-[430px] lg:h-[270px]
-                  xl:w-[470px] xl:h-[295px]
-                  border border-black/15 sm:border-white/60
-                  shadow-[0_18px_36px_-10px_rgba(0,0,0,0.22)]
-                  bg-white
-                  transition-shadow duration-300 hover:shadow-2xl
-                `}
+                key={`${category._id || category.id || idx}-${idx}`}
+                onClick={() => handleCardClick(category)}
+                className="flex-shrink-0 cursor-pointer group"
               >
-                {/* Pure Image - Absolutely NO Text */}
-                <img
-                  src={imgSrc}
-                  alt=""
-                  loading={Math.abs(currentSlot) <= 1 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/placeholder-image.jpg';
-                  }}
-                  className="w-full h-full object-cover select-none pointer-events-none rounded-2xl sm:rounded-3xl transition-transform duration-500 ease-out hover:scale-105"
-                  draggable={false}
-                />
-
-                {/* Subtle glass reflection highlight on top edge */}
+                {/* 
+                  Card Container:
+                  - Exact match to reference screenshot: rounded-2xl, crisp border, pure image
+                  - Zero text, zero labels, zero overlays
+                */}
                 <div 
-                  className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-white/35 to-transparent rounded-t-2xl sm:rounded-t-3xl" 
-                  aria-hidden="true" 
-                />
+                  className="
+                    relative overflow-hidden rounded-2xl
+                    w-[160px] h-[160px]
+                    xs:w-[185px] xs:h-[185px]
+                    sm:w-[210px] sm:h-[210px]
+                    md:w-[235px] md:h-[235px]
+                    lg:w-[250px] lg:h-[250px]
+                    bg-gray-100 border border-black/10 shadow-sm
+                    hover:shadow-md hover:border-black/25
+                    transition-all duration-300
+                  "
+                >
+                  <img
+                    src={imgSrc}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/placeholder-image.jpg';
+                    }}
+                    className="w-full h-full object-cover select-none pointer-events-none rounded-2xl transition-transform duration-500 ease-out group-hover:scale-105"
+                    draggable={false}
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
 
-        {/* Floating Left Chevron Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            stepBackward();
-          }}
-          aria-label="Previous category"
-          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
-        >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
+        {/* 
+          Floating Controls (Exact match to reference screenshot):
+          - Play/Pause circular toggle button (|| / ▶)
+          - Subtle Direction toggle arrows (Left <-> Right)
+        */}
+        <div className="absolute left-4 sm:left-6 bottom-4 sm:bottom-6 z-30 flex items-center gap-2">
+          {/* Play / Pause Toggle Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsPlaying((prev) => !prev);
+            }}
+            aria-label={isPlaying ? 'Pause carousel' : 'Play carousel'}
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-gray-800 shadow-lg border border-black/15 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+          >
+            {isPlaying ? (
+              <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 fill-current" />
+            ) : (
+              <Play className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 fill-current translate-x-0.5" />
+            )}
+          </button>
 
-        {/* Floating Right Chevron Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            stepForward();
-          }}
-          aria-label="Next category"
-          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
-        >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
+          {/* Direction Toggle Pill */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDirection();
+            }}
+            title={direction === 1 ? 'Moving Left to Right (Click to reverse)' : 'Moving Right to Left (Click to reverse)'}
+            aria-label="Toggle carousel direction"
+            className="h-10 sm:h-11 px-3 rounded-full bg-white/95 text-gray-700 shadow-lg border border-black/15 flex items-center gap-1.5 hover:bg-gray-50 active:scale-95 transition-all duration-200 cursor-pointer text-xs font-semibold"
+          >
+            {direction === 1 ? (
+              <>
+                <ChevronRight className="w-4 h-4 text-orange-600 animate-pulse" />
+                <span className="hidden sm:inline text-gray-600 font-medium text-[11px]">Left → Right</span>
+              </>
+            ) : (
+              <>
+                <ChevronLeft className="w-4 h-4 text-orange-600 animate-pulse" />
+                <span className="hidden sm:inline text-gray-600 font-medium text-[11px]">Right → Left</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </section>
   );
