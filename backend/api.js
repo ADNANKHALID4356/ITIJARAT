@@ -53,6 +53,7 @@ const UPLOAD_DIRS = {
 // Base upload path configuration
 const UPLOADS_BASE_DIR = 'uploads';
 const UPLOADS_ABSOLUTE_PATH = path.join(__dirname, UPLOADS_BASE_DIR);
+const ROOT_UPLOADS_PATH = path.join(__dirname, '..', UPLOADS_BASE_DIR);
 
 // Ensure upload directories exist
 const ensureUploadDirectories = () => {
@@ -79,7 +80,17 @@ app.use(compressionMiddleware);
 // Apply cache headers SECOND (before serving static files)
 app.use(cacheHeaders);
 
-// Serve homepage category images with optimized settings
+// Serve homepage category images with optimized settings (both root and backend)
+app.use('/uploads/homepage-categories', express.static(path.join(ROOT_UPLOADS_PATH, 'homepage-categories'), {
+    fallthrough: true,
+    maxAge: '365d',
+    immutable: true,
+    etag: true,
+    lastModified: true,
+    setHeaders: (res) => {
+      res.set('X-Content-Type-Options', 'nosniff');
+    }
+}));
 app.use('/uploads/homepage-categories', express.static(path.join(UPLOADS_ABSOLUTE_PATH, 'homepage-categories'), {
     fallthrough: true,
     maxAge: '365d',
@@ -158,12 +169,16 @@ const staticOptions = {
     }
 };
 
-// Serve all upload directories with consistent configuration
+// Serve all upload directories with consistent configuration (root and backend)
+app.use(`/${UPLOADS_BASE_DIR}`, express.static(ROOT_UPLOADS_PATH, staticOptions));
+app.use(`/${UPLOADS_BASE_DIR}`, express.static(UPLOADS_ABSOLUTE_PATH, staticOptions));
+
 Object.entries(UPLOAD_DIRS).forEach(([key, dir]) => {
     const urlPath = `/${UPLOADS_BASE_DIR}/${dir}`;
+    const rootDirPath = path.join(ROOT_UPLOADS_PATH, dir);
     const dirPath = path.join(UPLOADS_ABSOLUTE_PATH, dir);
     
-    // Single static middleware per directory
+    app.use(urlPath, express.static(rootDirPath, staticOptions));
     app.use(urlPath, express.static(dirPath, staticOptions));
     
     if (process.env.NODE_ENV !== 'production') {

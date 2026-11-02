@@ -145,28 +145,45 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const resolveImageUrl = useCallback((category) => {
     if (!category) return '/placeholder-image.jpg';
 
+    const toFullUrl = (pathStr) => {
+      if (!pathStr || typeof pathStr !== 'string') return '';
+      if (pathStr.startsWith('http://') || pathStr.startsWith('https://') || pathStr.startsWith('data:')) {
+        return pathStr;
+      }
+      const cleanPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`;
+      return `${config.BASE_URL}${cleanPath}`;
+    };
+
     const opt = category.optimizedImage || category.optimizedMainImage;
     if (opt) {
-      if (opt.webp?.large) return `${config.BASE_URL}${opt.webp.large}`;
-      if (opt.webp?.medium) return `${config.BASE_URL}${opt.webp.medium}`;
+      const webpCandidate =
+        opt.webp?.['600w'] ||
+        opt.webp?.['300w'] ||
+        opt.webp?.large ||
+        opt.webp?.medium ||
+        opt.webp?.full;
+
+      if (webpCandidate) {
+        return toFullUrl(webpCandidate);
+      }
       if (opt.original) {
-        return opt.original.startsWith('http') ? opt.original : `${config.BASE_URL}${opt.original}`;
+        return toFullUrl(opt.original);
       }
     }
 
-    const raw = category.imageUrl || category.src;
+    const raw = category.imageUrl || category.src || category.image;
     if (!raw) return '/placeholder-image.jpg';
 
     if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) {
       return raw;
     }
-    if (raw.startsWith('/uploads/')) {
-      return `${config.BASE_URL}${raw}`;
+    if (raw.startsWith('/uploads/') || raw.startsWith('uploads/')) {
+      return toFullUrl(raw);
     }
     if (raw.startsWith('/')) {
       return raw;
     }
-    return `${config.BASE_URL}/${raw}`;
+    return toFullUrl(raw);
   }, []);
 
   // Card click navigates to category group
