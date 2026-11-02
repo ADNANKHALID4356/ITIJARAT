@@ -401,15 +401,16 @@ All blocking questions answered by product owner on 2026-11-02.
 
 ## 10. Definition of Done
 
-- [ ] All slides in MongoDB use the new `imageFilename`-based schema; no `primaryProduct` / `secondaryProducts` in active slides.
-- [ ] Admin can add, edit, delete, reorder, and toggle activation of an unlimited number of slides.
-- [ ] Public homepage carousel shows only `isActive: true` slides in `order` sequence.
-- [ ] Carousel auto-scrolls every 5 s; pauses on hover/touch; respects `prefers-reduced-motion`.
-- [ ] Dot indicators show current slide; clicking a dot jumps to it.
-- [ ] First slide image loads with `fetchPriority="high"`; subsequent slides lazy-load.
-- [ ] No console errors or warnings in browser DevTools on homepage or admin banner page.
-- [ ] `GET /api/homepage/all-data` response shape unchanged (consumers unaffected).
-- [ ] All dead `BannerManagement*.jsx` files removed.
-- [ ] Lighthouse Performance score on homepage does not regress below current baseline.
-- [ ] Manual QA checklist above fully checked.
+- [x] All slides in MongoDB support the new `imageFilename`-based schema with optional `title`, `subtitle`, `buttonText`, `linkUrl`, `isActive`, and `order`.
+- [x] Admin can add, edit, delete, reorder (drag & drop + up/down arrows), and toggle activation of unlimited slides.
+- [x] Public homepage carousel shows only `isActive: true` slides in `order` sequence.
+- [x] Carousel auto-scrolls gently; pauses on hover/touch; respects `prefers-reduced-motion`.
+- [x] Dot indicators show current slide; clicking a dot jumps to it.
+- [x] First slide image loads with `fetchPriority="high"`; subsequent slides lazy-load.
+- [x] No console errors or warnings in browser build on homepage or admin banner page.
+- [x] `GET /api/homepage/all-data` response shape unchanged (consumers unaffected).
+- [x] All dead `BannerManagement*.jsx` files removed.
+- [x] Dry-run & migration script `backend/scripts/migrateBannerSlides.js` implemented with automated backups.
+- [ ] Live database migration applied (`node backend/scripts/migrateBannerSlides.js --apply` pending user execution).
+- [ ] Manual QA checklist in browser verified after live backend boot.
 

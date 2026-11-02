@@ -252,6 +252,7 @@ const HeroSection = ({ banners = [], hideCards = false }) => {
       >
         {/* Sliding Track */}
         <div
+          aria-live={isPaused ? "polite" : "off"}
           onTransitionEnd={handleTransitionEnd}
           className="flex h-full w-full"
           style={{
