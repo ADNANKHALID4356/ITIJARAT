@@ -322,19 +322,8 @@ const AmazonStyleProductDisplay = ({ staticCategories: staticCategoriesProp = []
   };
 
   return (
-    <section className="w-full py-1 sm:py-2 bg-gray-50">
+    <section className="w-full pt-0 pb-4 bg-gray-50">
       <div className="w-full px-3 sm:px-4">
-        {/* Section Header */}
-        <div className="text-center mb-2 sm:mb-3">
-          <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-1">
-            Discover Amazing
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Products</span>
-          </h2>
-          <p className="text-[10px] sm:text-xs text-gray-600 max-w-2xl mx-auto">
-            Explore our handpicked selection of top-rated products across all categories
-          </p>
-        </div>
-
         {/* Product Sections */}
         <div className="space-y-2 sm:space-y-3">
           {loading ? (

@@ -16,9 +16,15 @@ const DEFAULT_FALLBACK_CATEGORIES = [
 
 const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const navigate = useNavigate();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Animation controller refs
+  const currentStepRef = useRef(0);
+  const targetStepRef = useRef(0);
+  const isPausedRef = useRef(false);
+  const cardRefs = useRef([]);
+  const rafIdRef = useRef(null);
+  const autoplayTimerRef = useRef(null);
 
   // Touch gesture refs
   const touchStartX = useRef(0);
@@ -39,7 +45,6 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const resolveImageUrl = useCallback((category) => {
     if (!category) return '/placeholder-image.jpg';
     
-    // Check optimized image formats first
     const opt = category.optimizedImage || category.optimizedMainImage;
     if (opt) {
       if (opt.webp?.large) return `${config.BASE_URL}${opt.webp.large}`;
@@ -64,16 +69,15 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
     return `${config.BASE_URL}/${raw}`;
   }, []);
 
-  // Prepare categories list (ensure at least 5 items for the 5 visual positions)
+  // Prepare categories list (ensure at least 7 items for seamless circular cascade)
   const items = React.useMemo(() => {
     const validProps = Array.isArray(homepageCategoriesProp) && homepageCategoriesProp.length > 0
       ? homepageCategoriesProp
       : DEFAULT_FALLBACK_CATEGORIES;
 
-    // If fewer than 5 items, repeat to fill the 5 perspective cascade slots
     let list = [...validProps];
-    if (list.length > 0 && list.length < 5) {
-      while (list.length < 5) {
+    if (list.length > 0 && list.length < 7) {
+      while (list.length < 7) {
         list = [...list, ...validProps];
       }
     }
@@ -82,39 +86,144 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
 
   const total = items.length;
 
-  // Auto-play interval
-  useEffect(() => {
-    if (total === 0 || isPaused) return;
+  // Direct DOM style updater for 60fps smooth interpolation without React render overhead
+  const renderCardPositions = useCallback((stepVal) => {
+    if (total === 0) return;
 
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % total);
-    }, 3800);
+    const mobile = window.innerWidth < 640;
+    const step1X = mobile ? 38 : 46;
+    const step2X = mobile ? 68 : 90;
+    const centerDown = mobile ? 12 : 22;
+    const stepUp = mobile ? 12 : 26;
 
-    return () => clearInterval(timer);
-  }, [total, isPaused]);
+    for (let i = 0; i < total; i++) {
+      const el = cardRefs.current[i];
+      if (!el) continue;
 
-  // Keep index in valid bounds if items count changes
-  useEffect(() => {
-    if (currentIndex >= total && total > 0) {
-      setCurrentIndex(0);
+      // Calculate relative circular step
+      let relStep = ((i - stepVal) % total + total) % total;
+      if (relStep > total / 2) relStep -= total;
+
+      const absStep = Math.abs(relStep);
+      const sign = relStep >= 0 ? 1 : -1;
+
+      // 1. Horizontal offset percentage
+      let xPercent = 0;
+      if (absStep <= 1) {
+        xPercent = sign * absStep * step1X;
+      } else if (absStep <= 2) {
+        xPercent = sign * (step1X + (absStep - 1) * (step2X - step1X));
+      } else {
+        xPercent = sign * (step2X + (absStep - 2) * 20);
+      }
+
+      // 2. Vertical offset (V-shape cascade: center card is lowest, outer cards are highest)
+      const yOffset = centerDown - absStep * stepUp;
+
+      // 3. Scale: center card is 1.0, mid cards 0.90, outer cards 0.80
+      const scale = Math.max(0.55, 1.0 - absStep * (mobile ? 0.12 : 0.10));
+
+      // 4. Opacity: smoothly fades to 0 before wrapping, preventing any crossing jump
+      let opacity = 1.0;
+      if (absStep <= 1) {
+        opacity = 1.0 - absStep * 0.12;
+      } else if (absStep <= 2) {
+        opacity = 0.88 - (absStep - 1) * 0.23;
+      } else {
+        opacity = Math.max(0, 0.65 - (absStep - 2) * 2.0);
+      }
+
+      if (mobile && absStep > 1.15) {
+        // Hide outer cards on mobile to prevent horizontal viewport clipping
+        opacity = Math.max(0, 0.85 - (absStep - 1.0) * 4.0);
+      }
+
+      // 5. Elevation z-index
+      const zIndex = absStep < 0.5 ? 30 : (absStep < 1.5 ? 20 : (absStep < 2.5 ? 10 : 0));
+      const pointerEvents = absStep <= (mobile ? 1.2 : 2.2) && opacity > 0.1 ? 'auto' : 'none';
+
+      el.style.transform = `translate(calc(-50% + ${xPercent}%), ${yOffset}px) scale(${scale})`;
+      el.style.opacity = String(opacity);
+      el.style.zIndex = String(zIndex);
+      el.style.pointerEvents = pointerEvents;
     }
-  }, [total, currentIndex]);
+  }, [total]);
+
+  // Smooth continuous animation frame loop
+  const startAnimationLoop = useCallback(() => {
+    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+
+    const animate = () => {
+      const diff = targetStepRef.current - currentStepRef.current;
+      if (Math.abs(diff) > 0.0005) {
+        // Continuous smooth easing towards target step without jerk
+        currentStepRef.current += diff * 0.07;
+        renderCardPositions(currentStepRef.current);
+        rafIdRef.current = requestAnimationFrame(animate);
+      } else {
+        currentStepRef.current = targetStepRef.current;
+        renderCardPositions(currentStepRef.current);
+        rafIdRef.current = null;
+      }
+    };
+
+    rafIdRef.current = requestAnimationFrame(animate);
+  }, [renderCardPositions]);
+
+  // Initial placement and window resize listener
+  useEffect(() => {
+    renderCardPositions(currentStepRef.current);
+    const handleResize = () => renderCardPositions(currentStepRef.current);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [renderCardPositions]);
+
+  // Step-by-step smooth auto-rotation with continuity
+  useEffect(() => {
+    if (total === 0) return;
+
+    if (autoplayTimerRef.current) clearInterval(autoplayTimerRef.current);
+
+    autoplayTimerRef.current = setInterval(() => {
+      if (!isPausedRef.current) {
+        targetStepRef.current += 1;
+        startAnimationLoop();
+      }
+    }, 3600);
+
+    return () => {
+      if (autoplayTimerRef.current) clearInterval(autoplayTimerRef.current);
+    };
+  }, [total, startAnimationLoop]);
+
+  // Cleanup animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    };
+  }, []);
 
   const handlePrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + total) % total);
-  }, [total]);
+    targetStepRef.current -= 1;
+    startAnimationLoop();
+  }, [startAnimationLoop]);
 
   const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % total);
-  }, [total]);
+    targetStepRef.current += 1;
+    startAnimationLoop();
+  }, [startAnimationLoop]);
 
-  // Card click: center card navigates, side card rotates to center
-  const handleCardClick = (e, offset, category) => {
+  // Card click: center card navigates, side cards smoothly rotate to center
+  const handleCardClick = (e, cardIndex, category) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (offset === 0) {
-      // Center card clicked -> Navigate to category page
+    // Calculate card's offset relative to current target
+    let relStep = ((cardIndex - Math.round(targetStepRef.current)) % total + total) % total;
+    if (relStep > total / 2) relStep -= total;
+
+    if (Math.abs(relStep) < 0.4) {
+      // Center card clicked -> Navigate to category collection
       const rawName = category.name || category.categoryId?.name || '';
       const slug = rawName
         .toLowerCase()
@@ -127,8 +236,9 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
         navigate('/shop');
       }
     } else {
-      // Side card clicked -> smoothly move it to center
-      setCurrentIndex((prev) => (prev + offset + total) % total);
+      // Side card clicked -> smoothly glide to make it active center
+      targetStepRef.current += relStep;
+      startAnimationLoop();
     }
   };
 
@@ -136,7 +246,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
     isSwiping.current = true;
-    setIsPaused(true);
+    isPausedRef.current = true;
   };
 
   const handleTouchMove = (e) => {
@@ -155,157 +265,68 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
         handlePrev();
       }
     }
-    // Resume auto-play after short delay
-    setTimeout(() => setIsPaused(false), 2000);
+    setTimeout(() => {
+      isPausedRef.current = false;
+    }, 2000);
   };
 
   if (total === 0) return null;
 
   return (
     <section 
-      className="relative w-full overflow-hidden select-none py-6 sm:py-10 md:py-12 bg-gradient-to-b from-[#7C69EF]/15 via-[#8F82F8]/10 to-slate-50/40"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      className="relative w-full overflow-hidden select-none bg-white py-0 my-0"
+      onMouseEnter={() => { isPausedRef.current = true; }}
+      onMouseLeave={() => { isPausedRef.current = false; }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       aria-label="Category Carousel"
     >
-      {/* Ambient background soft glow */}
-      <div 
-        className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-indigo-400/20 rounded-full blur-3xl opacity-70"
-        aria-hidden="true" 
-      />
-      <div 
-        className="pointer-events-none absolute -bottom-10 left-1/4 w-[400px] h-[250px] bg-purple-400/15 rounded-full blur-3xl opacity-60"
-        aria-hidden="true" 
-      />
-
-      {/* 3D Stepped Cascade Container */}
-      <div className="relative w-full max-w-7xl mx-auto px-4 h-[280px] sm:h-[350px] md:h-[410px] lg:h-[450px] flex items-center justify-center">
+      {/* 3D Stepped Cascade Container - Snug, tightly attached to upper cards */}
+      <div className="relative w-full max-w-7xl mx-auto px-4 h-[190px] xs:h-[220px] sm:h-[270px] md:h-[320px] lg:h-[360px] xl:h-[385px] flex items-center justify-center">
         {items.map((category, idx) => {
-          // Calculate relative circular offset: -floor(total/2) to floor((total-1)/2)
-          let offset = idx - currentIndex;
-          while (offset > total / 2) offset -= total;
-          while (offset < -total / 2) offset += total;
-
-          // Determine position, scale, elevation and opacity based on offset
-          let transform = '';
-          let zIndex = 0;
-          let opacity = 0;
-          let pointerEvents = 'none';
-          let cursor = 'default';
-
-          if (offset === 0) {
-            // CENTER CARD (Front, lowest top edge, highest z-index)
-            transform = isMobile 
-              ? 'translate(-50%, 0) translateY(24px) scale(1.0)' 
-              : 'translate(-50%, 0) translateY(48px) scale(1.0)';
-            zIndex = 30;
-            opacity = 1;
-            pointerEvents = 'auto';
-            cursor = 'pointer';
-          } else if (offset === -1) {
-            // MID LEFT CARD (Stepped behind center, higher top edge)
-            transform = isMobile
-              ? 'translate(calc(-50% - 38%), 0) translateY(0px) scale(0.86)'
-              : 'translate(calc(-50% - 46%), 0) translateY(0px) scale(0.90)';
-            zIndex = 20;
-            opacity = 0.88;
-            pointerEvents = 'auto';
-            cursor = 'pointer';
-          } else if (offset === 1) {
-            // MID RIGHT CARD (Stepped behind center, higher top edge)
-            transform = isMobile
-              ? 'translate(calc(-50% + 38%), 0) translateY(0px) scale(0.86)'
-              : 'translate(calc(-50% + 46%), 0) translateY(0px) scale(0.90)';
-            zIndex = 20;
-            opacity = 0.88;
-            pointerEvents = 'auto';
-            cursor = 'pointer';
-          } else if (offset === -2) {
-            // OUTER LEFT CARD (Furthest back, highest top edge)
-            transform = isMobile
-              ? 'translate(calc(-50% - 68%), 0) translateY(-18px) scale(0.72)'
-              : 'translate(calc(-50% - 90%), 0) translateY(-46px) scale(0.80)';
-            zIndex = 10;
-            opacity = isMobile ? 0 : 0.65;
-            pointerEvents = isMobile ? 'none' : 'auto';
-            cursor = isMobile ? 'default' : 'pointer';
-          } else if (offset === 2) {
-            // OUTER RIGHT CARD (Furthest back, highest top edge)
-            transform = isMobile
-              ? 'translate(calc(-50% + 68%), 0) translateY(-18px) scale(0.72)'
-              : 'translate(calc(-50% + 90%), 0) translateY(-46px) scale(0.80)';
-            zIndex = 10;
-            opacity = isMobile ? 0 : 0.65;
-            pointerEvents = isMobile ? 'none' : 'auto';
-            cursor = isMobile ? 'default' : 'pointer';
-          } else {
-            // Off-screen hidden cards
-            transform = 'translate(-50%, 0) translateY(0px) scale(0.6)';
-            zIndex = 0;
-            opacity = 0;
-            pointerEvents = 'none';
-          }
-
           const imgSrc = resolveImageUrl(category);
 
           return (
             <div
               key={`${category._id || category.id || idx}-${idx}`}
-              onClick={(e) => handleCardClick(e, offset, category)}
-              className="absolute left-1/2 top-4 sm:top-6 transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform"
-              style={{
-                transform,
-                zIndex,
-                opacity,
-                pointerEvents
-              }}
+              ref={(el) => { cardRefs.current[idx] = el; }}
+              onClick={(e) => handleCardClick(e, idx, category)}
+              className="absolute left-1/2 top-0 sm:top-1 will-change-transform cursor-pointer"
             >
-              {/* Card Container - Strict Image Only, rounded corners, glass border & reflection */}
+              {/* Card Container - Strict Image Only, rounded corners, glass border & subtle sheen */}
               <div
                 className={`
                   relative overflow-hidden rounded-2xl sm:rounded-3xl
-                  w-[240px] h-[155px]
-                  xs:w-[270px] xs:h-[175px]
-                  sm:w-[330px] sm:h-[215px]
-                  md:w-[410px] md:h-[265px]
-                  lg:w-[460px] lg:h-[295px]
-                  xl:w-[500px] xl:h-[320px]
-                  border border-white/60 dark:border-white/20
-                  ${offset === 0 
-                    ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)] ring-2 ring-white/50' 
-                    : 'shadow-[0_15px_30px_-8px_rgba(0,0,0,0.22)]'
-                  }
-                  bg-gradient-to-b from-white/90 to-white/40 backdrop-blur-sm
-                  transition-shadow duration-300
-                  ${cursor === 'pointer' ? 'cursor-pointer hover:shadow-2xl' : ''}
+                  w-[230px] h-[145px]
+                  xs:w-[260px] xs:h-[165px]
+                  sm:w-[310px] sm:h-[195px]
+                  md:w-[370px] md:h-[235px]
+                  lg:w-[430px] lg:h-[270px]
+                  xl:w-[470px] xl:h-[295px]
+                  border border-black/15 sm:border-white/60
+                  shadow-[0_18px_36px_-10px_rgba(0,0,0,0.22)]
+                  bg-white
+                  transition-shadow duration-300 hover:shadow-2xl
                 `}
               >
                 {/* Pure Image - Absolutely NO Text */}
                 <img
                   src={imgSrc}
                   alt=""
-                  loading={Math.abs(offset) <= 1 ? 'eager' : 'lazy'}
+                  loading={idx < 4 ? 'eager' : 'lazy'}
                   decoding="async"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = '/placeholder-image.jpg';
                   }}
-                  className="w-full h-full object-cover select-none pointer-events-none rounded-2xl sm:rounded-3xl transition-transform duration-700 ease-out hover:scale-105"
+                  className="w-full h-full object-cover select-none pointer-events-none rounded-2xl sm:rounded-3xl transition-transform duration-500 ease-out hover:scale-105"
                   draggable={false}
                 />
 
                 {/* Subtle glass reflection highlight on top edge */}
                 <div 
-                  className="pointer-events-none absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/35 to-transparent rounded-t-2xl sm:rounded-t-3xl" 
-                  aria-hidden="true" 
-                />
-
-                {/* Subtle bottom gradient tint */}
-                <div 
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black/15 to-transparent rounded-b-2xl sm:rounded-b-3xl" 
+                  className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-white/35 to-transparent rounded-t-2xl sm:rounded-t-3xl" 
                   aria-hidden="true" 
                 />
               </div>
@@ -321,7 +342,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
             handlePrev();
           }}
           aria-label="Previous category"
-          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3.5 rounded-full bg-white/85 hover:bg-white text-gray-800 shadow-xl border border-white/60 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -334,34 +355,10 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
             handleNext();
           }}
           aria-label="Next category"
-          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3.5 rounded-full bg-white/85 hover:bg-white text-gray-800 shadow-xl border border-white/60 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
-
-        {/* Bottom Dot Indicators */}
-        <div 
-          className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/25 backdrop-blur-md border border-white/20 shadow-md"
-        >
-          {items.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentIndex(i);
-              }}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`
-                h-2 rounded-full transition-all duration-300 focus:outline-none
-                ${i === currentIndex 
-                  ? 'w-6 sm:w-7 bg-white shadow-sm' 
-                  : 'w-2 bg-white/50 hover:bg-white/80'
-                }
-              `}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );

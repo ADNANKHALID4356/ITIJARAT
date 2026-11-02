@@ -71,7 +71,7 @@ const DynamicHomepageCards = () => {
   // Loading skeleton matching the 2-column mobile / 4-column desktop layout
   if (loading) {
     return (
-      <div className="bg-white py-6 sm:py-8">
+      <div className="bg-white pt-3 sm:pt-4 pb-0">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((num) => (
@@ -89,7 +89,7 @@ const DynamicHomepageCards = () => {
   );
 
   return (
-    <div className="w-full bg-white py-6 sm:py-8">
+    <div className="w-full bg-white pt-3 sm:pt-4 pb-1">
       <div className="w-full px-3 sm:px-6">
         {/* 
           Main Grid Wrapper:
