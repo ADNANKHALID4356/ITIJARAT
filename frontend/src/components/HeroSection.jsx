@@ -182,7 +182,6 @@ const HeroSection = ({ banners = [], hideCards = false }) => {
               Welcome to International Tijarat
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-24 md:h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
         </div>
         {!hideCards && <DynamicHomepageCards />}
       </div>
@@ -230,8 +229,6 @@ const HeroSection = ({ banners = [], hideCards = false }) => {
           <div className="absolute bottom-10 left-6 sm:bottom-12 sm:left-12 lg:bottom-16 lg:left-16 z-30 select-none">
             {renderSlideCTA(single)}
           </div>
-
-          <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-24 md:h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
         </section>
         {!hideCards && <DynamicHomepageCards />}
       </div>
@@ -336,7 +333,7 @@ const HeroSection = ({ banners = [], hideCards = false }) => {
         <div
           role="tablist"
           aria-label="Slide indicators"
-          className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2"
+          className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur-sm border border-white/10 shadow-md"
         >
           {slides.map((_, dotIdx) => {
             const isActive = dotIdx === activeDotIndex;
@@ -356,9 +353,6 @@ const HeroSection = ({ banners = [], hideCards = false }) => {
             );
           })}
         </div>
-
-        {/* Bottom Line Diffusion Gradient to blend into page */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-24 md:h-32 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-20" />
       </section>
 
       {/* Dynamic Homepage Cards - Preserved fully */}
