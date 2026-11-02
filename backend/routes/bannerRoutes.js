@@ -16,7 +16,12 @@ const BANNER_UPLOADS_DIR = path.join(__dirname, '../uploads/banner-slides');
 // Helper to clear all banner-related server and edge caches
 const clearBannerCaches = async () => {
     try {
-        cacheService.clearPattern('cache:*/banner*');
+        await cacheService.clearPattern('*banner*');
+        await cacheService.clearPattern('cache:*banner*');
+        await cacheService.del('cache:/api/banner');
+        await cacheService.del('cache:/api/banner?all=true');
+        await cacheService.del('cache:/api/homepage/banners');
+        await cacheService.del('cache:/api/homepage/banners?all=true');
         await cacheService.del('homepage_banner');
         await cacheService.del('cache:/api/homepage/all-data');
 
@@ -48,8 +53,20 @@ const formatSlide = (slide) => {
  * GET /api/banner
  * Public & Admin: Fetch all slides (sorted by order)
  * Query: ?all=true returns both active and inactive slides (used by admin UI)
+ * NOTE: Admin requests (?all=true or with auth) bypass cache to ensure real-time CRUD visibility.
  */
-router.get('/', cacheService.middleware(BANNER_CACHE), async (req, res) => {
+router.get('/', (req, res, next) => {
+    const isAdminRequest = req.query.all === 'true' || req.query.admin === 'true' || !!req.headers.authorization;
+    if (isAdminRequest) {
+        res.set({
+            'Cache-Control': 'private, no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+        return next();
+    }
+    return cacheService.middleware(BANNER_CACHE)(req, res, next);
+}, async (req, res) => {
     try {
         const showAll = req.query.all === 'true' || req.query.admin === 'true';
         const banner = await HomepageBanner.findOne().populate('slides.category');

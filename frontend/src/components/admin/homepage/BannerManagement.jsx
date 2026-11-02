@@ -247,7 +247,12 @@ const BannerManagement = () => {
     const fetchSlides = async () => {
         try {
             setLoading(true);
-            const response = await API.get('/banner', { params: { all: 'true' } });
+            const response = await API.get('/banner', {
+                params: {
+                    all: 'true',
+                    _t: Date.now()
+                }
+            });
             const data = Array.isArray(response.data) ? response.data : [];
             setSlides(data);
         } catch (error) {
