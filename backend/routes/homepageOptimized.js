@@ -110,18 +110,6 @@ router.get('/all-data', cacheService.middleware(HOMEPAGE_CACHE_TTL), async (req,
       // 1. Hero Banner Slides
       HomepageBanner.findOne()
         .select('slides')
-        .populate({
-          path: 'slides.primaryProduct',
-          select: 'title price image images discount slug'
-        })
-        .populate({
-          path: 'slides.secondaryProducts',
-          select: 'title image images slug'
-        })
-        .populate({
-          path: 'slides.category',
-          select: 'name slug'
-        })
         .lean(), // Use lean() for better performance (plain JS objects)
 
       // 2. Category Carousel
@@ -256,16 +244,29 @@ router.get('/all-data', cacheService.middleware(HOMEPAGE_CACHE_TTL), async (req,
 
     // Construct optimized response
     const responseData = {
-      // Banner slides
-      banners: bannerData?.slides?.map(slide => ({
-        _id: slide._id,
-        title: slide.title,
-        category: slide.category,
-        image: addBannerImagePath(slide.image),
-        optimizedMainImage: getOptimizedImagePaths(addBannerImagePath(slide.image)),
-        primaryProduct: slide.primaryProduct ? addImagePaths(slide.primaryProduct) : null,
-        secondaryProducts: (slide.secondaryProducts || []).map(addImagePaths)
-      })) || [],
+      // Banner slides (active only, sorted by order)
+      banners: (bannerData?.slides || [])
+        .filter(slide => slide.isActive !== false)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+        .map(slide => {
+          const rawImage = slide.imageFilename || slide.image;
+          const bannerImgPath = addBannerImagePath(rawImage);
+          return {
+            _id: slide._id,
+            title: slide.title || '',
+            subtitle: slide.subtitle || '',
+            buttonText: slide.buttonText || '',
+            linkUrl: slide.linkUrl || '',
+            image: bannerImgPath,
+            imageFilename: rawImage || '',
+            optimizedMainImage: getOptimizedImagePaths(bannerImgPath),
+            isActive: slide.isActive !== false,
+            order: slide.order || 0,
+            category: slide.category,
+            primaryProduct: slide.primaryProduct ? addImagePaths(slide.primaryProduct) : null,
+            secondaryProducts: (slide.secondaryProducts || []).map(addImagePaths)
+          };
+        }),
 
       // Category carousel
       categories: categories.map(cat => {
