@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { config } from '../config';
@@ -18,18 +18,47 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
 
-  // Animation controller refs
-  const currentStepRef = useRef(0);
-  const targetStepRef = useRef(0);
+  // Prepare categories list (ensure at least 7 items for seamless circular buffer slots)
+  const items = useMemo(() => {
+    const validProps = Array.isArray(homepageCategoriesProp) && homepageCategoriesProp.length > 0
+      ? homepageCategoriesProp
+      : DEFAULT_FALLBACK_CATEGORIES;
+
+    let list = [...validProps];
+    if (list.length > 0 && list.length < 7) {
+      while (list.length < 7) {
+        list = [...list, ...validProps];
+      }
+    }
+    return list;
+  }, [homepageCategoriesProp]);
+
+  const total = items.length;
+
+  // Initialize slots: [0, 1, 2, 3, -3, -2, -1] for N=7
+  const initSlots = useCallback((count) => {
+    const half = Math.floor(count / 2);
+    return Array.from({ length: count }, (_, i) => (i <= half ? i : i - count));
+  }, []);
+
+  const [slots, setSlots] = useState(() => initSlots(total));
+  const [instantCard, setInstantCard] = useState(null);
+
+  const isAnimatingRef = useRef(false);
   const isPausedRef = useRef(false);
-  const cardRefs = useRef([]);
-  const rafIdRef = useRef(null);
   const autoplayTimerRef = useRef(null);
 
   // Touch gesture refs
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
+
+  // Sync slots if total items count changes
+  useEffect(() => {
+    setSlots(initSlots(total));
+    setInstantCard(null);
+    isAnimatingRef.current = false;
+  }, [total, initSlots]);
 
   // Detect mobile viewport
   useEffect(() => {
@@ -44,7 +73,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   // Resolve image source cleanly
   const resolveImageUrl = useCallback((category) => {
     if (!category) return '/placeholder-image.jpg';
-    
+
     const opt = category.optimizedImage || category.optimizedMainImage;
     if (opt) {
       if (opt.webp?.large) return `${config.BASE_URL}${opt.webp.large}`;
@@ -69,161 +98,82 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
     return `${config.BASE_URL}/${raw}`;
   }, []);
 
-  // Prepare categories list (ensure at least 7 items for seamless circular cascade)
-  const items = React.useMemo(() => {
-    const validProps = Array.isArray(homepageCategoriesProp) && homepageCategoriesProp.length > 0
-      ? homepageCategoriesProp
-      : DEFAULT_FALLBACK_CATEGORIES;
+  // Smooth forward step: all cards glide left simultaneously
+  const stepForward = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+    setInstantCard(null);
 
-    let list = [...validProps];
-    if (list.length > 0 && list.length < 7) {
-      while (list.length < 7) {
-        list = [...list, ...validProps];
-      }
-    }
-    return list;
-  }, [homepageCategoriesProp]);
+    // 1. Shift all cards left by 1 position (monotonic, parallel 700ms glide)
+    setSlots((prev) => prev.map((s) => s - 1));
 
-  const total = items.length;
+    // 2. Once animation completes, quietly wrap the off-screen exit card to the entry buffer
+    setTimeout(() => {
+      setSlots((prev) => {
+        const next = [...prev];
+        const half = Math.floor(next.length / 2);
+        const wrappedIdx = next.indexOf(-half - 1);
+        if (wrappedIdx !== -1) {
+          next[wrappedIdx] = half;
+          setInstantCard(wrappedIdx);
+        }
+        return next;
+      });
+      isAnimatingRef.current = false;
+    }, 710);
+  }, []);
 
-  // Direct DOM style updater for 60fps smooth interpolation without React render overhead
-  const renderCardPositions = useCallback((stepVal) => {
-    if (total === 0) return;
+  // Smooth backward step: all cards glide right simultaneously
+  const stepBackward = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+    setInstantCard(null);
 
-    const mobile = window.innerWidth < 640;
-    const step1X = mobile ? 38 : 46;
-    const step2X = mobile ? 68 : 90;
-    const centerDown = mobile ? 12 : 22;
-    const stepUp = mobile ? 12 : 26;
+    // 1. Shift all cards right by 1 position (monotonic, parallel 700ms glide)
+    setSlots((prev) => prev.map((s) => s + 1));
 
-    for (let i = 0; i < total; i++) {
-      const el = cardRefs.current[i];
-      if (!el) continue;
+    // 2. Once animation completes, quietly wrap the off-screen exit card to the entry buffer
+    setTimeout(() => {
+      setSlots((prev) => {
+        const next = [...prev];
+        const half = Math.floor(next.length / 2);
+        const wrappedIdx = next.indexOf(half + 1);
+        if (wrappedIdx !== -1) {
+          next[wrappedIdx] = -half;
+          setInstantCard(wrappedIdx);
+        }
+        return next;
+      });
+      isAnimatingRef.current = false;
+    }, 710);
+  }, []);
 
-      // Calculate relative circular step
-      let relStep = ((i - stepVal) % total + total) % total;
-      if (relStep > total / 2) relStep -= total;
-
-      const absStep = Math.abs(relStep);
-      const sign = relStep >= 0 ? 1 : -1;
-
-      // 1. Horizontal offset percentage
-      let xPercent = 0;
-      if (absStep <= 1) {
-        xPercent = sign * absStep * step1X;
-      } else if (absStep <= 2) {
-        xPercent = sign * (step1X + (absStep - 1) * (step2X - step1X));
-      } else {
-        xPercent = sign * (step2X + (absStep - 2) * 20);
-      }
-
-      // 2. Vertical offset (V-shape cascade: center card is lowest, outer cards are highest)
-      const yOffset = centerDown - absStep * stepUp;
-
-      // 3. Scale: center card is 1.0, mid cards 0.90, outer cards 0.80
-      const scale = Math.max(0.55, 1.0 - absStep * (mobile ? 0.12 : 0.10));
-
-      // 4. Opacity: smoothly fades to 0 before wrapping, preventing any crossing jump
-      let opacity = 1.0;
-      if (absStep <= 1) {
-        opacity = 1.0 - absStep * 0.12;
-      } else if (absStep <= 2) {
-        opacity = 0.88 - (absStep - 1) * 0.23;
-      } else {
-        opacity = Math.max(0, 0.65 - (absStep - 2) * 2.0);
-      }
-
-      if (mobile && absStep > 1.15) {
-        // Hide outer cards on mobile to prevent horizontal viewport clipping
-        opacity = Math.max(0, 0.85 - (absStep - 1.0) * 4.0);
-      }
-
-      // 5. Elevation z-index
-      const zIndex = absStep < 0.5 ? 30 : (absStep < 1.5 ? 20 : (absStep < 2.5 ? 10 : 0));
-      const pointerEvents = absStep <= (mobile ? 1.2 : 2.2) && opacity > 0.1 ? 'auto' : 'none';
-
-      el.style.transform = `translate(calc(-50% + ${xPercent}%), ${yOffset}px) scale(${scale})`;
-      el.style.opacity = String(opacity);
-      el.style.zIndex = String(zIndex);
-      el.style.pointerEvents = pointerEvents;
-    }
-  }, [total]);
-
-  // Smooth continuous animation frame loop
-  const startAnimationLoop = useCallback(() => {
-    if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
-
-    const animate = () => {
-      const diff = targetStepRef.current - currentStepRef.current;
-      if (Math.abs(diff) > 0.0005) {
-        // Continuous smooth easing towards target step without jerk
-        currentStepRef.current += diff * 0.07;
-        renderCardPositions(currentStepRef.current);
-        rafIdRef.current = requestAnimationFrame(animate);
-      } else {
-        currentStepRef.current = targetStepRef.current;
-        renderCardPositions(currentStepRef.current);
-        rafIdRef.current = null;
-      }
-    };
-
-    rafIdRef.current = requestAnimationFrame(animate);
-  }, [renderCardPositions]);
-
-  // Initial placement and window resize listener
-  useEffect(() => {
-    renderCardPositions(currentStepRef.current);
-    const handleResize = () => renderCardPositions(currentStepRef.current);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [renderCardPositions]);
-
-  // Step-by-step smooth auto-rotation with continuity
+  // Periodic auto-rotation
   useEffect(() => {
     if (total === 0) return;
 
     if (autoplayTimerRef.current) clearInterval(autoplayTimerRef.current);
 
     autoplayTimerRef.current = setInterval(() => {
-      if (!isPausedRef.current) {
-        targetStepRef.current += 1;
-        startAnimationLoop();
+      if (!isPausedRef.current && !isAnimatingRef.current) {
+        stepForward();
       }
-    }, 3600);
+    }, 3800);
 
     return () => {
       if (autoplayTimerRef.current) clearInterval(autoplayTimerRef.current);
     };
-  }, [total, startAnimationLoop]);
+  }, [total, stepForward]);
 
-  // Cleanup animation frame on unmount
-  useEffect(() => {
-    return () => {
-      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
-    };
-  }, []);
-
-  const handlePrev = useCallback(() => {
-    targetStepRef.current -= 1;
-    startAnimationLoop();
-  }, [startAnimationLoop]);
-
-  const handleNext = useCallback(() => {
-    targetStepRef.current += 1;
-    startAnimationLoop();
-  }, [startAnimationLoop]);
-
-  // Card click: center card navigates, side cards smoothly rotate to center
-  const handleCardClick = (e, cardIndex, category) => {
+  // Card click: center card navigates, side cards smoothly glide to center
+  const handleCardClick = (e, idx, category) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Calculate card's offset relative to current target
-    let relStep = ((cardIndex - Math.round(targetStepRef.current)) % total + total) % total;
-    if (relStep > total / 2) relStep -= total;
+    const currentSlot = slots[idx];
 
-    if (Math.abs(relStep) < 0.4) {
-      // Center card clicked -> Navigate to category collection
+    if (currentSlot === 0) {
+      // Center card clicked -> Navigate to category products collection
       const rawName = category.name || category.categoryId?.name || '';
       const slug = rawName
         .toLowerCase()
@@ -235,10 +185,16 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
       } else {
         navigate('/shop');
       }
-    } else {
-      // Side card clicked -> smoothly glide to make it active center
-      targetStepRef.current += relStep;
-      startAnimationLoop();
+    } else if (currentSlot === 1) {
+      stepForward();
+    } else if (currentSlot === -1) {
+      stepBackward();
+    } else if (currentSlot === 2) {
+      stepForward();
+      setTimeout(() => stepForward(), 730);
+    } else if (currentSlot === -2) {
+      stepBackward();
+      setTimeout(() => stepBackward(), 730);
     }
   };
 
@@ -260,14 +216,110 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
     const diff = touchStartX.current - touchEndX.current;
     if (Math.abs(diff) > 40) {
       if (diff > 0) {
-        handleNext();
+        stepForward();
       } else {
-        handlePrev();
+        stepBackward();
       }
     }
     setTimeout(() => {
       isPausedRef.current = false;
     }, 2000);
+  };
+
+  // Helper to compute CSS style for each slot
+  const getSlotStyle = (slot, isInstant) => {
+    const step1X = isMobile ? 38 : 46;
+    const step2X = isMobile ? 68 : 90;
+    const step3X = isMobile ? 98 : 130;
+    const centerDown = isMobile ? 12 : 22;
+    const stepUp = isMobile ? 12 : 26;
+
+    // Use transition for visible/entering/exiting cards; disable for instant buffer wraps
+    const transition = isInstant
+      ? 'none'
+      : 'transform 700ms cubic-bezier(0.25, 1, 0.5, 1), opacity 700ms ease';
+
+    if (slot === 0) {
+      // CENTER CARD (Front, lowest top edge, highest z-index)
+      return {
+        transform: `translate(-50%, ${centerDown}px) scale(1.0)`,
+        opacity: 1.0,
+        zIndex: 30,
+        pointerEvents: 'auto',
+        cursor: 'pointer',
+        transition
+      };
+    }
+
+    if (slot === -1) {
+      // MID LEFT CARD
+      return {
+        transform: `translate(calc(-50% - ${step1X}%), 0px) scale(0.90)`,
+        opacity: 0.88,
+        zIndex: 20,
+        pointerEvents: 'auto',
+        cursor: 'pointer',
+        transition
+      };
+    }
+
+    if (slot === 1) {
+      // MID RIGHT CARD
+      return {
+        transform: `translate(calc(-50% + ${step1X}%), 0px) scale(0.90)`,
+        opacity: 0.88,
+        zIndex: 20,
+        pointerEvents: 'auto',
+        cursor: 'pointer',
+        transition
+      };
+    }
+
+    if (slot === -2) {
+      // OUTER LEFT CARD
+      return {
+        transform: `translate(calc(-50% - ${step2X}%), ${-stepUp}px) scale(0.80)`,
+        opacity: isMobile ? 0 : 0.65,
+        zIndex: 10,
+        pointerEvents: isMobile ? 'none' : 'auto',
+        cursor: isMobile ? 'default' : 'pointer',
+        transition
+      };
+    }
+
+    if (slot === 2) {
+      // OUTER RIGHT CARD
+      return {
+        transform: `translate(calc(-50% + ${step2X}%), ${-stepUp}px) scale(0.80)`,
+        opacity: isMobile ? 0 : 0.65,
+        zIndex: 10,
+        pointerEvents: isMobile ? 'none' : 'auto',
+        cursor: isMobile ? 'default' : 'pointer',
+        transition
+      };
+    }
+
+    if (slot <= -3) {
+      // OFF-SCREEN LEFT BUFFER
+      return {
+        transform: `translate(calc(-50% - ${step3X}%), ${-stepUp - 6}px) scale(0.70)`,
+        opacity: 0,
+        zIndex: 0,
+        pointerEvents: 'none',
+        cursor: 'default',
+        transition
+      };
+    }
+
+    // OFF-SCREEN RIGHT BUFFER (slot >= 3)
+    return {
+      transform: `translate(calc(-50% + ${step3X}%), ${-stepUp - 6}px) scale(0.70)`,
+      opacity: 0,
+      zIndex: 0,
+      pointerEvents: 'none',
+      cursor: 'default',
+      transition
+    };
   };
 
   if (total === 0) return null;
@@ -282,19 +334,22 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
       onTouchEnd={handleTouchEnd}
       aria-label="Category Carousel"
     >
-      {/* 3D Stepped Cascade Container - Snug, tightly attached to upper cards */}
+      {/* 3D Stepped Cascade Container - Snug, seamlessly attached to upper cards */}
       <div className="relative w-full max-w-7xl mx-auto px-4 h-[190px] xs:h-[220px] sm:h-[270px] md:h-[320px] lg:h-[360px] xl:h-[385px] flex items-center justify-center">
         {items.map((category, idx) => {
           const imgSrc = resolveImageUrl(category);
+          const currentSlot = slots[idx];
+          const isInstant = instantCard === idx;
+          const slotStyle = getSlotStyle(currentSlot, isInstant);
 
           return (
             <div
               key={`${category._id || category.id || idx}-${idx}`}
-              ref={(el) => { cardRefs.current[idx] = el; }}
               onClick={(e) => handleCardClick(e, idx, category)}
-              className="absolute left-1/2 top-0 sm:top-1 will-change-transform cursor-pointer"
+              style={slotStyle}
+              className="absolute left-1/2 top-0 sm:top-1 will-change-transform"
             >
-              {/* Card Container - Strict Image Only, rounded corners, glass border & subtle sheen */}
+              {/* Card Container - Strict Image Only, rounded corners, glass border & subtle reflection */}
               <div
                 className={`
                   relative overflow-hidden rounded-2xl sm:rounded-3xl
@@ -314,7 +369,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
                 <img
                   src={imgSrc}
                   alt=""
-                  loading={idx < 4 ? 'eager' : 'lazy'}
+                  loading={Math.abs(currentSlot) <= 1 ? 'eager' : 'lazy'}
                   decoding="async"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
@@ -339,10 +394,10 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            handlePrev();
+            stepBackward();
           }}
           aria-label="Previous category"
-          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -352,10 +407,10 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            handleNext();
+            stepForward();
           }}
           aria-label="Next category"
-          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-2.5 sm:p-3 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl border border-gray-200/80 backdrop-blur-md transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
