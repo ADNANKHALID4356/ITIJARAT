@@ -11,6 +11,7 @@ const createUploadDirs = () => {
     'uploads/properties',
     'uploads/products',
     'uploads/banner',
+    'uploads/banner-slides',
     'uploads/wholesale-suppliers'
   ];
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs, Tab } from '@headlessui/react';
-import BannerManagement from '../../components/admin/homepage/BannerManagement';
+import { BannerManagement } from '../../components/admin/homepage';
 import CardManagement from '../../components/admin/homepage/CardManagement';
 import CategoryManagement from '../../components/admin/homepage/CategoryManagement';
 import PremiumProducts from '../../components/admin/homepage/PremiumProducts';

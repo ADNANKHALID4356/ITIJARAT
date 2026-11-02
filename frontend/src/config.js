@@ -9,7 +9,9 @@ const IMAGE_PATHS = {
   'homepage-cards': 'homepage-cards',
   'wholesale-suppliers': 'wholesale-suppliers',
   'qr-codes': 'qr-codes',
-  'payment-receipts': 'payment-receipts'
+  'payment-receipts': 'payment-receipts',
+  'banner-slides': 'banner-slides',
+  banner: 'banner-slides'
 };
 
 // Get base URL for the application (for API calls)

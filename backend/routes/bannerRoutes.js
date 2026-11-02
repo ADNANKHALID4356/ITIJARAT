@@ -12,7 +12,7 @@ const BANNER_CACHE = 3600; // 1 hour - banners change infrequently
 // Get all banner slides
 router.get('/', cacheService.middleware(BANNER_CACHE), async (req, res) => {
     try {
-        const banner = await HomepageBanner.findOne();
+        const banner = await HomepageBanner.findOne().populate('slides.category');
         const slides = banner ? banner.slides.sort((a, b) => a.order - b.order) : [];
         res.json(slides);
     } catch (error) {
