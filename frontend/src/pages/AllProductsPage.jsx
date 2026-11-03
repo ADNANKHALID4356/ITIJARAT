@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import ProductService from '../services/productService';
 import { getApiUrl, getImageUrl } from '../config';
 import EnhancedProductCard from '../components/EnhancedProductCard';
+import ShopProductCard from '../components/ShopProductCard';
 import { getCanonicalUrl, generateBreadcrumbs } from '../utils/seoHelpers';
 import { getCollectionSchema, getBreadcrumbSchema } from '../utils/schemaGenerator';
 
@@ -482,21 +483,21 @@ const AllProductsPage = () => {
 
       {/* Products Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {filteredAndSortedProducts.map((product, index) => (
             <div
               key={product._id}
               ref={index === filteredAndSortedProducts.length - 1 ? lastProductElementRef : null}
             >
-              <EnhancedProductCard
+              <ShopProductCard
                 product={product}
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
                 cartQuantity={getCartItemQuantity(product._id)}
                 isInCart={isProductInCart(product._id)}
                 isAddingToCart={addingToCart[product._id] || false}
-                errorMessage={errorMessages[product._id]}
-                showBuyNow={true}
+                isFavorite={wishlist.has(product._id)}
+                onFavoriteToggle={handleToggleWishlist}
               />
             </div>
           ))}
