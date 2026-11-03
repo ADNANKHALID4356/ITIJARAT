@@ -407,6 +407,7 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
                   errorMessage={errorMessages[product._id || product.id]}
                   showBuyNow={true}
                   showTitle={false}
+                  showPrice={false}
                 />
               ))}
             </div>
@@ -431,6 +432,7 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
                   errorMessage={errorMessages[product._id || product.id]}
                   showBuyNow={true}
                   showTitle={false}
+                  showPrice={false}
                 />
               ))
             ) : (

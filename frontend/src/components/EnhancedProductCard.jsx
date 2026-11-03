@@ -18,6 +18,7 @@ const EnhancedProductCard = ({
   showFavorite = true,
   showQuickView = true,
   showTitle = true, // New prop to control title visibility
+  showPrice = true, // New prop to control price visibility
   isAddingToCart = false,
   cartQuantity = 0,
   isInCart = false,
@@ -210,7 +211,7 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Media Container - Square 1:1 aspect ratio for images */}
-      <div className="relative w-full overflow-hidden rounded-t-xl bg-gray-100" style={{ paddingBottom: '100%', height: 0 }}>
+      <div className={`relative w-full overflow-hidden ${(!showTitle && !showPrice) ? "rounded-xl" : "rounded-t-xl"} bg-gray-100`} style={{ paddingBottom: '100%', height: 0 }}>
         <div className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
         {/* Video - shown on hover if available */}
         {product.video && !videoError && (
@@ -330,6 +331,7 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Product Info */}
+      {(showTitle || showPrice) && (
       <div className="p-1 flex flex-col h-auto min-h-0">
         {/* Product Title - Conditionally shown */}
         {showTitle && (
@@ -386,6 +388,7 @@ const EnhancedProductCard = ({
           </div>
         )}
       </div>
+      )}
       
       {/* Size Selection Modal - Rendered via Portal to be completely outside card DOM */}
       {showSizeModal && createPortal(
