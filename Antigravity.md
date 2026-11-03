@@ -165,3 +165,51 @@ cd backend; node scripts/migrateBannerSlides.js --rollback "backend/scripts/back
 1. **`backend/.env` file required** — Copy from `.env.template` and provide `MONGODB_URI` and `JWT_SECRET` before starting the backend.
 2. **Cache invalidation** — When testing in production, Cloudflare cache is automatically purged on mutation. In development, browser hard refresh (`Ctrl + Shift + R`) clears any local asset cache.
 3. **Multer field name** — The slide creation/update endpoint expects the single image file to be uploaded under field name `image`.
+
+---
+
+## Featured Products Bento Grid — Architecture & Planning Context
+
+**Feature Status:** Analysis & Architectural Planning Complete (`Planning-FeaturedBento.md`). Ready for Phase 1 implementation upon approval.  
+**Branch:** `feature/banner-slides-v2`  
+**Target:** Transform the Homepage "Featured Products" uniform card grid (embedded inside `<PremiumProductDisplay>` Tab 3) into an editorial, interlocking **Bento Grid** with Hero (2x2), Wide (2x1), Tall (1x2), and Small (1x1) tiles.
+
+### 1. Verified File Map
+
+| Layer | File Path | Status / Role |
+|---|---|---|
+| **Admin Route View** | `frontend/src/pages/Admin/homepage/index.jsx` | Renders `tabs` including `'featured'`; instantiates `<FeaturedProductsManager />` |
+| **Admin Wrapper** | `frontend/src/components/admin/homepage/FeaturedProductsManager.jsx` | Returns `<SpecialProductsManager type="featured" />` |
+| **Admin Core** | `frontend/src/components/admin/homepage/SpecialProductsManager.jsx` | Product search, category filter, optimistic ID selection, `PUT /api/special/featured` |
+| **Public Host** | `frontend/src/pages/Home.jsx` | React-Query fetches `/api/homepage/all-data`; passes `homepageData?.specialProducts?.featured` |
+| **Public Display** | `frontend/src/components/PremiumProductDisplay.jsx` | Current host of Featured Products (Tab 3: uniform `grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6`) |
+| **Public Bento Target**| `frontend/src/components/FeaturedBentoGrid.jsx` | **Planned new component** — dedicated Bento grid section with Hero, Wide, Tall, Small tiles |
+| **Shared Product Card**| `frontend/src/components/EnhancedProductCard.jsx` | Reusable card; preserved for general catalogue & other tabs |
+| **Aggregate Route** | `backend/routes/homepageOptimized.js` | Feeds `/api/homepage/all-data`; queries `FeaturedProducts.findOne().populate('products')` |
+| **REST Admin API** | `backend/api.js` (L408–480) | `GET /api/special/featured`, `PUT /api/special/featured` |
+| **DB Model (Active)** | `backend/models/FeaturedProducts.js` | Singleton schema: `products: [{ type: ObjectId, ref: 'Product' }]`, `lastUpdated: Date` |
+| **DB Model (Orphan)** | `backend/models/FeaturedProduct.js` | 0-byte orphan file (to be removed in cleanup) |
+
+### 2. Key Architecture Decisions
+
+1. **Standalone Public Section vs Tabbed Container:**
+   - `<FeaturedBentoGrid>` will be extracted into a dedicated, visually prominent homepage section placed directly beneath the Category Carousel and above `<PremiumProductDisplay>`, giving featured items true editorial presence.
+2. **Pure CSS Grid Engine (Zero Bundle Bloat):**
+   - Utilizes Tailwind CSS Grid (`grid-cols-4 auto-rows-[220px] gap-4 md:gap-6`) with mathematical interlocking presets ($1, 3, 5, 7, 9+$ items) rather than heavy JavaScript packing libraries (no Packery, Masonry, or Muuri). Guarantees zero Cumulative Layout Shift (CLS < 0.05).
+3. **100% Backward-Compatible Schema Evolution:**
+   - Preserves `products: [ObjectId]` in `FeaturedProducts` for standard operation.
+   - Adds an optional `layoutConfig` array (`{ productId: ObjectId, slotSize: 'hero' | 'wide' | 'tall' | 'small', order: Number }`). If `layoutConfig` is absent or unconfigured, an automated layout algorithm maps the first product to Hero (2x2) and subsequent products to Wide/Tall/Small tiles seamlessly.
+4. **Enhanced Projection in Aggregate Endpoint:**
+   - `backend/routes/homepageOptimized.js` currently restricts projection to `title price image discount rating slug`. Plan expands projection to include `description originalPrice category stock` for rich Hero tile display.
+5. **Admin Bento Studio:**
+   - Upgrades `<SpecialProductsManager>` to include interactive slot assignment, tactile drag-and-drop reordering (`react-dnd`), and live WYSIWYG preview matching public bento geometry.
+
+### 3. Known Gotchas & Constraints
+
+1. **Query Reversal in `homepageOptimized.js`:**
+   - Line 296 currently performs `[...featuredProducts.products].reverse()`. Admin reorder persistence must either align with this or update the endpoint to honor explicit `order` index.
+2. **Missing Product Schema Fields:**
+   - `rating` and `reviewsCount` do not exist on the Mongoose `Product` schema. The Bento tiles must gracefully omit star ratings or render fallbacks when these fields are null.
+3. **Style Guide Compliance:**
+   - Strict typography rule: prices must remain non-bold (`font-sans font-normal`) per project `.product-price` styling standards. Primary headings use `font-serif font-bold`.
+

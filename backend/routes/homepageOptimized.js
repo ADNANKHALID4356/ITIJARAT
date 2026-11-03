@@ -143,10 +143,10 @@ router.get('/all-data', cacheService.middleware(HOMEPAGE_CACHE_TTL), async (req,
 
       // 5. Featured Products
       FeaturedProducts.findOne()
-        .select('products')
+        .select('products layoutConfig')
         .populate({
           path: 'products',
-          select: 'title price image discount rating slug' // Phase 5: Removed stock, description, vendor, images
+          select: 'title price image discount rating slug stock' // Include stock for out-of-stock bento indicator
         })
         .lean(),
 
@@ -293,7 +293,42 @@ router.get('/all-data', cacheService.middleware(HOMEPAGE_CACHE_TTL), async (req,
       specialProducts: {
         // Reverse arrays so newest products appear first
         premium: premiumProducts?.products ? [...premiumProducts.products].reverse().map(addImagePaths) : [],
-        featured: featuredProducts?.products ? [...featuredProducts.products].reverse().map(addImagePaths) : [],
+        featured: (() => {
+          if (!featuredProducts?.products || featuredProducts.products.length === 0) return [];
+          const layoutMap = new Map();
+          if (Array.isArray(featuredProducts.layoutConfig)) {
+            featuredProducts.layoutConfig.forEach(cfg => {
+              if (cfg && cfg.productId) {
+                layoutMap.set(cfg.productId.toString(), cfg);
+              }
+            });
+          }
+          const valid = featuredProducts.products.filter(p => p && p._id);
+          if (layoutMap.size > 0) {
+            valid.sort((a, b) => {
+              const orderA = layoutMap.get(a._id.toString())?.order ?? 999;
+              const orderB = layoutMap.get(b._id.toString())?.order ?? 999;
+              return orderA - orderB;
+            });
+            return valid.map(p => {
+              const mapped = addImagePaths(p);
+              const cfg = layoutMap.get(p._id.toString());
+              mapped.slotSize = cfg?.slotSize || 'small';
+              mapped.order = cfg?.order !== undefined ? cfg.order : 0;
+              return mapped;
+            });
+          } else {
+            // Legacy default fallback: reverse so newest first, 1st = hero, rest = small
+            const reversed = [...valid].reverse();
+            return reversed.map((p, idx) => {
+              const mapped = addImagePaths(p);
+              mapped.slotSize = idx === 0 ? 'hero' : 'small';
+              mapped.order = idx;
+              return mapped;
+            });
+          }
+        })(),
+        featuredLayoutConfig: featuredProducts?.layoutConfig || [],
         newArrivals: (newArrivals || []).map(addImagePaths)
       },
 

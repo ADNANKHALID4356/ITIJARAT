@@ -420,8 +420,31 @@ app.get('/api/special/featured', async (req, res) => {
             return res.json([]);
         }
 
+        const layoutMap = new Map();
+        if (Array.isArray(featuredProducts.layoutConfig)) {
+            featuredProducts.layoutConfig.forEach(cfg => {
+                if (cfg && cfg.productId) {
+                    layoutMap.set(cfg.productId.toString(), cfg);
+                }
+            });
+        }
+
         // Filter out any null or undefined products
-        const validProducts = featuredProducts.products.filter(product => product && product._id);
+        const validProducts = featuredProducts.products
+            .filter(product => product && product._id)
+            .map(product => {
+                const prodObj = product.toObject ? product.toObject() : { ...product };
+                const cfg = layoutMap.get(prodObj._id.toString());
+                prodObj.slotSize = cfg?.slotSize || 'small';
+                prodObj.order = cfg?.order !== undefined ? cfg.order : 0;
+                return prodObj;
+            });
+
+        // If layoutConfig was defined, sort by order; otherwise keep current array order
+        if (layoutMap.size > 0) {
+            validProducts.sort((a, b) => a.order - b.order);
+        }
+
         res.json(validProducts);
     } catch (error) {
         console.error('Featured products error:', error);
@@ -454,27 +477,105 @@ app.get('/api/special/premium', async (req, res) => {
 // Update featured products (admin only)
 app.put('/api/special/featured', authenticateAdmin, async (req, res) => {
     try {
-        const { productIds } = req.body;
+        const { productIds, layoutConfig } = req.body;
+
+        if (!Array.isArray(productIds)) {
+            return res.status(400).json({ message: 'productIds must be an array of product IDs' });
+        }
+
+        // Limit maximum featured products (e.g. 30)
+        const MAX_FEATURED_PRODUCTS = 30;
+        if (productIds.length > MAX_FEATURED_PRODUCTS) {
+            return res.status(400).json({ 
+                message: `Cannot feature more than ${MAX_FEATURED_PRODUCTS} products` 
+            });
+        }
+
+        // Validate all product IDs are valid ObjectIds
+        const validIds = [];
+        for (const id of productIds) {
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: `Invalid product ID: ${id}` });
+            }
+            if (!validIds.includes(id.toString())) {
+                validIds.push(id.toString());
+            }
+        }
+
+        // Process and validate layoutConfig if provided
+        const ALLOWED_SLOT_SIZES = ['hero', 'wide', 'tall', 'small'];
+        let cleanLayoutConfig = [];
+
+        if (Array.isArray(layoutConfig) && layoutConfig.length > 0) {
+            cleanLayoutConfig = layoutConfig
+                .filter(cfg => cfg && cfg.productId && validIds.includes(cfg.productId.toString()))
+                .map((cfg, idx) => ({
+                    productId: cfg.productId,
+                    slotSize: ALLOWED_SLOT_SIZES.includes(cfg.slotSize) ? cfg.slotSize : 'small',
+                    order: Number.isInteger(cfg.order) && cfg.order >= 0 ? cfg.order : idx
+                }));
+        } else {
+            // Sensible default: first product = hero, rest = small
+            cleanLayoutConfig = validIds.map((id, idx) => ({
+                productId: id,
+                slotSize: idx === 0 ? 'hero' : 'small',
+                order: idx
+            }));
+        }
+
         let featuredProducts = await FeaturedProducts.findOne();
-        
         if (!featuredProducts) {
             featuredProducts = new FeaturedProducts();
         }
         
-        featuredProducts.products = productIds;
+        featuredProducts.products = validIds;
+        featuredProducts.layoutConfig = cleanLayoutConfig;
         featuredProducts.lastUpdated = Date.now();
         await featuredProducts.save();
         
-        const updatedProducts = await FeaturedProducts.findOne()
-            .populate('products');
+        const updatedDoc = await FeaturedProducts.findOne()
+            .populate({
+                path: 'products',
+                populate: [
+                    { path: 'category' },
+                    { path: 'vendor', select: 'name shopName' }
+                ]
+            });
 
         // Clear server-side cache and purge Cloudflare so homepage shows new products immediately
         await cacheService.del('cache:/api/homepage/all-data');
+        if (cacheService.clearPattern) {
+            await cacheService.clearPattern('homepage');
+        }
         const siteUrl = process.env.SITE_URL || 'https://internationaltijarat.com';
         purgeCloudflareUrls([`${siteUrl}/api/homepage/all-data`, `${siteUrl}/`]);
         
-        res.json(updatedProducts.products);
+        const layoutMap = new Map();
+        if (Array.isArray(updatedDoc.layoutConfig)) {
+            updatedDoc.layoutConfig.forEach(cfg => {
+                if (cfg && cfg.productId) {
+                    layoutMap.set(cfg.productId.toString(), cfg);
+                }
+            });
+        }
+
+        const validProducts = (updatedDoc.products || [])
+            .filter(p => p && p._id)
+            .map(p => {
+                const prodObj = p.toObject ? p.toObject() : { ...p };
+                const cfg = layoutMap.get(prodObj._id.toString());
+                prodObj.slotSize = cfg?.slotSize || 'small';
+                prodObj.order = cfg?.order !== undefined ? cfg.order : 0;
+                return prodObj;
+            });
+
+        if (layoutMap.size > 0) {
+            validProducts.sort((a, b) => a.order - b.order);
+        }
+
+        res.json(validProducts);
     } catch (error) {
+        console.error('Update featured products error:', error);
         res.status(500).json({ message: error.message });
     }
 });
