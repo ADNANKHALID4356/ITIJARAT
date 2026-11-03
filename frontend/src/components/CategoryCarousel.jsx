@@ -63,19 +63,33 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
   const measureWidth = useCallback(() => {
     if (!trackRef.current) return;
     const totalScrollWidth = trackRef.current.scrollWidth;
-    singleSetWidthRef.current = totalScrollWidth / 3;
+    if (totalScrollWidth > 0) {
+      singleSetWidthRef.current = totalScrollWidth / 3;
 
-    // Initialize position centered on middle set so it can scroll in either direction seamlessly
-    if (posRef.current === 0) {
-      posRef.current = -singleSetWidthRef.current;
-      trackRef.current.style.transform = `translate3d(${posRef.current}px, 0, 0)`;
+      // Initialize position centered on middle set so it can scroll in either direction seamlessly
+      if (posRef.current === 0) {
+        posRef.current = -singleSetWidthRef.current;
+        trackRef.current.style.transform = `translate3d(${posRef.current}px, 0, 0)`;
+      }
     }
   }, []);
 
   useEffect(() => {
     measureWidth();
+
+    let ro;
+    if (typeof ResizeObserver !== 'undefined' && trackRef.current) {
+      ro = new ResizeObserver(() => {
+        measureWidth();
+      });
+      ro.observe(trackRef.current);
+    }
+
     window.addEventListener('resize', measureWidth);
-    return () => window.removeEventListener('resize', measureWidth);
+    return () => {
+      window.removeEventListener('resize', measureWidth);
+      if (ro) ro.disconnect();
+    };
   }, [measureWidth, displayItems]);
 
   // 60FPS Silky Continuous Ticker with V-Shaped Stepped Layering Arrangement
@@ -113,7 +127,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
         const count = cardRefs.current.length;
         for (let i = 0; i < count; i++) {
           const cardEl = cardRefs.current[i];
-          if (!cardEl) continue;
+          if (!cardEl || !cardEl.getBoundingClientRect) continue;
 
           const cardRect = cardEl.getBoundingClientRect();
           const cardCenterX = cardRect.left + cardRect.width / 2;
@@ -141,7 +155,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
     };
   }, []);
 
-  // Image URL Resolver
+  // Image URL Resolver (Handles responsive webp, original, and relative /uploads/ paths)
   const resolveImageUrl = useCallback((category) => {
     if (!category) return '/placeholder-image.jpg';
 
@@ -188,7 +202,7 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
 
   // Card click navigates to category group
   const handleCardClick = (category) => {
-    const rawName = category.name || category.categoryId?.name || '';
+    const rawName = category?.name || category?.categoryId?.name || '';
     const slug = rawName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
