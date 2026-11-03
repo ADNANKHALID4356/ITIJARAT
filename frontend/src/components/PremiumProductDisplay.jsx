@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getApiUrl, getImageUrl } from '../config';
 import EnhancedProductCard from './EnhancedProductCard';
 import FeaturedBentoGrid from './FeaturedBentoGrid';
+import PremiumBentoGrid from './PremiumBentoGrid';
 
 const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], newArrivals = [] }) => {
   const navigate = useNavigate();
@@ -381,6 +382,11 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
               Retry
             </button>
           </div>
+        ) : activeTab === 'featured' ? (
+          <PremiumBentoGrid 
+            products={products.featured && products.featured.length > 0 ? products.featured : (premiumProducts || [])} 
+            isLoading={loading}
+          />
         ) : activeTab === 'newArrivals' ? (
           <FeaturedBentoGrid 
             products={products.newArrivals && products.newArrivals.length > 0 ? products.newArrivals : (featuredProducts || [])} 
