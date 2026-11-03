@@ -36,7 +36,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
-  const [showHorizontalCategories, setShowHorizontalCategories] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [submenuPosition, setSubmenuPosition] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,7 +44,6 @@ const Navbar = () => {
   const categoriesRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
-  const mainCategoriesTimeoutRef = useRef(null);
   const navigate = useNavigate();
   
   const { cartStats } = useCart();
@@ -127,16 +125,7 @@ const Navbar = () => {
           </Link>
 
           {/* Search Bar - Modernized with Shimmer */}
-          <div 
-            className="flex-1 max-w-[140px] mx-1 md:max-w-xl md:mx-6 relative group"
-            onMouseEnter={() => {
-              if (mainCategoriesTimeoutRef.current) clearTimeout(mainCategoriesTimeoutRef.current);
-              setShowHorizontalCategories(true);
-            }}
-            onMouseLeave={() => {
-              mainCategoriesTimeoutRef.current = setTimeout(() => setShowHorizontalCategories(false), 200);
-            }}
-          >
+          <div className="flex-1 max-w-[140px] mx-1 md:max-w-xl md:mx-6 relative group">
             <form onSubmit={handleSearch} className="flex w-full overflow-hidden rounded-md border border-gray-700 focus-within:border-orange-500 transition-all shadow-inner bg-gray-900/50">
               <div className="hidden md:block bg-gray-800 px-4 py-2 text-xs font-bold text-gray-300 uppercase tracking-wider border-r border-gray-700" style={{ fontFamily: 'var(--font-serif)' }}>
                 Categories
@@ -252,30 +241,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      {/* Horizontal Category Bar */}
-      {showHorizontalCategories && (
-        <div className="bg-gray-900 border-b border-gray-800 shadow-xl overflow-hidden"
-             onMouseEnter={() => { if (mainCategoriesTimeoutRef.current) clearTimeout(mainCategoriesTimeoutRef.current); setShowHorizontalCategories(true); }}
-             onMouseLeave={() => { mainCategoriesTimeoutRef.current = setTimeout(() => setShowHorizontalCategories(false), 200); }}>
-          <div className="max-w-screen-xl mx-auto px-6 py-3">
-            <div className="flex flex-wrap gap-4 items-center justify-center">
-              {!loadingCategories && Object.keys(categories).sort().map((main) => (
-                <Link
-                  key={main}
-                  to={`/category-group/${main.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`}
-                  className="text-xs font-bold text-gray-400 hover:text-white uppercase tracking-widest transition-colors"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                  onClick={() => setShowHorizontalCategories(false)}
-                >
-                  {main}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Secondary Navigation */}
       <div className="bg-[#1e293b] border-b border-gray-800 shadow-inner">
         <div className="max-w-screen-xl mx-auto px-4">
