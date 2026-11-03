@@ -9,7 +9,6 @@ import { getApiUrl, getImageUrl } from '../config';
 import EnhancedProductCard from './EnhancedProductCard';
 import FeaturedBentoGrid from './FeaturedBentoGrid';
 import PremiumBentoGrid from './PremiumBentoGrid';
-import NewArrivalsBentoGrid from './NewArrivalsBentoGrid';
 
 const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], newArrivals = [] }) => {
   const navigate = useNavigate();
@@ -394,10 +393,29 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
             showHeader={false}
           />
         ) : activeTab === 'trending' ? (
-          <NewArrivalsBentoGrid 
-            products={products.trending && products.trending.length > 0 ? products.trending : (newArrivals || [])} 
-            isLoading={loading}
-          />
+          ((products.trending && products.trending.length > 0) || (newArrivals && newArrivals.length > 0)) ? (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 my-2">
+              {(products.trending && products.trending.length > 0 ? products.trending : newArrivals).map((product) => (
+                <EnhancedProductCard 
+                  key={product._id || product.id} 
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  onBuyNow={handleBuyNow}
+                  cartQuantity={getCartItemQuantity(product._id || product.id)}
+                  isInCart={isProductInCart(product._id || product.id)}
+                  isAddingToCart={addingToCart[product._id || product.id] || false}
+                  errorMessage={errorMessages[product._id || product.id]}
+                  showBuyNow={true}
+                  showTitle={false}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="col-span-full text-center py-16">
+              <p className="text-gray-600 mb-4">No products available in this category</p>
+              <p className="text-sm text-gray-500">Check back soon for new arrivals!</p>
+            </div>
+          )
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1">
             {(products[activeTab] && products[activeTab].length > 0) ? (
