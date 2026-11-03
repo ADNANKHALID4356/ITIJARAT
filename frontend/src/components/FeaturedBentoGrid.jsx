@@ -1,18 +1,14 @@
 import React, { useMemo } from 'react';
-import BentoImageTile from './BentoImageTile';
-import { BENTO_TOKENS, getPresetForCount } from '../config/bentoConfig';
+import EditorialBentoGrid from './EditorialBentoGrid';
 
 /**
  * FeaturedBentoGrid — Editorial, Interlocking Bento Grid for Homepage Featured Products
  * 
- * Features:
- * - 4-Column pure CSS Grid architecture with deterministic zero-gap presets.
- * - Dynamic slot size resolution (admin configured slotSize > per-count geometric preset).
- * - Image-only tiles: zero text on cards, accessible links, out-of-stock visual cue.
- * - Responsive breakpoints: 4 columns on desktop, 2 columns on tablet, 2 columns/stacked on mobile.
- * - Zero products: renders null cleanly without layout shift.
- * - Loading state: renders proportional bento skeleton tiles.
- * - showHeader: allows suppressing the inner title when embedded in tabbed components.
+ * Replicates the high-end editorial Bento UI matching the reference design:
+ * - Dark Obsidian luxury framing canvas.
+ * - Dominant 2x2 central focal card with floating glassmorphic micro-cards.
+ * - Alternating blush rose (#fee4e7) and crisp white interlocking companion cards.
+ * - Real product data dynamic slotting.
  */
 const FeaturedBentoGrid = ({
   products = [],
@@ -28,87 +24,47 @@ const FeaturedBentoGrid = ({
     return products.filter(p => p && (p._id || p.id));
   }, [products]);
 
-  // Derive per-count geometric preset
-  const preset = useMemo(() => {
-    return getPresetForCount(validProducts.length);
-  }, [validProducts.length]);
-
   // Loading skeleton state
   if (isLoading) {
     return (
-      <section 
-        className={`w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-8 ${className}`}
-        aria-label="Loading featured products"
-      >
-        {showHeader && (
-          <div className="mb-6 md:mb-8 text-center sm:text-left">
-            <div className="h-8 w-48 bg-neutral-200 rounded-md animate-pulse mb-2" />
-            <div className="h-4 w-72 bg-neutral-100 rounded-md animate-pulse" />
+      <div className={`w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 ${className}`}>
+        <div className="w-full bg-[#090a0d] rounded-[32px] p-6 animate-pulse">
+          <div className="h-6 w-48 bg-neutral-800 rounded-md mb-6" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[160px]">
+            <div className="col-span-1 row-span-2 rounded-[28px] bg-neutral-800/60" />
+            <div className="col-span-1 row-span-1 rounded-[26px] bg-neutral-800/40" />
+            <div className="col-span-1 row-span-1 rounded-[26px] bg-neutral-800/40" />
+            <div className="col-span-1 row-span-2 rounded-[28px] bg-neutral-800/60" />
+            <div className="col-span-2 row-span-2 rounded-[28px] bg-neutral-800/70" />
           </div>
-        )}
-        <div className={`grid grid-cols-2 md:grid-cols-4 auto-rows-[160px] sm:auto-rows-[190px] md:auto-rows-[220px] ${BENTO_TOKENS.gap.mobile} ${BENTO_TOKENS.gap.tablet} ${BENTO_TOKENS.gap.desktop}`}>
-          <div className="col-span-2 row-span-2 rounded-2xl md:rounded-3xl bg-neutral-200/70 animate-pulse" />
-          <div className="col-span-1 row-span-2 rounded-2xl md:rounded-3xl bg-neutral-200/60 animate-pulse" />
-          <div className="col-span-1 row-span-1 rounded-2xl md:rounded-3xl bg-neutral-200/50 animate-pulse" />
-          <div className="col-span-1 row-span-1 rounded-2xl md:rounded-3xl bg-neutral-200/50 animate-pulse" />
         </div>
-      </section>
+      </div>
     );
   }
 
-  // 0 products state: render nothing per quality bar
+  // 0 products state: render nothing cleanly
   if (validProducts.length === 0) {
     return null;
   }
 
   return (
-    <section 
-      className={`w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-8 ${className}`}
-      aria-labelledby={showHeader ? "featured-bento-heading" : undefined}
-    >
-      {/* Section Header */}
+    <div className={`w-full max-w-7xl mx-auto px-2 sm:px-4 ${className}`}>
       {showHeader && (
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 md:mb-8 gap-2">
-          <div>
-            <h2 
-              id="featured-bento-heading"
-              className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 tracking-tight"
-            >
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-sm sm:text-base text-neutral-500 mt-1 font-sans">
-                {subtitle}
-              </p>
-            )}
-          </div>
+        <div className="mb-4 text-center sm:text-left">
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 tracking-tight">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-sm sm:text-base text-neutral-500 mt-1 font-sans">
+              {subtitle}
+            </p>
+          )}
         </div>
       )}
 
-      {/* Bento Grid Canvas */}
-      <div 
-        className={`
-          grid grid-cols-2 md:grid-cols-4
-          auto-rows-[160px] sm:auto-rows-[190px] md:auto-rows-[220px]
-          ${BENTO_TOKENS.gap.mobile} ${BENTO_TOKENS.gap.tablet} ${BENTO_TOKENS.gap.desktop}
-        `}
-      >
-        {validProducts.map((product, index) => {
-          // Resolved slotSize: Admin explicit setting takes precedence, falls back to geometric preset
-          const slotSize = product.slotSize || preset[index] || 'small';
-          const isPriority = index < 2; // Eager load first 2 items (hero + top companion)
-
-          return (
-            <BentoImageTile
-              key={product._id || product.id || index}
-              product={product}
-              slotSize={slotSize}
-              isPriority={isPriority}
-            />
-          );
-        })}
-      </div>
-    </section>
+      {/* Render the high-production editorial bento grid */}
+      <EditorialBentoGrid products={validProducts} />
+    </div>
   );
 };
 
