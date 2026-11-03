@@ -6,6 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 import ProductService from "../services/productService";
 import { getUploadUrl, getImageUrl } from "../config";
 import EnhancedProductCard from "../components/EnhancedProductCard";
+import ShopProductCard from '../components/ShopProductCard';
 import { generateCategorySEO, getCanonicalUrl, generateBreadcrumbs } from "../utils/seoHelpers";
 import { getCategorySchema, getBreadcrumbSchema } from "../utils/schemaGenerator";
 
@@ -58,6 +59,15 @@ const GroupCategoryPage = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState("grid");
   const [addingToCart, setAddingToCart] = useState({});
+  const [wishlist, setWishlist] = useState(new Set());
+  const handleToggleWishlist = (productId) => {
+    setWishlist(prev => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
+    });
+  };
   const [errorMessages, setErrorMessages] = useState({});
   
   // Infinite scroll refs
@@ -405,7 +415,7 @@ const GroupCategoryPage = () => {
 
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 capitalize">
@@ -433,7 +443,7 @@ const GroupCategoryPage = () => {
       </div>
 
       {/* Products */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
 
 
         {products.length === 0 && !loading ? (
@@ -447,21 +457,21 @@ const GroupCategoryPage = () => {
             <p className="text-gray-500">No products available in this category yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {sortedProducts.map((product, index) => (
               <div
                 key={product._id}
                 ref={index === sortedProducts.length - 1 ? lastProductElementRef : null}
               >
-                <EnhancedProductCard
+                <ShopProductCard
                   product={product}
                   onAddToCart={() => addToCart(product)}
                   onBuyNow={() => handleBuyNow(product)}
-                  showBuyNow={true}
-                  isAddingToCart={addingToCart[product._id]}
                   cartQuantity={getCartItemQuantity(product._id)}
                   isInCart={isProductInCart(product._id)}
-                  errorMessage={errorMessages[product._id]}
+                  isAddingToCart={addingToCart[product._id]}
+                  isFavorite={wishlist.has(product._id)}
+                  onFavoriteToggle={handleToggleWishlist}
                 />
               </div>
             ))}
