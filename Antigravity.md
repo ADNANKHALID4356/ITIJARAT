@@ -168,27 +168,26 @@ cd backend; node scripts/migrateBannerSlides.js --rollback "backend/scripts/back
 
 ---
 
-## Featured Products Bento Grid — Architecture & Planning Context
+## Featured Products Bento Grid — Architecture & Implementation
 
-**Feature Status:** Analysis & Architectural Planning Complete (`Planning-FeaturedBento.md`). Ready for Phase 1 implementation upon approval.  
-**Branch:** `feature/banner-slides-v2`  
-**Target:** Transform the Homepage "Featured Products" uniform card grid (embedded inside `<PremiumProductDisplay>` Tab 3) into an editorial, interlocking **Bento Grid** with Hero (2x2), Wide (2x1), Tall (1x2), and Small (1x1) tiles.
+**Feature Status:** Implementation & QA Complete on branch `feature/featured-bento`.  
+**Branch:** `feature/featured-bento`  
+**Target:** Transformed the Homepage "Featured Products" section into an editorial, interlocking **Bento Grid** with Hero (2x2), Wide (2x1), Tall (1x2), and Small (1x1) tiles adhering strictly to image-only presentation.
 
-### 1. Verified File Map
+### 1. Active File Map
 
 | Layer | File Path | Status / Role |
 |---|---|---|
 | **Admin Route View** | `frontend/src/pages/Admin/homepage/index.jsx` | Renders `tabs` including `'featured'`; instantiates `<FeaturedProductsManager />` |
 | **Admin Wrapper** | `frontend/src/components/admin/homepage/FeaturedProductsManager.jsx` | Returns `<SpecialProductsManager type="featured" />` |
-| **Admin Core** | `frontend/src/components/admin/homepage/SpecialProductsManager.jsx` | Product search, category filter, optimistic ID selection, `PUT /api/special/featured` |
-| **Public Host** | `frontend/src/pages/Home.jsx` | React-Query fetches `/api/homepage/all-data`; passes `homepageData?.specialProducts?.featured` |
-| **Public Display** | `frontend/src/components/PremiumProductDisplay.jsx` | Current host of Featured Products (Tab 3: uniform `grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6`) |
-| **Public Bento Target**| `frontend/src/components/FeaturedBentoGrid.jsx` | **Planned new component** — dedicated Bento grid section with Hero, Wide, Tall, Small tiles |
-| **Shared Product Card**| `frontend/src/components/EnhancedProductCard.jsx` | Reusable card; preserved for general catalogue & other tabs |
-| **Aggregate Route** | `backend/routes/homepageOptimized.js` | Feeds `/api/homepage/all-data`; queries `FeaturedProducts.findOne().populate('products')` |
-| **REST Admin API** | `backend/api.js` (L408–480) | `GET /api/special/featured`, `PUT /api/special/featured` |
-| **DB Model (Active)** | `backend/models/FeaturedProducts.js` | Singleton schema: `products: [{ type: ObjectId, ref: 'Product' }]`, `lastUpdated: Date` |
-| **DB Model (Orphan)** | `backend/models/FeaturedProduct.js` | 0-byte orphan file (to be removed in cleanup) |
+| **Admin Studio** | `frontend/src/components/admin/homepage/SpecialProductsManager.jsx` | Product search, thumbnail cards, tactile up/down reordering, tile size selector, and live image-only WYSIWYG Bento preview |
+| **Public Host** | `frontend/src/pages/Home.jsx` | Mounts `<FeaturedBentoGrid>` directly beneath `<CategoryCarousel />` and above `<PremiumProductDisplay />` |
+| **Public Bento Grid**| `frontend/src/components/FeaturedBentoGrid.jsx` | 4-column responsive CSS grid engine with per-count zero-gap presets and responsive collapse |
+| **Image-Only Tile** | `frontend/src/components/BentoImageTile.jsx` | Pure image presentation (no visible text), accessible link, out-of-stock visual cue, and missing image fallback |
+| **Design Tokens** | `frontend/src/config/bentoConfig.js` | Gutters, radii, per-count span presets ($1, 2, 3, 4, 5, 6, 7, 8, 12, 20+$) |
+| **Aggregate Route** | `backend/routes/homepageOptimized.js` | Feeds `/api/homepage/all-data` with ordered products, `stock`, and `layoutConfig` |
+| **REST Admin API** | `backend/api.js` (L408–570) | `GET /api/special/featured`, `PUT /api/special/featured` with dual-field persistence and validation |
+| **DB Model (Active)** | `backend/models/FeaturedProducts.js` | Mongoose schema with `products: [ObjectId]` and optional `layoutConfig: [{ productId, slotSize, order }]` |
 
 ### 2. Key Architecture Decisions
 

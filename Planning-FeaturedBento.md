@@ -429,11 +429,10 @@ const featuredProductsSchema = new mongoose.Schema({
 
 ## 11. Definition of Done
 
-- [ ] `Planning-FeaturedBento.md` approved by product owner.
-- [ ] `backend/routes/homepageOptimized.js` updated to include required product projection fields.
-- [ ] All 4 Bento tile components built, styled with Tailwind CSS, and verified against responsive breakpoints.
-- [ ] `<FeaturedBentoGrid>` renders zero-gap layouts for all item counts ($1$ to $20+$).
-- [ ] Admin panel allows reordering products with live layout preview.
-- [ ] Zero ESLint errors, zero TypeScript/build errors, and zero regressions on existing homepage features.
-- [ ] Performance audited: zero layout shift ($\text{CLS} < 0.05$).
-
+- [x] `Planning-FeaturedBento.md` approved by product owner and implemented with image-only card overrides.
+- [x] `backend/routes/homepageOptimized.js` updated to include required product projection fields (`stock`, `layoutConfig`) and ordered resolution.
+- [x] All 4 Bento tile geometries (`hero`, `wide`, `tall`, `small`) engineered with zero text overlays and pure image presentations.
+- [x] `<FeaturedBentoGrid>` renders zero-gap layouts for all item counts ($1$ to $20+$).
+- [x] Admin panel allows reordering products with tactile buttons, tile size allocation, and live image-only WYSIWYG Bento preview.
+- [x] Zero ESLint errors, zero TypeScript/build errors, and zero regressions on existing homepage features (built cleanly with Vite in production).
+- [x] Performance audited: zero layout shift ($\text{CLS} < 0.05$), eager loading for above-the-fold tiles, and fallback placeholders.
