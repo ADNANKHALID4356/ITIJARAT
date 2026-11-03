@@ -7,6 +7,7 @@ import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getApiUrl, getImageUrl } from '../config';
 import EnhancedProductCard from './EnhancedProductCard';
+import FeaturedBentoGrid from './FeaturedBentoGrid';
 
 const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], newArrivals = [] }) => {
   const navigate = useNavigate();
@@ -31,12 +32,14 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
   const [errorMessages, setErrorMessages] = useState({});
   const tabs = [
     { id: 'featured', label: 'Premium', icon: Award },
-    { id: 'trending', label: 'New Arrivals', icon: Zap }
+    { id: 'trending', label: 'New Arrivals', icon: Zap },
+    { id: 'newArrivals', label: 'Featured', icon: TrendingUp }
   ];
   const [activeTab, setActiveTab] = useState('featured');
   const [products, setProducts] = useState({
     featured: [],
-    trending: []
+    trending: [],
+    newArrivals: []
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -45,9 +48,10 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
   useEffect(() => {
     setProducts({
       featured: premiumProducts,    // Premium products show in the Premium tab
-      trending: newArrivals         // New arrivals in the New Arrivals tab
+      trending: newArrivals,        // New arrivals in the middle tab
+      newArrivals: featuredProducts // Featured products show in the Featured tab
     });
-  }, [premiumProducts, newArrivals]);
+  }, [premiumProducts, featuredProducts, newArrivals]);
 
   // Fallback static product data for demo purposes
   const staticProducts = {
@@ -377,6 +381,11 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
               Retry
             </button>
           </div>
+        ) : activeTab === 'newArrivals' ? (
+          <FeaturedBentoGrid 
+            products={products.newArrivals && products.newArrivals.length > 0 ? products.newArrivals : (featuredProducts || [])} 
+            showHeader={false}
+          />
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-1">
             {(products[activeTab] && products[activeTab].length > 0) ? (

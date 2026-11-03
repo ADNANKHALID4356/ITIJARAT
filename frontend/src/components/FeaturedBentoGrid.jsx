@@ -12,12 +12,15 @@ import { BENTO_TOKENS, getPresetForCount } from '../config/bentoConfig';
  * - Responsive breakpoints: 4 columns on desktop, 2 columns on tablet, 2 columns/stacked on mobile.
  * - Zero products: renders null cleanly without layout shift.
  * - Loading state: renders proportional bento skeleton tiles.
+ * - showHeader: allows suppressing the inner title when embedded in tabbed components.
  */
 const FeaturedBentoGrid = ({
   products = [],
   isLoading = false,
   title = "Featured Products",
-  subtitle = "Handpicked marketplace highlights"
+  subtitle = "Handpicked marketplace highlights",
+  showHeader = true,
+  className = ""
 }) => {
   // Validate and sanitize products list
   const validProducts = useMemo(() => {
@@ -34,13 +37,15 @@ const FeaturedBentoGrid = ({
   if (isLoading) {
     return (
       <section 
-        className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
+        className={`w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-8 ${className}`}
         aria-label="Loading featured products"
       >
-        <div className="mb-6 md:mb-8 text-center sm:text-left">
-          <div className="h-8 w-48 bg-neutral-200 rounded-md animate-pulse mb-2" />
-          <div className="h-4 w-72 bg-neutral-100 rounded-md animate-pulse" />
-        </div>
+        {showHeader && (
+          <div className="mb-6 md:mb-8 text-center sm:text-left">
+            <div className="h-8 w-48 bg-neutral-200 rounded-md animate-pulse mb-2" />
+            <div className="h-4 w-72 bg-neutral-100 rounded-md animate-pulse" />
+          </div>
+        )}
         <div className={`grid grid-cols-2 md:grid-cols-4 auto-rows-[160px] sm:auto-rows-[190px] md:auto-rows-[220px] ${BENTO_TOKENS.gap.mobile} ${BENTO_TOKENS.gap.tablet} ${BENTO_TOKENS.gap.desktop}`}>
           <div className="col-span-2 row-span-2 rounded-2xl md:rounded-3xl bg-neutral-200/70 animate-pulse" />
           <div className="col-span-1 row-span-2 rounded-2xl md:rounded-3xl bg-neutral-200/60 animate-pulse" />
@@ -58,25 +63,27 @@ const FeaturedBentoGrid = ({
 
   return (
     <section 
-      className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
-      aria-labelledby="featured-bento-heading"
+      className={`w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-8 ${className}`}
+      aria-labelledby={showHeader ? "featured-bento-heading" : undefined}
     >
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 md:mb-8 gap-2">
-        <div>
-          <h2 
-            id="featured-bento-heading"
-            className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 tracking-tight"
-          >
-            {title}
-          </h2>
-          {subtitle && (
-            <p className="text-sm sm:text-base text-neutral-500 mt-1 font-sans">
-              {subtitle}
-            </p>
-          )}
+      {showHeader && (
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 md:mb-8 gap-2">
+          <div>
+            <h2 
+              id="featured-bento-heading"
+              className="text-2xl sm:text-3xl font-serif font-bold text-neutral-900 tracking-tight"
+            >
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="text-sm sm:text-base text-neutral-500 mt-1 font-sans">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Bento Grid Canvas */}
       <div 

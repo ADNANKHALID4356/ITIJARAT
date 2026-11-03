@@ -26,15 +26,20 @@ const BentoImageTile = ({
   if (!product) return null;
 
   const isOutOfStock = product.stock !== undefined && product.stock !== null && Number(product.stock) <= 0;
-  const productUrl = product.slug ? `/product/${product.slug}` : `/product/${product._id}`;
-  const accessibleLabel = `${product.title || 'Featured Product'}${isOutOfStock ? ' (Out of stock)' : ''}`;
+  const productUrl = product.slug ? `/product/${product.slug}` : `/product/${product._id || product.id}`;
+  const accessibleLabel = `${product.title || product.name || 'Featured Product'}${isOutOfStock ? ' (Out of stock)' : ''}`;
 
-  // Image source resolution
+  // Image resolution helper with correct getImageUrl(type, filename) signature
+  const resolveImg = (file) => {
+    if (!file) return null;
+    return getImageUrl('products', file);
+  };
+
   const optimized = product.optimizedImage;
-  const primarySrc = getImageUrl(
-    optimized?.webp?.full || optimized?.original || product.image,
-    'products'
-  );
+  const rawImage = product.image || (Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : null);
+  const primarySrc = resolveImg(rawImage);
+  const avifSrc = optimized?.avif?.full ? resolveImg(optimized.avif.full) : null;
+  const webpSrc = optimized?.webp?.full ? resolveImg(optimized.webp.full) : null;
 
   const spanClasses = TILE_SPANS[slotSize] || TILE_SPANS.small;
 
@@ -90,16 +95,16 @@ const BentoImageTile = ({
         ) : (
           /* Product Image with responsive sources */
           <picture className="block w-full h-full">
-            {optimized?.avif?.full && (
+            {avifSrc && (
               <source
                 type="image/avif"
-                srcSet={getImageUrl(optimized.avif.full, 'products')}
+                srcSet={avifSrc}
               />
             )}
-            {optimized?.webp?.full && (
+            {webpSrc && (
               <source
                 type="image/webp"
-                srcSet={getImageUrl(optimized.webp.full, 'products')}
+                srcSet={webpSrc}
               />
             )}
             <img
