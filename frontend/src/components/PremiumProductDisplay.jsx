@@ -31,14 +31,12 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
   const [errorMessages, setErrorMessages] = useState({});
   const tabs = [
     { id: 'featured', label: 'Premium', icon: Award },
-    { id: 'trending', label: 'New Arrivals', icon: Zap },
-    { id: 'newArrivals', label: 'Featured', icon: TrendingUp }
+    { id: 'trending', label: 'New Arrivals', icon: Zap }
   ];
   const [activeTab, setActiveTab] = useState('featured');
   const [products, setProducts] = useState({
     featured: [],
-    trending: [],
-    newArrivals: []
+    trending: []
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -47,10 +45,9 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
   useEffect(() => {
     setProducts({
       featured: premiumProducts,    // Premium products show in the Premium tab
-      trending: newArrivals,        // New arrivals in the middle tab
-      newArrivals: featuredProducts // Featured products show in the Featured tab
+      trending: newArrivals         // New arrivals in the New Arrivals tab
     });
-  }, [premiumProducts, featuredProducts, newArrivals]);
+  }, [premiumProducts, newArrivals]);
 
   // Fallback static product data for demo purposes
   const staticProducts = {

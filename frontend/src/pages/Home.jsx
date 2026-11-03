@@ -6,6 +6,7 @@ import axios from 'axios';
 // Critical components - load immediately
 import HeroSection from '../components/HeroSection';
 import CategoryCarousel from '../components/CategoryCarousel';
+import FeaturedBentoGrid from '../components/FeaturedBentoGrid';
 import Footer from '../components/Footer';
 
 // Non-critical components - lazy load
@@ -51,6 +52,12 @@ const Home = () => {
       {/* Category Carousel - renders immediately */}
       <CategoryCarousel categories={homepageData?.categories || []} />
 
+      {/* Featured Products Bento Grid */}
+      <FeaturedBentoGrid 
+        products={homepageData?.specialProducts?.featured || []}
+        isLoading={isLoading}
+      />
+
       {/* Lazy loaded sections - only if data is ready */}
       {!isLoading && (
         <>
@@ -61,7 +68,6 @@ const Home = () => {
           <Suspense fallback={<SectionSkeleton />}>
             <PremiumProductDisplay 
               premiumProducts={homepageData?.specialProducts?.premium || []}
-              featuredProducts={homepageData?.specialProducts?.featured || []}
               newArrivals={homepageData?.specialProducts?.newArrivals || []}
             />
           </Suspense>
