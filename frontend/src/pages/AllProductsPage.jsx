@@ -426,7 +426,7 @@ const AllProductsPage = () => {
 
       {/* Enhanced Modern Header */}
       <div className="bg-white shadow-lg border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             {/* Title and Stats */}
             <div className="flex-1">
@@ -482,7 +482,7 @@ const AllProductsPage = () => {
       </div>
 
       {/* Products Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {filteredAndSortedProducts.map((product, index) => (
             <div
