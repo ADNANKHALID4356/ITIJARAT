@@ -128,7 +128,7 @@ const DynamicHomepageCards = () => {
                   className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
-                    <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-orange-600 transition-colors">
+                    <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-[#0F0A87] transition-colors">
                       <h3 className="text-xs sm:text-base font-bold text-gray-900 tracking-tight leading-snug line-clamp-2">
                         {card.title}
                       </h3>
@@ -152,7 +152,7 @@ const DynamicHomepageCards = () => {
                   
                   <Link 
                     to={mainUrl} 
-                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-2 sm:pt-3 block"
+                    className="text-[10px] sm:text-xs font-bold text-[#0F0A87] hover:text-[#1510B5] font-serif transition-colors tracking-widest uppercase mt-auto pt-2 sm:pt-3 block"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     Explore Now →
@@ -170,7 +170,7 @@ const DynamicHomepageCards = () => {
                   className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
-                    <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-orange-600 transition-colors">
+                    <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-[#0F0A87] transition-colors">
                       <h3 className="text-xs sm:text-base font-bold text-gray-900 tracking-tight leading-snug line-clamp-2">
                         {card.title}
                       </h3>
@@ -204,7 +204,7 @@ const DynamicHomepageCards = () => {
 
                   <Link 
                     to={firstSubUrl} 
-                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-3 block"
+                    className="text-[10px] sm:text-xs font-bold text-[#0F0A87] hover:text-[#1510B5] font-serif transition-colors tracking-widest uppercase mt-auto pt-3 block"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     Discover →

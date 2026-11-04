@@ -330,7 +330,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F7F7F9]">
       {/* Search Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
@@ -342,12 +342,12 @@ const SearchPage = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for products, categories, or brands..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87] text-gray-900 placeholder-gray-500"
                 />
                 <SearchIcon className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                 <button
                   type="submit"
-                  className="absolute right-2 top-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition-colors"
+                  className="absolute right-2 top-2 bg-[#0F0A87] hover:bg-[#1510B5] text-white p-2 rounded-lg transition-colors"
                 >
                   <SearchIcon className="h-4 w-4" />
                 </button>
@@ -382,7 +382,7 @@ const SearchPage = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87]"
                   disabled={loadingCategories}
                 >
                   {loadingCategories ? (
@@ -406,19 +406,19 @@ const SearchPage = () => {
                     value={priceRange.min}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
                     placeholder="Min"
-                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm min-w-0"
+                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87] text-sm min-w-0"
                   />
                   <input
                     type="number"
                     value={priceRange.max}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
                     placeholder="Max"
-                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm min-w-0"
+                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87] text-sm min-w-0"
                   />
                 </div>
                 <button
                   onClick={handlePriceRangeChange}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-md transition-colors text-sm"
+                  className="w-full bg-[#0F0A87] hover:bg-[#1510B5] text-white py-2 px-4 rounded-md transition-colors text-sm"
                 >
                   Apply Price Filter
                 </button>
@@ -430,7 +430,7 @@ const SearchPage = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87]"
                 >
                   <option value="relevance">Most Relevant</option>
                   <option value="newest">Newest First</option>
@@ -445,7 +445,7 @@ const SearchPage = () => {
           <div className="lg:col-span-9">
             {isLoading && products.length === 0 ? (
               <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0F0A87]"></div>
                 <span className="ml-3 text-gray-600">Searching products...</span>
               </div>
             ) : error ? (
@@ -453,7 +453,7 @@ const SearchPage = () => {
                 <div className="text-red-500 text-xl mb-4">⚠️ {error}</div>
                 <button
                   onClick={() => resetAndSearch()}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+                  className="bg-[#0F0A87] hover:bg-[#1510B5] text-white px-6 py-2 rounded-lg transition-colors"
                 >
                   Try Again
                 </button>
@@ -507,7 +507,7 @@ const SearchPage = () => {
                 {/* Loading More Indicator */}
                 {loadingMore && (
                   <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0F0A87]"></div>
                     <span className="ml-3 text-gray-600">Loading more products...</span>
                   </div>
                 )}

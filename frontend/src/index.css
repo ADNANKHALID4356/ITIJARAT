@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  /* Google-inspired Professional Palette */
-  --google-blue: #4285F4;
-  --google-red: #DB4437;
-  --google-yellow: #F4B400;
-  --google-green: #0F9D58;
-  
-  /* Multi-color Diffused Shimmer Gradient */
+  /* 70 / 15 / 10 / 3 / 2 Palette Architecture */
+  --color-soft-white: #F7F7F9;
+  --color-ink-black: #17151D;
+  --color-cobalt-blue: #0F0A87;
+  --color-cobalt-blue-hover: #1510B5;
+  --color-electric-yellow: #F4EA00;
+  --color-hot-magenta: #EF168A;
+
+  /* Legacy brand gradients harmonized to Deep Cobalt Blue */
   --shimmer-gradient: linear-gradient(
     -45deg, 
-    #4285f4, #db4437, #f4b400, #0f9d58, #4285f4
+    #0F0A87, #1510B5, #17151D, #0F0A87
   );
 
   /* Typography */
@@ -21,8 +23,8 @@
 /* Base Body Styles */
 body {
   font-family: var(--font-sans);
-  color: #1f2937;
-  background-color: #ffffff;
+  color: var(--color-ink-black);
+  background-color: var(--color-soft-white);
   margin: 0;
   overflow-x: hidden;
 }
@@ -35,9 +37,9 @@ html, * {
 /* Professional Headings (Bold & Serif) */
 h1, h2, h3, h4, .section-heading {
   font-family: var(--font-serif);
-  font-weight: 700 !important; /* Headings must be bold */
+  font-weight: 700 !important;
   letter-spacing: -0.01em;
-  color: #000;
+  color: #17151D;
 }
 
 /* Logic for Product Prices (Strictly NOT bold as requested) */
@@ -63,11 +65,10 @@ h1, h2, h3, h4, .section-heading {
 /* Premium Header Glass (No overflow clipping, so dropdowns expand fully!) */
 /* Premium Header Glass (No overflow clipping, so dropdowns expand fully!) */
 .header-glass-dark {
-  background: rgba(15, 23, 42, 0.95) !important; /* Premium Slate-900 with opacity */
+  background: rgba(23, 21, 29, 0.96) !important; /* Ink Black #17151D */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  /* NO overflow: hidden here! Dropdowns can render fully. */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Shining "Glass" Effect for Light UI Elements (Cards/Modals - safe for overflow clipping) */
@@ -253,3 +254,16 @@ img {
 .gradient-black-orange {
   background: linear-gradient(135deg, #000000 0%, #1f2937 50%, #f97316 100%);
 }
+
+/* Target Palette Utilities */
+.bg-soft-white { background-color: #F7F7F9 !important; }
+.bg-ink-black { background-color: #17151D !important; }
+.text-ink-black { color: #17151D !important; }
+.bg-cobalt-blue { background-color: #0F0A87 !important; }
+.hover\:bg-cobalt-blue-hover:hover { background-color: #1510B5 !important; }
+.text-cobalt-blue { color: #0F0A87 !important; }
+.border-cobalt-blue { border-color: #0F0A87 !important; }
+.badge-electric-yellow { background-color: #F4EA00 !important; color: #17151D !important; }
+.badge-hot-magenta { background-color: #EF168A !important; color: #FFFFFF !important; }
+.text-electric-yellow { color: #F4EA00 !important; }
+.text-hot-magenta { color: #EF168A !important; }
