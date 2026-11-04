@@ -99,14 +99,14 @@ const DynamicHomepageCards = () => {
           - lg:grid-cols-4: 4 columns on widescreen desktops
           - items-stretch: all cards share equal dynamic height
         */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 items-stretch">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-3.5 lg:gap-4 items-stretch">
           {cardPositions.map((card, index) => {
             // 1. Placeholder card if no card is configured
             if (!card) {
               return (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl border border-dashed border-[#E8DED8] p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-[#8B8080]"
+                  className="bg-white rounded-2xl border border-dashed border-[#E8DED8] p-3 sm:p-3.5 lg:p-4 flex items-center justify-center h-full min-h-[200px] text-[#8B8080]"
                 >
                   <div className="text-center">
                     <div className="w-6 h-6 bg-[#FAF7F3] rounded-full mx-auto mb-2 animate-pulse"></div>
@@ -125,10 +125,10 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={card._id} 
-                  className="bg-white rounded-2xl border border-[#E8DED8] hover:border-[#D8C9C0] shadow-2xs hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
+                  className="bg-white rounded-2xl border border-[#E8DED8] hover:border-[#D8C9C0] shadow-2xs hover:shadow-md transition-all duration-300 p-3 sm:p-3.5 lg:p-4 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
-                    <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-[#5B1830] transition-colors">
+                    <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3 group-hover:text-[#5B1830] transition-colors">
                       <h3 className="text-xs sm:text-base font-semibold text-[#241A1D] tracking-tight leading-snug line-clamp-2 font-body">
                         {card.title}
                       </h3>
@@ -136,14 +136,14 @@ const DynamicHomepageCards = () => {
                     </Link>
                     {card.mainImage && (
                       <Link to={mainUrl} className="block group/img">
-                        <div className="aspect-[4/3] sm:aspect-square w-full rounded-xl overflow-hidden bg-[#FAF7F3] flex items-center justify-center p-2 border border-[#E8DED8] group-hover/img:border-[#D8C9C0] transition-all duration-300">
+                        <div className="aspect-[4/3] sm:aspect-square w-full rounded-xl overflow-hidden bg-[#FAF7F3] border border-[#E8DED8] group-hover/img:border-[#B97855]/60 transition-all duration-300 shadow-2xs group-hover/img:shadow-xs">
                           <LazyImage 
                             src={getCardImageUrl(card)}
                             alt={card.title}
                             enableModernFormats={true}
                             priority={card.order === 1}
                             optimizedImage={card.optimizedMainImage || null}
-                            className="w-full h-full object-cover rounded-lg group-hover/img:scale-105 transition-transform duration-500 cursor-pointer"
+                            className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500 cursor-pointer"
                           />
                         </div>
                       </Link>
@@ -152,7 +152,7 @@ const DynamicHomepageCards = () => {
                   
                   <Link 
                     to={mainUrl} 
-                    className="text-[10px] sm:text-xs font-semibold text-[#5B1830] hover:text-[#350A1B] font-body transition-colors tracking-wider uppercase mt-auto pt-2 sm:pt-3 block"
+                    className="text-[11px] sm:text-xs font-semibold text-[#5B1830] hover:text-[#350A1B] font-body transition-colors tracking-wider uppercase mt-auto pt-2.5 sm:pt-3 block"
                   >
                     Explore Now →
                   </Link>
@@ -166,33 +166,33 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={card._id} 
-                  className="bg-white rounded-2xl border border-[#E8DED8] hover:border-[#D8C9C0] shadow-2xs hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
+                  className="bg-white rounded-2xl border border-[#E8DED8] hover:border-[#D8C9C0] shadow-2xs hover:shadow-md transition-all duration-300 p-3 sm:p-3.5 lg:p-4 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
-                    <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-[#5B1830] transition-colors">
+                    <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3 group-hover:text-[#5B1830] transition-colors">
                       <h3 className="text-xs sm:text-base font-semibold text-[#241A1D] tracking-tight leading-snug line-clamp-2 font-body">
                         {card.title}
                       </h3>
                       <ChevronRight className="w-4 h-4 text-[#746B6C] flex-shrink-0 group-hover:text-[#5B1830] group-hover:translate-x-0.5 transition-all" />
                     </Link>
-                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mb-1.5">
                       {card.subcategoryItems.map((item, idx) => {
                         const optimizedItem = card.optimizedSubcategoryItems?.[idx];
                         return (
                           <div key={idx} className="flex flex-col items-start group/sub">
                             <Link to={getCategoryUrl(item.category._id, item.category.name)} className="w-full block">
-                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-[#FAF7F3] flex items-center justify-center p-1.5 sm:p-2 border border-[#E8DED8] group-hover/sub:border-[#D8C9C0] transition-all duration-300">
+                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-[#FAF7F3] border border-[#E8DED8] group-hover/sub:border-[#B97855]/60 transition-all duration-300 shadow-2xs group-hover/sub:shadow-xs relative">
                                 <LazyImage 
                                   src={getSubcategoryImageUrl(item)}
                                   alt={item.name}
                                   enableModernFormats={true}
                                   priority={card.order === 1 && idx < 2}
                                   optimizedImage={optimizedItem?.optimizedImage || null}
-                                  className="w-full h-full object-contain rounded-lg group-hover/sub:scale-105 transition-transform duration-300"
+                                  className="w-full h-full object-cover group-hover/sub:scale-105 transition-transform duration-300"
                                 />
                               </div>
                             </Link>
-                            <p className="text-[10px] sm:text-xs text-[#241A1D] font-medium mt-1.5 text-left line-clamp-1 w-full font-body">
+                            <p className="text-[11px] sm:text-xs text-[#241A1D] group-hover/sub:text-[#5B1830] font-medium mt-1.5 text-left line-clamp-1 w-full font-body transition-colors">
                               {item.name}
                             </p>
                           </div>
@@ -203,7 +203,7 @@ const DynamicHomepageCards = () => {
 
                   <Link 
                     to={firstSubUrl} 
-                    className="text-[10px] sm:text-xs font-semibold text-[#5B1830] hover:text-[#350A1B] font-body transition-colors tracking-wider uppercase mt-auto pt-3 block"
+                    className="text-[11px] sm:text-xs font-semibold text-[#5B1830] hover:text-[#350A1B] font-body transition-colors tracking-wider uppercase mt-auto pt-2.5 sm:pt-3 block"
                   >
                     Discover →
                   </Link>
