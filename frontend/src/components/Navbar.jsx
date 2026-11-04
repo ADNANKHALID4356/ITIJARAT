@@ -109,7 +109,7 @@ const Navbar = () => {
   // --- END OF LOGIC SECTION ---
 
   return (
-    <header className="bg-[#17151D] shadow-lg sticky top-0 z-50 border-b border-gray-800 header-glass-dark">
+    <header className="bg-[#0f172a] shadow-lg sticky top-0 z-50 border-b border-gray-800 header-glass-dark">
       {/* Main Navigation - Shifted slightly left with pl-2 sm:pl-3 lg:pl-4 */}
       <div className="w-full pl-2 sm:pl-3 lg:pl-4 pr-3 sm:pr-4 lg:pr-6">
         <div className="flex items-center justify-between h-14 py-1.5">
@@ -126,7 +126,7 @@ const Navbar = () => {
 
           {/* Search Bar - Stretched across entire remaining space */}
           <div className="flex-1 mx-2 sm:mx-3 lg:mx-4 min-w-0">
-            <form onSubmit={handleSearch} className="flex w-full overflow-hidden rounded-md border border-gray-700 focus-within:border-[#0F0A87] transition-all shadow-inner bg-gray-900/50">
+            <form onSubmit={handleSearch} className="flex w-full overflow-hidden rounded-md border border-gray-700 focus-within:border-orange-500 transition-all shadow-inner bg-gray-900/50">
               <input
                 type="text"
                 value={searchQuery}
@@ -136,7 +136,7 @@ const Navbar = () => {
               />
               <button
                 type="submit"
-                className="bg-[#0F0A87] hover:bg-[#1510B5] text-white px-4 sm:px-5 py-1.5 transition-all flex-shrink-0 flex items-center justify-center"
+                className="shimmer-bg px-4 sm:px-5 py-1.5 transition-all hover:opacity-90 flex-shrink-0 flex items-center justify-center"
               >
                 <SearchIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </button>
@@ -178,10 +178,10 @@ const Navbar = () => {
                       </>
                     ) : isAuthenticated ? (
                       <>
-                        <NavLink to="/profile" className="flex items-center px-4 py-3 text-sm font-bold text-gray-800 hover:bg-blue-50 hover:text-[#0F0A87] transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>
+                        <NavLink to="/profile" className="flex items-center px-4 py-3 text-sm font-bold text-gray-800 hover:bg-orange-50 hover:text-orange-600 transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>
                           My Profile
                         </NavLink>
-                        <NavLink to="/orders" className="flex items-center px-4 py-3 text-sm font-bold text-gray-800 hover:bg-blue-50 hover:text-[#0F0A87] transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>
+                        <NavLink to="/orders" className="flex items-center px-4 py-3 text-sm font-bold text-gray-800 hover:bg-orange-50 hover:text-orange-600 transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>
                           My Orders
                         </NavLink>
                         <hr className="border-gray-100" />
@@ -193,8 +193,8 @@ const Navbar = () => {
                       <>
                         <NavLink to="/login" className="flex items-center px-4 py-3 text-sm font-bold text-gray-800 hover:bg-gray-50 transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>Login</NavLink>
                         <NavLink to="/register" className="flex items-center px-4 py-3 text-sm font-bold text-gray-800 hover:bg-gray-50 transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>Register</NavLink>
-                        <div className="bg-blue-50 m-2 rounded-lg">
-                          <NavLink to="/vendor/login" className="flex items-center px-4 py-3 text-sm font-bold text-[#0F0A87] hover:text-[#1510B5]" style={{ fontFamily: 'var(--font-serif)' }}>Sell With Us</NavLink>
+                        <div className="bg-green-50 m-2 rounded-lg">
+                          <NavLink to="/vendor/login" className="flex items-center px-4 py-3 text-sm font-bold text-green-700 hover:text-green-800" style={{ fontFamily: 'var(--font-serif)' }}>Sell With Us</NavLink>
                         </div>
                       </>
                     )}
@@ -204,11 +204,11 @@ const Navbar = () => {
             </div>
 
             {/* Cart Widget */}
-            <Link to="/cart" className="relative flex items-center space-x-2 px-2.5 py-1.5 rounded-md text-white hover:text-[#0F0A87] group transition-all hover:bg-white/5 border border-transparent hover:border-gray-700">
+            <Link to="/cart" className="relative flex items-center space-x-2 px-2.5 py-1.5 rounded-md text-white hover:text-orange-400 group transition-all hover:bg-white/5 border border-transparent hover:border-gray-700">
               <div className="relative flex-shrink-0">
                 <ShoppingCartIcon className="w-6 h-6 transition-transform group-hover:scale-105" />
                 {cartStats.totalItems > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#EF168A] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-lg border-2 border-[#17151D]">
+                  <span className="absolute -top-1.5 -right-2 shimmer-bg text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-lg border-2 border-[#0f172a]">
                     {cartStats.totalItems}
                   </span>
                 )}
@@ -225,7 +225,7 @@ const Navbar = () => {
             <Link to="/cart" className="relative text-white">
               <ShoppingCartIcon className="w-6 h-6" />
               {cartStats.totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#EF168A] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 shimmer-bg text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {cartStats.totalItems}
                 </span>
               )}
@@ -240,7 +240,7 @@ const Navbar = () => {
       </div>
 
       {/* Secondary Navigation - Left-aligned Grouping */}
-      <div className="bg-[#131118] border-b border-gray-800 shadow-inner">
+      <div className="bg-[#1e293b] border-b border-gray-800 shadow-inner">
         <div className="w-full pl-2 sm:pl-3 lg:pl-4 pr-3 sm:pr-4 lg:pr-6">
           <nav className="hidden md:flex items-center h-10 justify-between">
             
@@ -248,7 +248,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-2 sm:space-x-4 h-full">
               {/* All Categories Dropdown - Placed on the Left */}
               <div className="relative flex-shrink-0" ref={categoriesRef} onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
-                <button className="bg-[#0F0A87] hover:bg-[#1510B5] flex items-center space-x-1.5 px-3 py-1 rounded text-white text-xs font-bold uppercase tracking-widest shadow-md hover:scale-105 transition-transform" style={{ fontFamily: 'var(--font-serif)' }}>
+                <button className="shimmer-bg flex items-center space-x-1.5 px-3 py-1 rounded text-white text-xs font-bold uppercase tracking-widest shadow-md hover:scale-105 transition-transform" style={{ fontFamily: 'var(--font-serif)' }}>
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" /></svg>
                   <span>Browse All</span>
                 </button>
@@ -263,7 +263,7 @@ const Navbar = () => {
                              onMouseEnter={(e) => { if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current); setHoveredCategory(main); const rect = e.currentTarget.getBoundingClientRect(); setSubmenuPosition(rect.top - e.currentTarget.closest('.overflow-y-auto').getBoundingClientRect().top); }}
                              onMouseLeave={() => { hoverTimeoutRef.current = setTimeout(() => setHoveredCategory(null), 150); }}>
                           <Link to={`/category-group/${main.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`} 
-                                className="flex justify-between items-center px-4 py-2.5 text-sm font-bold text-gray-700 hover:bg-blue-50 hover:text-[#0F0A87] transition-all border-l-4 border-transparent hover:border-[#0F0A87]"
+                                className="flex justify-between items-center px-4 py-2.5 text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all border-l-4 border-transparent hover:border-orange-500"
                                 style={{ fontFamily: 'var(--font-serif)' }} onClick={() => setCatOpen(false)}>
                             <span>{main}</span>
                             {subs.length > 0 && <ChevronDownIcon className="w-4 h-4 -rotate-90 text-gray-300" />}
@@ -276,7 +276,7 @@ const Navbar = () => {
                               <div className="bg-gray-50 px-4 py-2 border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{main} Collection</div>
                               {subs.sort().map((sub, i) => (
                                 <Link key={i} to={`/category-group/${sub.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`}
-                                      className="block px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-blue-50 hover:text-[#0F0A87]"
+                                      className="block px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                                       style={{ fontFamily: 'var(--font-serif)' }} onClick={() => setCatOpen(false)}>{sub}</Link>
                               ))}
                             </div>
@@ -296,8 +296,8 @@ const Navbar = () => {
                     to={page.path}
                     className={({ isActive }) => {
                       const isWholesale = page.label === 'Wholesale Dealership';
-                      if (isWholesale) return `mx-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest transition-all bg-[#0F0A87] hover:bg-[#1510B5] text-white shadow-md border border-white/20 hover:scale-105 active:scale-95`;
-                      return `px-3 py-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center h-full ${isActive ? 'text-white border-b-2 border-[#0F0A87]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`;
+                      if (isWholesale) return `mx-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest transition-all shimmer-bg text-white shadow-lg border border-white/20 hover:scale-105 active:scale-95`;
+                      return `px-3 py-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center h-full ${isActive ? 'text-orange-400 border-b-2 border-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5'}`;
                     }}
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
@@ -313,10 +313,10 @@ const Navbar = () => {
                 <span>More</span>
                 <ChevronDownIcon className="w-3 h-3" />
               </button>
-              <div className="absolute right-0 top-full w-48 bg-[#17151D] rounded-b-lg shadow-2xl border border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all py-2 z-50">
+              <div className="absolute right-0 top-full w-48 bg-[#0f172a] rounded-b-lg shadow-2xl border border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all py-2 z-50">
                 {otherPages.map((page) => (
                   <NavLink key={page.label} to={page.path} style={{ fontFamily: 'var(--font-serif)' }}
-                           className="block px-4 py-2.5 text-xs font-bold text-gray-400 hover:text-[#0F0A87] hover:bg-white/5 uppercase tracking-widest">
+                           className="block px-4 py-2.5 text-xs font-bold text-gray-400 hover:text-orange-400 hover:bg-white/5 uppercase tracking-widest">
                     {page.label}
                   </NavLink>
                 ))}

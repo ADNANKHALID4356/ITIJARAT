@@ -102,9 +102,9 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-[#17151D] text-white">
+    <footer className="bg-gray-900 text-white">
       {/* Newsletter Section */}
-      <div className="bg-[#131118] border-b border-gray-700">
+      <div className="bg-gray-800 border-b border-gray-700">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-12">
           <div className="text-center max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-white mb-3">
@@ -122,12 +122,12 @@ const Footer = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   disabled={isSubscribing}
-                  className="flex-1 px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F0A87] focus:border-transparent bg-gray-700 text-white placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button 
                   type="submit"
                   disabled={isSubscribing}
-                  className="bg-[#0F0A87] hover:bg-[#1510B5] disabled:bg-blue-800 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center min-w-[120px]"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center min-w-[120px]"
                 >
                   {isSubscribing ? (
                     <>
@@ -333,7 +333,7 @@ const Footer = () => {
             </ul>
 
             {/* Contact Info */}
-            <div className="bg-[#131118] rounded-lg p-4 border border-gray-700">
+            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <h6 className="font-medium text-white mb-2 text-sm">Contact Information</h6>
               <div className="space-y-1 text-xs text-gray-300">
                 <p>📧 support@internationaltijarat.com</p>
@@ -345,7 +345,7 @@ const Footer = () => {
       </div>
 
       {/* Payment Methods & Security */}
-      <div className="bg-[#131118] border-t border-gray-700">
+      <div className="bg-gray-800 border-t border-gray-700">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             
@@ -412,7 +412,7 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="bg-[#17151D] border-t border-gray-700">
+      <div className="bg-gray-900 border-t border-gray-700">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
             <div className="flex flex-wrap items-center gap-4">

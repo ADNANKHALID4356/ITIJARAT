@@ -334,11 +334,11 @@ const GroupCategoryPage = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F7F7F9] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 mx-auto mb-4"></div>
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#0F0A87] border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
           </div>
           <p className="text-gray-600 font-medium">Loading {displayGroup} products...</p>
           <p className="text-gray-500 text-sm mt-1">Please wait while we fetch the latest products</p>
@@ -350,13 +350,13 @@ const GroupCategoryPage = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-[#F7F7F9] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">⚠️</div>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="bg-[#0F0A87] hover:bg-[#1510B5] text-white px-6 py-2 rounded-lg"
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg"
           >
             Try Again
           </button>
@@ -366,7 +366,7 @@ const GroupCategoryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7F9]">
+    <div className="min-h-screen bg-gray-50">
       {/* SEO Head Tags */}
       <Helmet>
         {/* Basic Meta Tags */}
@@ -429,7 +429,7 @@ const GroupCategoryPage = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full max-w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87] transition-colors truncate"
+                  className="w-full max-w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors truncate"
                 >
                   <option value="newest">Newest First</option>
                   <option value="price-low">Price: Low to High</option>
@@ -484,7 +484,7 @@ const GroupCategoryPage = () => {
             <div className="inline-flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-lg border border-gray-100">
               <div className="relative">
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-200"></div>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#0F0A87] border-t-transparent absolute top-0 left-0"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-orange-500 border-t-transparent absolute top-0 left-0"></div>
               </div>
               <span className="text-gray-700 text-sm font-medium">Loading more...</span>
             </div>

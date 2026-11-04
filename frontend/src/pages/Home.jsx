@@ -44,7 +44,7 @@ const Home = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#F7F7F9]">
+    <div className="min-h-screen bg-white">
       {/* Hero Section - renders immediately with placeholder */}
       <HeroSection banners={homepageData?.banners || []} />
       

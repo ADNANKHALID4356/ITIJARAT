@@ -89,12 +89,12 @@ const ShopProductCard = ({
       className="group flex flex-col h-full cursor-pointer transition-all duration-300"
     >
       {/* 1. SEPARATE PRODUCT IMAGE CARD */}
-      <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F7F9] border border-neutral-200/80 shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:border-neutral-300">
+      <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#f7f7f8] border border-neutral-200/80 shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:border-neutral-300">
         
         {/* Floating Top Badges */}
         <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 pointer-events-none">
           {discountPercent > 0 && (
-            <span className="bg-[#F4EA00] text-[#17151D] font-bold text-[10px] sm:text-xs px-2 py-0.5 rounded-md shadow-sm">
+            <span className="bg-red-600 text-white font-bold text-[10px] sm:text-xs px-2 py-0.5 rounded-md shadow-sm">
               -{discountPercent}%
             </span>
           )}
@@ -109,10 +109,10 @@ const ShopProductCard = ({
         <button
           onClick={handleFavoriteClick}
           aria-label="Add to wishlist"
-          className="absolute top-2.5 right-2.5 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm text-neutral-600 hover:text-[#EF168A] hover:bg-white shadow-sm transition-all duration-200"
+          className="absolute top-2.5 right-2.5 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm text-neutral-600 hover:text-red-500 hover:bg-white shadow-sm transition-all duration-200"
         >
           <Heart 
-            className={`w-4 h-4 transition-transform active:scale-125 ${favorite ? 'fill-[#EF168A] text-[#EF168A]' : 'text-neutral-600'}`} 
+            className={`w-4 h-4 transition-transform active:scale-125 ${favorite ? 'fill-red-500 text-red-500' : 'text-neutral-600'}`} 
           />
         </button>
 
@@ -140,7 +140,7 @@ const ShopProductCard = ({
             className={`w-full py-2.5 px-3 rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg transition-all ${
               isOutOfStock 
                 ? 'bg-neutral-400 text-white cursor-not-allowed'
-                : 'bg-[#17151D] hover:bg-[#0F0A87] text-white active:scale-[0.98]'
+                : 'bg-neutral-900 hover:bg-orange-600 text-white active:scale-[0.98]'
             }`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
@@ -168,7 +168,7 @@ const ShopProductCard = ({
         </div>
 
         {/* Product Title */}
-        <h3 className="font-semibold text-sm sm:text-base text-neutral-900 group-hover:text-[#0F0A87] transition-colors line-clamp-1 leading-snug">
+        <h3 className="font-semibold text-sm sm:text-base text-neutral-900 group-hover:text-orange-600 transition-colors line-clamp-1 leading-snug">
           {product.title || 'Untitled Product'}
         </h3>
 
@@ -181,11 +181,11 @@ const ShopProductCard = ({
 
         {/* Star Rating Section */}
         <div className="flex items-center gap-1.5 mt-1.5">
-          <div className="flex items-center text-[#F4EA00]">
+          <div className="flex items-center text-amber-400">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-3 h-3 ${i < Math.floor(ratingValue) ? 'fill-[#F4EA00] text-[#F4EA00]' : 'text-neutral-300'}`}
+                className={`w-3 h-3 ${i < Math.floor(ratingValue) ? 'fill-amber-400 text-amber-400' : 'text-neutral-300'}`}
               />
             ))}
           </div>
@@ -197,7 +197,7 @@ const ShopProductCard = ({
 
         {/* Price Section */}
         <div className="flex items-baseline gap-2 mt-2 pt-1 border-t border-neutral-100">
-          <span className="text-base sm:text-lg font-bold text-[#17151D] tracking-tight">
+          <span className="text-base sm:text-lg font-bold text-neutral-900 tracking-tight">
             PKR {price.toLocaleString()}
           </span>
           {hasDiscount && (

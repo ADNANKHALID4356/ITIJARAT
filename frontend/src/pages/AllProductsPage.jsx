@@ -335,11 +335,11 @@ const AllProductsPage = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F7F7F9] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 mx-auto mb-4"></div>
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#0F0A87] border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-500 border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
           </div>
           <p className="text-gray-600 font-medium">Loading products...</p>
           <p className="text-gray-500 text-sm mt-1">Please wait while we fetch the latest products</p>
@@ -351,13 +351,13 @@ const AllProductsPage = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-[#F7F7F9] flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">⚠️</div>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="bg-[#0F0A87] hover:bg-[#1510B5] text-white px-6 py-2 rounded-lg"
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg"
           >
             Try Again
           </button>
@@ -367,7 +367,7 @@ const AllProductsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F7F9]">
+    <div className="min-h-screen bg-gray-50">
       {/* SEO Head Tags */}
       <Helmet>
         {/* Basic Meta Tags */}
@@ -442,7 +442,7 @@ const AllProductsPage = () => {
                 <select 
                   value={filters.category}
                   onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="w-full appearance-none px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87] transition-all shadow-sm hover:border-gray-400 cursor-pointer"
+                  className="w-full appearance-none px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm hover:border-gray-400 cursor-pointer"
                 >
                   <option value="">All Categories</option>
                   {categories.map((category, index) => (
@@ -463,7 +463,7 @@ const AllProductsPage = () => {
                 <select 
                   value={filters.sortBy}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="w-full appearance-none px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium focus:ring-2 focus:ring-[#0F0A87] focus:border-[#0F0A87] transition-all shadow-sm hover:border-gray-400 cursor-pointer"
+                  className="w-full appearance-none px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm hover:border-gray-400 cursor-pointer"
                 >
                   <option value="relevance">Sort by Relevance</option>
                   <option value="price-low">Price: Low to High</option>
@@ -509,7 +509,7 @@ const AllProductsPage = () => {
             <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 shadow-lg border border-gray-100">
               <div className="relative">
                 <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200"></div>
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#0F0A87] border-t-transparent absolute top-0 left-0"></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-orange-500 border-t-transparent absolute top-0 left-0"></div>
               </div>
               <span className="text-gray-700 font-medium">Loading more products...</span>
             </div>
@@ -546,7 +546,7 @@ const AllProductsPage = () => {
             {(filters.category && filters.category !== '') && (
               <button
                 onClick={() => handleCategoryChange('')}
-                className="bg-[#0F0A87] hover:bg-[#1510B5] text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
               >
                 View All Products
               </button>
