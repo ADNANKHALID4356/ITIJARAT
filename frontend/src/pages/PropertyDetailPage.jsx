@@ -101,15 +101,15 @@ const PropertyDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+      <div className="min-h-screen bg-[#FAF7F3] flex items-center justify-center font-body">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5B1830]"></div>
       </div>
     );
   }
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F3] flex items-center justify-center font-body">
         <div className="text-center">
           <Home className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-semibold text-gray-900">Property not found</h3>
@@ -118,7 +118,7 @@ const PropertyDetailPage = () => {
           </p>
           <Link
             to="/properties"
-            className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-orange-600 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
+            className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-[#5B1830] bg-[#F4E9ED] rounded-xl hover:bg-[#5B1830] hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Properties
@@ -129,14 +129,14 @@ const PropertyDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3] font-body">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-4">
             <Link
               to="/properties"
-              className="flex items-center text-gray-600 hover:text-orange-600 transition-colors"
+              className="flex items-center text-[#746B6C] hover:text-[#5B1830] transition-colors"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Properties
@@ -217,7 +217,7 @@ const PropertyDetailPage = () => {
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
                       className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 ${
-                        index === currentImageIndex ? 'border-orange-500' : 'border-gray-200'
+                        index === currentImageIndex ? 'border-[#5B1830]' : 'border-[#E8DED8]'
                       }`}
                     >
                       <img
@@ -239,7 +239,7 @@ const PropertyDetailPage = () => {
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{property.title}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#241A1D] mb-2">{property.title}</h1>
                   <div className="flex items-center text-gray-600 mb-2">
                     <MapPin className="w-5 h-5 mr-2" />
                     <span>{property.address}, {property.area_name}, {property.city}</span>
@@ -253,7 +253,7 @@ const PropertyDetailPage = () => {
                 </div>
                 <div className="text-right">
                   <div className="mt-2 flex flex-col space-y-2">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#F4E9ED] text-[#5B1830] border border-[#5B1830]/20">
                       {property.propertyType}
                     </span>
                     {property.status === 'sold' && (
@@ -308,7 +308,7 @@ const PropertyDetailPage = () => {
                       const IconComponent = getFeatureIcon(feature);
                       return (
                         <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                          <IconComponent className="w-5 h-5 text-orange-600" />
+                          <IconComponent className="w-5 h-5 text-[#B97855]" />
                           <span className="text-gray-900 capitalize">{feature.replace('_', ' ')}</span>
                         </div>
                       );
@@ -317,7 +317,7 @@ const PropertyDetailPage = () => {
                   {property.features.length > 6 && (
                     <button
                       onClick={() => setShowAllFeatures(!showAllFeatures)}
-                      className="mt-3 text-orange-600 hover:text-orange-700 font-medium"
+                      className="mt-3 text-[#5B1830] hover:text-[#350A1B] font-medium"
                     >
                       {showAllFeatures ? 'Show Less' : `Show ${property.features.length - 6} More Features`}
                     </button>
@@ -363,7 +363,7 @@ const PropertyDetailPage = () => {
                   <p className="text-sm text-gray-600 text-center">Looking for similar properties?</p>
                   <Link
                     to="/properties"
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors"
+                    className="w-full bg-[#5B1830] hover:bg-[#350A1B] text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 transition-colors"
                   >
                     <Home className="w-5 h-5" />
                     <span>Browse Other Properties</span>
@@ -373,7 +373,7 @@ const PropertyDetailPage = () => {
                 <>
                   <button
                     onClick={handleWhatsAppContact}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors mb-4"
+                    className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 transition-colors mb-3 shadow-xs cursor-pointer"
                   >
                     <Phone className="w-5 h-5" />
                     <span>WhatsApp Now</span>
@@ -381,7 +381,7 @@ const PropertyDetailPage = () => {
 
                   <button
                     onClick={() => window.location.href = `tel:+923005567507`}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors"
+                    className="w-full bg-[#5B1830] hover:bg-[#350A1B] text-white py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 transition-colors"
                   >
                     <Phone className="w-5 h-5" />
                     <span>Call Now</span>

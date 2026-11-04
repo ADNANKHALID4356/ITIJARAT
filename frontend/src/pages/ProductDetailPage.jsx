@@ -568,8 +568,8 @@ const ProductDetailPage = () => {
 
                   {/* Stock Status */}
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                    <span className={`text-sm font-medium ${product && product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-[#23845B]' : 'bg-[#C43D43]'}`}></div>
+                    <span className={`text-sm font-medium ${product && product.stock > 0 ? 'text-[#23845B]' : 'text-[#C43D43]'}`}>
                       {product && product.stock > 0 ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </div>
@@ -674,7 +674,7 @@ const ProductDetailPage = () => {
                         className={`flex-1 py-2.5 rounded-lg font-semibold text-base transition-colors ${
                           (product?.stock || 0) === 0
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-green-600 text-white hover:bg-green-700'
+                            : 'bg-[#B97855] text-white hover:bg-[#75462F] shadow-sm font-body cursor-pointer'
                         }`}
                       >
                         {(product?.stock || 0) === 0 ? 'Out of Stock' : 'Buy Now'}
@@ -702,7 +702,7 @@ const ProductDetailPage = () => {
                         {product?.mainCategory?.name && (
                           <button
                             onClick={() => navigate(`/shop?mainCategory=${product.mainCategory._id || product.mainCategory}`)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors text-xs font-medium"
+                            className="px-3 py-1.5 bg-[#F4E9ED] text-[#5B1830] rounded-md hover:bg-[#5B1830] hover:text-white transition-colors text-xs font-medium font-body border border-[#5B1830]/20 cursor-pointer"
                           >
                             {product.mainCategory.name}
                           </button>
@@ -710,7 +710,7 @@ const ProductDetailPage = () => {
                         {product?.subCategory?.name && (
                           <button
                             onClick={() => navigate(`/shop?subCategory=${product.subCategory._id || product.subCategory}`)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors text-xs font-medium"
+                            className="px-3 py-1.5 bg-[#F4E9ED] text-[#5B1830] rounded-md hover:bg-[#5B1830] hover:text-white transition-colors text-xs font-medium font-body border border-[#5B1830]/20 cursor-pointer"
                           >
                             {product.subCategory.name}
                           </button>
@@ -718,7 +718,7 @@ const ProductDetailPage = () => {
                         {product?.category?.name && (
                           <button
                             onClick={() => navigate(`/shop?category=${product.category._id || product.category}`)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors text-xs font-medium"
+                            className="px-3 py-1.5 bg-[#F4E9ED] text-[#5B1830] rounded-md hover:bg-[#5B1830] hover:text-white transition-colors text-xs font-medium font-body border border-[#5B1830]/20 cursor-pointer"
                           >
                             {product.category.name}
                           </button>

@@ -169,7 +169,7 @@ const CartPage = () => {
             <div className="border-t pt-6">
               <Link 
                 to="/" 
-                className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium text-lg transition-colors"
+                className="inline-flex items-center text-[#5B1830] hover:text-[#350A1B] font-medium text-lg transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -182,8 +182,8 @@ const CartPage = () => {
           {/* Additional Features Section */}
           <div className="mt-12 grid md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow-sm border p-6 text-center">
-              <div className="w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 mx-auto mb-4 bg-[#F4E9ED] rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
@@ -192,8 +192,8 @@ const CartPage = () => {
             </div>
             
             <div className="bg-white rounded-lg shadow-sm border p-6 text-center">
-              <div className="w-12 h-12 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 mx-auto mb-4 bg-[#EAF4EF] rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#23845B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -202,8 +202,8 @@ const CartPage = () => {
             </div>
             
             <div className="bg-white rounded-lg shadow-sm border p-6 text-center">
-              <div className="w-12 h-12 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 mx-auto mb-4 bg-[#F4E9ED] rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-[#B97855]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 3M7 13l2.5 3m9.5-3v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
                 </svg>
               </div>
@@ -464,7 +464,7 @@ const CartPage = () => {
                 <h2 className="text-lg font-medium text-gray-900">Items in your cart</h2>
                 <button
                   onClick={clearCart}
-                  className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                  className="text-sm text-[#5B1830] hover:text-[#350A1B] font-medium"
                 >
                   Clear cart
                 </button>
@@ -506,7 +506,7 @@ const CartPage = () => {
                   <span className="font-medium">
                     {shipping > 0 ? `PKR ${shipping.toFixed(2)}` : 'Free'}
                     {subtotal >= 10000 && (
-                      <span className="text-green-600 text-xs block">Free shipping applied!</span>
+                      <span className="text-[#23845B] text-xs block font-medium">Free shipping applied!</span>
                     )}
                   </span>
                 </div>
@@ -515,7 +515,7 @@ const CartPage = () => {
                 {shipping > 0 && subtotal < 10000 && (
                   <div className="text-xs text-gray-500 mt-1">
                     <p>Highest product shipping: PKR {shipping.toFixed(2)}</p>
-                    <p className="text-green-600">Add PKR {(10000 - subtotal).toFixed(2)} more for free shipping!</p>
+                    <p className="text-[#23845B]">Add PKR {(10000 - subtotal).toFixed(2)} more for free shipping!</p>
                   </div>
                 )}
                 

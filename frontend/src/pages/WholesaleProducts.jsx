@@ -60,46 +60,46 @@ const WholesaleProducts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FAF7F3] flex items-center justify-center font-body">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading wholesale products...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5B1830] mx-auto mb-4"></div>
+          <p className="text-[#746B6C]">Loading wholesale products...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-[#FAF7F3] py-6 font-body">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 rounded-full mb-4">
-            <Store className="w-8 h-8 text-orange-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#F4E9ED] rounded-full mb-3 border border-[#5B1830]/20">
+            <Store className="w-8 h-8 text-[#5B1830]" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Wholesale Products</h1>
-          <p className="text-gray-600">Discover bulk purchase opportunities from verified suppliers</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#241A1D] mb-1">Wholesale Products</h1>
+          <p className="text-sm text-[#746B6C]">Discover bulk purchase opportunities directly from verified suppliers</p>
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl shadow-2xs border border-[#E8DED8] p-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search products or suppliers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-[#E8DED8] rounded-lg focus:ring-1 focus:ring-[#5B1830] focus:border-[#5B1830] bg-[#FCFAF8] text-[#241A1D]"
               />
             </div>
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none bg-white"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-[#E8DED8] rounded-lg focus:ring-1 focus:ring-[#5B1830] focus:border-[#5B1830] appearance-none bg-[#FCFAF8] text-[#241A1D] cursor-pointer"
               >
                 <option value="all">All Categories</option>
                 {categories.map((category) => (
@@ -114,95 +114,99 @@ const WholesaleProducts = () => {
 
         {/* Results Count */}
         <div className="mb-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-xs text-[#746B6C]">
             Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
           </p>
         </div>
 
         {/* Products Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-16">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-600">Try adjusting your search or filters</p>
+          <div className="text-center py-16 bg-white rounded-xl border border-[#E8DED8]">
+            <Package className="w-16 h-16 text-[#8B8080] mx-auto mb-3" />
+            <h3 className="text-lg font-display font-semibold text-[#241A1D] mb-1">No products found</h3>
+            <p className="text-sm text-[#746B6C]">Try adjusting your search or filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
                 onClick={() => handleProductClick(product)}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 cursor-pointer group overflow-hidden"
+                className="bg-white rounded-xl shadow-2xs border border-[#E8DED8] hover:shadow-md hover:border-[#B97855]/50 transition-all duration-200 cursor-pointer group overflow-hidden flex flex-col justify-between"
               >
                 {/* Product Image */}
-                <div className="aspect-square relative overflow-hidden bg-gray-100">
+                <div className="aspect-square relative overflow-hidden bg-[#FAF7F3]">
                   <img
                     src={getImageUrl('products', product.image)}
                     alt={product.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                   {product.discount > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    <div className="absolute top-2 right-2 bg-[#5B1830] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
                       -{product.discount}%
                     </div>
                   )}
                 </div>
 
                 {/* Product Info */}
-                <div className="p-3">
-                  {/* Category Badge */}
-                  {product.category && (
-                    <div className="mb-2">
-                      <span className="inline-block px-2 py-0.5 bg-orange-50 text-orange-600 text-xs font-medium rounded">
-                        {product.category.displayName || product.category.name}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Product Title */}
-                  <h3 className="font-semibold text-sm text-gray-900 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
-                    {product.title}
-                  </h3>
-
-                  {/* Supplier Info */}
-                  {product.wholesaleContact?.supplierName && (
-                    <div className="flex items-center gap-1 text-xs text-gray-600 mb-2">
-                      <Store className="w-3 h-3" />
-                      <span className="truncate">{product.wholesaleContact.supplierName}</span>
-                    </div>
-                  )}
-
-                  {/* Price */}
-                  <div className="mb-2">
-                    {product.wholesalePricing && product.wholesalePricing.length > 0 ? (
-                      <div className="text-xs text-gray-600">
-                        <span className="font-semibold text-sm text-orange-600">
-                          Starting from ₨{product.wholesalePricing[0].pricePerUnit.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-gray-500 block">
-                          Min: {product.wholesalePricing[0].minQuantity} units
+                <div className="p-3 flex-1 flex flex-col justify-between">
+                  <div>
+                    {/* Category Badge */}
+                    {product.category && (
+                      <div className="mb-1.5">
+                        <span className="inline-block px-2 py-0.5 bg-[#F4E9ED] text-[#5B1830] text-[10px] font-medium rounded-md border border-[#5B1830]/20">
+                          {product.category.displayName || product.category.name}
                         </span>
                       </div>
-                    ) : (
-                      <div className="text-sm font-semibold text-orange-600">
-                        ₨{product.price.toLocaleString()}
+                    )}
+
+                    {/* Product Title */}
+                    <h3 className="font-semibold text-xs sm:text-sm text-[#241A1D] mb-1.5 line-clamp-2 group-hover:text-[#5B1830] transition-colors leading-snug">
+                      {product.title}
+                    </h3>
+
+                    {/* Supplier Info */}
+                    {product.wholesaleContact?.supplierName && (
+                      <div className="flex items-center gap-1 text-[11px] text-[#746B6C] mb-2">
+                        <Store className="w-3 h-3 text-[#B97855]" />
+                        <span className="truncate">{product.wholesaleContact.supplierName}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Quick Contact */}
-                  {product.wholesaleContact?.whatsappNumber && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(`https://wa.me/${product.wholesaleContact.whatsappNumber}`, '_blank');
-                      }}
-                      className="w-full bg-green-500 hover:bg-green-600 text-white text-xs font-medium py-2 rounded transition-colors flex items-center justify-center gap-1"
-                    >
-                      <Phone className="w-3 h-3" />
-                      WhatsApp
-                    </button>
-                  )}
+                  {/* Price & Action */}
+                  <div className="mt-2 pt-2 border-t border-[#E8DED8]/60">
+                    <div className="mb-2">
+                      {product.wholesalePricing && product.wholesalePricing.length > 0 ? (
+                        <div>
+                          <span className="font-bold text-xs sm:text-sm text-[#5B1830]">
+                            ₨{product.wholesalePricing[0].pricePerUnit.toLocaleString()}
+                          </span>
+                          <span className="text-[10px] text-[#8B8080] block">
+                            Min: {product.wholesalePricing[0].minQuantity} units
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="text-xs sm:text-sm font-bold text-[#5B1830]">
+                          ₨{product.price.toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quick Contact */}
+                    {product.wholesaleContact?.whatsappNumber && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(`https://wa.me/${product.wholesaleContact.whatsappNumber}`, '_blank');
+                        }}
+                        className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-medium py-1.5 px-2 rounded-lg transition-colors flex items-center justify-center gap-1 shadow-2xs cursor-pointer"
+                      >
+                        <Phone className="w-3 h-3" />
+                        <span>WhatsApp</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

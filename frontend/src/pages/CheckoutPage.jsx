@@ -93,7 +93,7 @@ const PaymentMethod = ({ id, title, description, selected, onClick }) => (
         type="radio"
         checked={selected}
         onChange={() => {}}
-        className="mr-3 text-orange-500"
+        className="mr-3 accent-[#5B1830] text-[#5B1830]"
       />
       <div>
         <h4 className="font-medium text-gray-900">{title}</h4>
@@ -1709,8 +1709,8 @@ const CheckoutPage = () => {
 
       {/* Success Notification */}
       {showSuccessMessage && (
-        <div className="fixed top-4 right-4 bg-orange-400 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2">
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <div className="fixed top-4 right-4 bg-white border border-[#E8DED8] border-l-4 border-l-[#5B1830] text-[#241A1D] px-6 py-3 rounded-xl shadow-xl z-50 flex items-center gap-3 font-body">
+          <svg className="w-5 h-5 text-[#5B1830]" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
           <div>

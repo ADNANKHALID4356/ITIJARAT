@@ -197,14 +197,14 @@ const OrderConfirmationPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-[#FAF7F3] py-12 font-body">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Success Header */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-6 text-center">
           <div className="flex justify-center mb-4">
-            <CheckCircleIcon className="w-16 h-16 text-green-500" />
+            <CheckCircleIcon className="w-16 h-16 text-[#5B1830]" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
+          <h1 className="text-3xl font-bold text-[#241A1D] mb-2 font-display">Order Confirmed!</h1>
           <p className="text-xl text-gray-600 mb-4">Thank you for your purchase</p>
         </div>
 
@@ -359,7 +359,7 @@ const OrderConfirmationPage = () => {
                 
                 <Link
                   to={`/order/${order.orderNumber || orderNumber}`}
-                  className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center"
+                  className="w-full bg-[#5B1830] text-white py-3 rounded-lg hover:bg-[#350A1B] transition-colors flex items-center justify-center font-body font-semibold cursor-pointer shadow-sm"
                 >
                   <TruckIcon className="w-5 h-5 mr-2" />
                   Track Order
@@ -368,7 +368,7 @@ const OrderConfirmationPage = () => {
                 {isAuthenticated && (
                   <Link
                     to="/orders"
-                    className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-colors flex items-center justify-center"
+                    className="w-full bg-[#B97855] text-white py-3 rounded-lg hover:bg-[#75462F] transition-colors flex items-center justify-center font-body font-semibold cursor-pointer shadow-sm"
                   >
                     📋 View Order History
                   </Link>

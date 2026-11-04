@@ -20,14 +20,14 @@ const ProductInfo = ({
     <div className="w-full space-y-6">
       {/* Product Title */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900" itemProp="name">
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#241A1D] font-display" itemProp="name">
           {product?.seo?.title || product?.metaTitle || product?.title || 'Product'}
         </h1>
       </div>
 
       {/* Price */}
       <div>
-        <span className="text-3xl lg:text-4xl font-bold text-orange-600">
+        <span className="text-3xl lg:text-4xl font-bold text-[#5B1830] font-body">
           PKR {(discountedPrice || 0).toFixed(2)}
         </span>
         {product && product.discount > 0 && (
@@ -91,7 +91,7 @@ const ProductInfo = ({
                 <Link
                   key={index}
                   to={`/category-group/${catName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`}
-                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm hover:bg-blue-200 hover:text-blue-900 transition-colors duration-200 cursor-pointer"
+                  className="bg-[#F4E9ED] text-[#5B1830] border border-[#5B1830]/20 px-3 py-1 rounded-full text-sm hover:bg-[#5B1830] hover:text-white transition-colors duration-200 cursor-pointer font-body"
                 >
                   {catName}
                 </Link>
@@ -104,7 +104,7 @@ const ProductInfo = ({
       {/* Vendor Information */}
       <div>
         <h3 className="text-lg font-semibold mb-2">Sold by</h3>
-        <span className="text-orange-600 font-semibold text-lg">
+        <span className="text-[#B97855] font-semibold text-lg font-body">
           {product?.vendor && typeof product.vendor === 'object' && product.vendor.businessName
             ? product.vendor.businessName
             : product?.vendor?.name || 'International Tijarat'}
@@ -127,12 +127,12 @@ const ProductInfo = ({
                   onClick={() => setSelectedSize(size)}
                   className={`px-4 py-2 border-2 rounded-lg font-medium transition-all relative ${
                     selectedSize === size
-                      ? 'border-orange-500 bg-orange-500 text-white'
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-orange-400 hover:bg-orange-50'
+                      ? 'border-[#5B1830] bg-[#5B1830] text-white'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-[#B97855]/60 hover:bg-[#FAF7F3]'
                   }`}
                 >
                   <div>{size}</div>
-                  <div className={`text-xs mt-1 ${selectedSize === size ? 'text-orange-100' : 'text-gray-500'}`}>
+                  <div className={`text-xs mt-1 ${selectedSize === size ? 'text-[#F4E9ED]' : 'text-gray-500'}`}>
                     Stock: {stock}
                   </div>
                 </button>
@@ -174,7 +174,7 @@ const ProductInfo = ({
                 (product?.stock || 0) === 0 
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : quantity >= (product?.stock || 0)
-                  ? 'bg-orange-100 text-orange-600 hover:bg-orange-200'
+                  ? 'bg-[#F4E9ED] text-[#5B1830] hover:bg-[#ebdbe0]'
                   : 'hover:bg-gray-100'
             }`}
               disabled={(product?.stock || 0) === 0}
@@ -191,7 +191,7 @@ const ProductInfo = ({
             className={`flex-1 py-3 rounded-lg font-bold text-lg transition-colors ${
               (product?.stock || 0) === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-orange-500 text-white hover:bg-orange-600'
+                : 'bg-[#5B1830] text-white hover:bg-[#350A1B] font-body cursor-pointer shadow-sm'
             }`}
           >
             {isAddingToCart ? (
@@ -212,7 +212,7 @@ const ProductInfo = ({
             className={`flex-1 py-3 rounded-lg font-bold text-lg transition-colors ${
               (product?.stock || 0) === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-[#B97855] text-white hover:bg-[#75462F] font-body cursor-pointer shadow-sm'
             }`}
           >
             {(product?.stock || 0) === 0 ? 'Out of Stock' : 'Buy Now'}

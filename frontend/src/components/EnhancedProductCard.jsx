@@ -430,7 +430,7 @@ const EnhancedProductCard = ({
                         py-2.5 px-3 rounded-lg border-2 font-semibold text-sm transition-all relative
                         ${selectedSize === size
                           ? 'border-[#5B1830] bg-[#F4E9ED] text-[#5B1830] scale-105'
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50'
+                          : 'border-[#E8DED8] bg-white text-[#241A1D] hover:border-[#B97855]/50 hover:bg-[#FAF7F3]'
                         }
                       `}
                     >
@@ -459,7 +459,7 @@ const EnhancedProductCard = ({
                   flex-1 py-2.5 px-4 rounded-lg font-medium transition-colors
                   ${selectedSize
                     ? sizeAction === 'buy' 
-                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white'
+                      ? 'bg-[#B97855] hover:bg-[#75462F] text-white'
                       : 'bg-[#5B1830] text-white hover:bg-[#350A1B]'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }

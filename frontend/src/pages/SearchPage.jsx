@@ -342,7 +342,7 @@ const SearchPage = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search for products, categories, or brands..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 placeholder-gray-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] text-gray-900 placeholder-gray-500"
                 />
                 <SearchIcon className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                 <button
@@ -382,7 +382,7 @@ const SearchPage = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830]"
                   disabled={loadingCategories}
                 >
                   {loadingCategories ? (
@@ -406,14 +406,14 @@ const SearchPage = () => {
                     value={priceRange.min}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
                     placeholder="Min"
-                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm min-w-0"
+                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] text-sm min-w-0"
                   />
                   <input
                     type="number"
                     value={priceRange.max}
                     onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
                     placeholder="Max"
-                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm min-w-0"
+                    className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] text-sm min-w-0"
                   />
                 </div>
                 <button
@@ -430,7 +430,7 @@ const SearchPage = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830]"
                 >
                   <option value="relevance">Most Relevant</option>
                   <option value="newest">Newest First</option>

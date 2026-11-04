@@ -98,26 +98,26 @@ const NotificationContainer = () => {
   const getIcon = (type) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="w-5 h-5" />;
+        return <CheckCircle className="w-5 h-5 text-[#5B1830]" />;
       case 'error':
-        return <XCircle className="w-5 h-5" />;
+        return <XCircle className="w-5 h-5 text-[#C43D43]" />;
       case 'warning':
-        return <AlertCircle className="w-5 h-5" />;
+        return <AlertCircle className="w-5 h-5 text-[#A66A12]" />;
       default:
-        return <Info className="w-5 h-5" />;
+        return <Info className="w-5 h-5 text-[#3977B8]" />;
     }
   };
 
   const getColors = (type) => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 border-green-200 text-green-800 shadow-green-100';
+        return 'bg-white border-[#E8DED8] border-l-4 border-l-[#5B1830] text-[#241A1D] shadow-xl';
       case 'error':
-        return 'bg-red-50 border-red-200 text-red-800 shadow-red-100';
+        return 'bg-white border-[#E8DED8] border-l-4 border-l-[#C43D43] text-[#241A1D] shadow-xl';
       case 'warning':
-        return 'bg-orange-50 border-orange-200 text-orange-800 shadow-orange-100';
+        return 'bg-white border-[#E8DED8] border-l-4 border-l-[#A66A12] text-[#241A1D] shadow-xl';
       default:
-        return 'bg-blue-50 border-blue-200 text-blue-800 shadow-blue-100';
+        return 'bg-white border-[#E8DED8] border-l-4 border-l-[#3977B8] text-[#241A1D] shadow-xl';
     }
   };
 
@@ -139,17 +139,17 @@ const NotificationContainer = () => {
             </div>
             <div className="ml-3 flex-1 min-w-0">
               {notification.title && (
-                <p className="text-sm font-semibold mb-1 leading-tight break-words">
+                <p className="text-sm font-semibold mb-1 leading-tight break-words text-[#241A1D] font-body">
                   {notification.title}
                 </p>
               )}
-              <p className={`text-xs sm:text-sm leading-tight break-words ${notification.title ? '' : 'font-medium'}`}>
+              <p className={`text-xs sm:text-sm leading-tight break-words text-[#746B6C] font-body ${notification.title ? '' : 'font-medium'}`}>
                 {notification.message}
               </p>
             </div>
             <div className="ml-2 sm:ml-3 flex-shrink-0">
               <button
-                className="rounded-md inline-flex text-current opacity-70 hover:opacity-100 focus:outline-none transition-opacity p-1 hover:bg-black hover:bg-opacity-10"
+                className="rounded-md inline-flex text-[#8B8080] hover:text-[#241A1D] focus:outline-none transition-colors p-1 hover:bg-black/5"
                 onClick={() => removeNotification(notification.id)}
               >
                 <X className="w-3 h-3 sm:w-4 sm:h-4" />

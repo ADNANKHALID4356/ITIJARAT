@@ -416,7 +416,7 @@ const AllProductsPage = () => {
 
       {/* Cart Loading Indicator */}
       {cartLoading && (
-        <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2">
+        <div className="fixed top-4 right-4 bg-[#5B1830] text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2 font-body">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
           <span className="text-sm">Updating cart...</span>
         </div>
@@ -442,7 +442,7 @@ const AllProductsPage = () => {
                 <select 
                   value={filters.category}
                   onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="w-full appearance-none px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm hover:border-gray-400 cursor-pointer"
+                  className="w-full appearance-none px-3 py-2 pr-8 border border-[#E8DED8] rounded-lg bg-white text-[#241A1D] text-sm font-medium focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all shadow-sm hover:border-[#D8C9C0] cursor-pointer"
                 >
                   <option value="">All Categories</option>
                   {categories.map((category, index) => (
@@ -463,7 +463,7 @@ const AllProductsPage = () => {
                 <select 
                   value={filters.sortBy}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="w-full appearance-none px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm hover:border-gray-400 cursor-pointer"
+                  className="w-full appearance-none px-3 py-2 pr-8 border border-[#E8DED8] rounded-lg bg-white text-[#241A1D] text-sm font-medium focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all shadow-sm hover:border-[#D8C9C0] cursor-pointer"
                 >
                   <option value="relevance">Sort by Relevance</option>
                   <option value="price-low">Price: Low to High</option>

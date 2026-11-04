@@ -35,11 +35,11 @@ const Notification = ({
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-orange-50',
-          border: 'border-orange-200',
-          icon: 'text-orange-500',
-          title: 'text-orange-800',
-          message: 'text-orange-700',
+          bg: 'bg-white',
+          border: 'border-[#E8DED8] border-l-4 border-l-[#5B1830] shadow-xl',
+          icon: 'text-[#5B1830]',
+          title: 'text-[#241A1D] font-semibold',
+          message: 'text-[#746B6C]',
           iconPath: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
         };
       case 'error':
@@ -53,7 +53,7 @@ const Notification = ({
         };
       case 'warning':
         return {
-          bg: 'bg-orange-50',
+          bg: 'bg-white',
           border: 'border-orange-300',
           icon: 'text-orange-600',
           title: 'text-black',
@@ -63,8 +63,8 @@ const Notification = ({
       default:
         return {
           bg: 'bg-white',
-          border: 'border-orange-200',
-          icon: 'text-orange-500',
+          border: 'border-[#E8DED8] border-l-4 border-l-[#5B1830] shadow-xl',
+          icon: 'text-[#5B1830]',
           title: 'text-black',
           message: 'text-gray-700',
           iconPath: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
