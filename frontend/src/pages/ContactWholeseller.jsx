@@ -175,8 +175,8 @@ const ContactWholeseller = () => {
         {/* Call-to-Action */}
         <div className="mt-10 bg-[#350A1B] border border-[#B97855]/30 rounded-2xl p-6 sm:p-8 text-center text-white relative overflow-hidden">
           <div className="relative z-10 max-w-xl mx-auto">
-            <h2 className="text-xl sm:text-2xl font-display font-bold mb-2">Become a Wholesale Supplier?</h2>
-            <p className="text-[#F0E7DF] text-sm mb-5">
+            <h2 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">Become a Wholesale Supplier?</h2>
+            <p className="text-[#FAF7F3] text-sm mb-5">
               Join our network of verified suppliers and reach thousands of customers worldwide.
             </p>
             <a

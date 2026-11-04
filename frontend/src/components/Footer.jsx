@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -9,90 +8,84 @@ const Footer = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState(''); // 'success' or 'error'
-  const [footerCategories, setFooterCategories] = useState([]);
+  const [footerCategories, setFooterCategories] = useState([
+    'Shawls & Apparel',
+    'Leather Goods',
+    'Traditional Wear',
+    'Fragrances',
+    'Footwear'
+  ]);
 
-  // Load footer categories on component mount
+  // Fetch top 5 active categories for footer
   useEffect(() => {
-    loadFooterCategories();
+    const fetchFooterCategories = async () => {
+      try {
+        const response = await axios.get(`${getApiUrl()}/categories`);
+        if (response.data && Array.isArray(response.data)) {
+          // Filter active main categories and take top 5
+          const activeCategories = response.data
+            .filter(cat => cat.isActive && !cat.parentCategory)
+            .slice(0, 5)
+            .map(cat => cat.name);
+          
+          if (activeCategories.length > 0) {
+            setFooterCategories(activeCategories);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching footer categories:', error);
+        // Keep default categories on error
+      }
+    };
+
+    fetchFooterCategories();
   }, []);
 
-  const loadFooterCategories = async () => {
-    try {
-      // Use public API endpoint (no authentication required)
-      const response = await axios.get(`${getApiUrl()}/footer-categories`);
-      setFooterCategories(response.data.data || []);
-    } catch (error) {
-      // Fall back to default categories if API fails
-      console.log('Using default footer categories');
-      setFooterCategories([
-        'Electronics',
-        'Fashion',
-        'Home & Garden',
-        'Sports & Outdoors',
-        'Books & Media',
-        'Health & Beauty',
-        'Automotive',
-        'Business & Industrial'
-      ]);
-    }
-  };
-
-  // Email validation function
-  const isValidEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  // Handle newsletter subscription
   const handleSubscribe = async (e) => {
     e.preventDefault();
     
-    // Clear previous messages
-    setMessage('');
-    setMessageType('');
-
-    // Validate email
-    if (!email.trim()) {
+    if (!email) {
       setMessage('Please enter your email address');
       setMessageType('error');
       return;
     }
 
-    if (!isValidEmail(email.trim())) {
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       setMessage('Please enter a valid email address');
       setMessageType('error');
       return;
     }
 
     setIsSubscribing(true);
+    setMessage('');
 
     try {
-      const response = await axios.post(getApiUrl('newsletter/subscribe'), {
-        email: email.trim()
+      const response = await axios.post(`${getApiUrl()}/newsletter/subscribe`, {
+        email: email.trim().toLowerCase()
       });
 
       if (response.data.success) {
-        setMessage('Successfully subscribed to our newsletter!');
+        setMessage('Thank you for subscribing to our newsletter!');
         setMessageType('success');
-        setEmail(''); // Clear the input
+        setEmail('');
       } else {
-        setMessage(response.data.message || 'Failed to subscribe. Please try again.');
+        setMessage(response.data.message || 'Subscription failed. Please try again.');
         setMessageType('error');
       }
     } catch (error) {
       console.error('Newsletter subscription error:', error);
-      
       if (error.response?.data?.message) {
         setMessage(error.response.data.message);
-      } else if (error.response?.status === 400) {
-        setMessage('This email is already subscribed or invalid');
+      } else if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+        setMessage('Unable to connect to server. Please try again later.');
       } else {
         setMessage('Failed to subscribe. Please try again later.');
       }
       setMessageType('error');
     } finally {
       setIsSubscribing(false);
-      
       // Clear message after 5 seconds
       setTimeout(() => {
         setMessage('');
@@ -110,7 +103,7 @@ const Footer = () => {
             <h3 className="text-2xl sm:text-3xl font-display font-medium text-white mb-3">
               Stay Updated with International Tijarat
             </h3>
-            <p className="text-[#E8DED8]/80 mb-6 font-body text-sm sm:text-base">
+            <p className="text-[#FAF7F3] mb-6 font-body text-sm sm:text-base leading-relaxed">
               Discover authentic Pakistani craftsmanship, everyday essentials, and exclusive seasonal releases.
             </p>
             
@@ -122,12 +115,12 @@ const Footer = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   disabled={isSubscribing}
-                  className="flex-1 px-4 py-3 border border-[#4A1526] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B97855] focus:border-transparent bg-[#350A1B] text-white placeholder-[#8B8080] disabled:opacity-50 disabled:cursor-not-allowed font-body text-sm"
+                  className="flex-1 px-4 py-3 border border-[#5B1830] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B97855] focus:border-transparent bg-[#350A1B] text-white placeholder-[#D8C9C0] disabled:opacity-50 disabled:cursor-not-allowed font-body text-sm"
                 />
                 <button 
                   type="submit"
                   disabled={isSubscribing}
-                  className="bg-[#5B1830] hover:bg-[#431223] disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center min-w-[120px] font-body text-sm border border-[#B97855]/30 cursor-pointer"
+                  className="bg-[#B97855] hover:bg-[#75462F] disabled:opacity-50 disabled:cursor-not-allowed text-white px-7 py-3 rounded-xl font-medium transition-colors duration-200 flex items-center justify-center min-w-[120px] font-body text-sm shadow-sm cursor-pointer"
                 >
                   {isSubscribing ? (
                     <>
@@ -175,7 +168,7 @@ const Footer = () => {
                 }}
               />
             </div>
-            <p className="text-[#E8DED8]/80 mb-6 text-sm leading-relaxed font-body">
+            <p className="text-[#FAF7F3] mb-6 text-sm leading-relaxed font-body">
               An international marketplace celebrating Pakistani craftsmanship and heritage while providing customers with premium products for everyday life.
             </p>
             
@@ -228,7 +221,7 @@ const Footer = () => {
                 <li key={index}>
                   <Link 
                     to={`/category-group/${encodeURIComponent(category.toLowerCase())}`}
-                    className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200"
+                    className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium"
                   >
                     {category}
                   </Link>
@@ -242,32 +235,32 @@ const Footer = () => {
             <h5 className="text-sm font-semibold text-[#B97855] uppercase tracking-wider mb-4 font-body">Customer Care</h5>
             <ul className="space-y-2 font-body">
               <li>
-                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/contact" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Returns & Exchanges
                 </Link>
               </li>
               <li>
-                <Link to="/simple-order-history" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/simple-order-history" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Track Your Order
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Payment Options
                 </Link>
               </li>
@@ -279,31 +272,31 @@ const Footer = () => {
             <h5 className="text-sm font-semibold text-[#B97855] uppercase tracking-wider mb-4 font-body">Company</h5>
             <ul className="space-y-2 mb-6 font-body">
               <li>
-                <Link to="/about" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/about" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/contact-wholeseller" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/contact-wholeseller" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Wholesale Dealership
                 </Link>
               </li>
               <li>
-                <Link to="/vendor/login" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/vendor/login" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Sell With Us
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#FAF7F3] hover:text-[#B97855] text-sm transition-colors duration-200 font-medium">
                   Sustainability & Heritage
                 </Link>
               </li>
             </ul>
 
             {/* Contact Info */}
-            <div className="bg-[#270713] rounded-lg p-4 border border-[#4A1526]">
+            <div className="bg-[#270713] rounded-xl p-4 border border-[#4A1526]">
               <h6 className="font-semibold text-white mb-2 text-sm font-body">Contact Information</h6>
-              <div className="space-y-1 text-xs text-[#E8DED8]/80 font-body">
+              <div className="space-y-1 text-xs text-[#FAF7F3] font-body">
                 <p>📧 support@internationaltijarat.com</p>
                 <p>📞 +92 300 5567507</p>
               </div>
@@ -368,7 +361,7 @@ const Footer = () => {
                 ].map((cert, index) => (
                   <div
                     key={index}
-                    className="bg-[#350A1B] border border-[#4A1526] px-3 py-1 rounded text-xs font-medium text-[#E8DED8]/80 font-body"
+                    className="bg-[#350A1B] border border-[#5B1830] px-3 py-1 rounded text-xs font-medium text-[#FAF7F3] font-body"
                   >
                     {cert}
                   </div>
@@ -382,15 +375,15 @@ const Footer = () => {
       {/* Copyright */}
       <div className="bg-[#1E040E] border-t border-[#4A1526]">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#8B8080] font-body">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#E8DED8] font-body">
             <div className="flex flex-wrap items-center gap-4">
               <p>© 2025 International Tijarat. All rights reserved.</p>
               <div className="flex gap-4">
-                <Link to="/privacy" className="hover:text-[#B97855] transition-colors duration-200">Privacy Policy</Link>
-                <Link to="/terms" className="hover:text-[#B97855] transition-colors duration-200">Terms of Service</Link>
+                <Link to="/privacy" className="text-[#FAF7F3] hover:text-[#B97855] transition-colors duration-200">Privacy Policy</Link>
+                <Link to="/terms" className="text-[#FAF7F3] hover:text-[#B97855] transition-colors duration-200">Terms of Service</Link>
               </div>
             </div>
-            <p className="text-[#8B8080]/70">Premium International E-Commerce Marketplace</p>
+            <p className="text-[#D8C9C0]">Premium International E-Commerce Marketplace</p>
           </div>
         </div>
       </div>

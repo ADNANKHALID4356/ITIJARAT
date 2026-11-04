@@ -25,10 +25,10 @@ const TermsConditionsPage = () => {
         {/* Header Section */}
         <div className="bg-[#350A1B] text-white py-14 sm:py-16 border-b border-[#B97855]/20">
           <div className="container mx-auto px-6 lg:px-12 max-w-4xl">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-center mb-3">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white text-center mb-3">
               Terms and Conditions
             </h1>
-            <p className="text-base sm:text-lg text-center text-[#F0E7DF] font-light">
+            <p className="text-base sm:text-lg text-center text-[#FAF7F3] font-light">
               Please read these terms carefully before using our platform.
             </p>
             <p className="text-center text-[#B97855] text-xs sm:text-sm mt-3">

@@ -156,8 +156,8 @@ const UsedProducts = () => {
       <div className="bg-[#350A1B] text-white py-12 sm:py-16 border-b border-[#B97855]/20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3">Used Products Marketplace</h1>
-            <p className="text-base sm:text-lg text-[#F0E7DF] max-w-2xl mx-auto font-light">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white mb-3">Used Products Marketplace</h1>
+            <p className="text-base sm:text-lg text-[#FAF7F3] max-w-2xl mx-auto font-light">
               Discover great deals on quality pre-owned items from trusted sellers
             </p>
             <div className="mt-8">

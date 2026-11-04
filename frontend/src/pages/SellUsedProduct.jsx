@@ -740,8 +740,8 @@ const SellUsedProduct = () => {
 
             {/* Call to Action */}
             <div className="text-center bg-[#350A1B] border border-[#B97855]/30 rounded-2xl p-8 sm:p-10 text-white shadow-sm">
-              <h3 className="text-2xl sm:text-3xl font-display font-bold mb-3">Ready to Start Selling?</h3>
-              <p className="text-[#F0E7DF] mb-6 max-w-2xl mx-auto font-light">
+              <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">Ready to Start Selling?</h3>
+              <p className="text-[#FAF7F3] mb-6 max-w-2xl mx-auto font-light">
                 Join thousands of sellers who have successfully sold their used products on our platform. 
                 Create your first listing in just a few minutes!
               </p>

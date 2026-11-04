@@ -160,7 +160,7 @@ const Navbar = () => {
               <div className="relative group">
                 <button className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md transition-all duration-200 border border-transparent hover:border-[#E8DED8] hover:bg-[#FAF7F3] ${!isAuthenticated && !isVendorAuthenticated ? 'bg-[#5B1830] hover:bg-[#350A1B] text-white shadow-sm' : 'text-[#241A1D]'}`}>
                   <UserIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${!isAuthenticated && !isVendorAuthenticated ? 'text-white' : 'text-[#746B6C]'}`} />
-                  <span className="font-semibold text-xs sm:text-sm font-body">Account</span>
+                  <span className={`font-semibold text-xs sm:text-sm font-body ${!isAuthenticated && !isVendorAuthenticated ? 'text-white' : 'text-[#241A1D]'}`}>Account</span>
                   <ChevronDownIcon className={`w-3.5 h-3.5 ${!isAuthenticated && !isVendorAuthenticated ? 'text-white/80' : 'text-[#8B8080]'}`} />
                 </button>
                 
@@ -250,8 +250,8 @@ const Navbar = () => {
               {/* All Categories Dropdown - Placed on the Left */}
               <div className="relative flex-shrink-0" ref={categoriesRef} onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
                 <button className="bg-[#5B1830] hover:bg-[#350A1B] flex items-center space-x-1.5 px-3 py-1 rounded text-white text-xs font-semibold uppercase tracking-wider shadow-xs transition-colors cursor-pointer font-body">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" /></svg>
-                  <span>Browse All</span>
+                  <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" /></svg>
+                  <span className="text-white">Browse All</span>
                 </button>
 
                 {catOpen && (

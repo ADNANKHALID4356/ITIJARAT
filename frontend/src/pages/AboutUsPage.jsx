@@ -245,8 +245,8 @@ const AboutUsPage = () => {
         {/* Call to Action */}
         <div className="text-center">
           <div className="bg-[#350A1B] text-white rounded-2xl p-8 sm:p-12 border border-[#B97855]/30 shadow-md">
-            <h2 className="text-3xl sm:text-4xl font-bold font-display mb-4">Join Our Journey</h2>
-            <p className="text-sm sm:text-base text-[#E8DED8] mb-8 max-w-2xl mx-auto leading-relaxed">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-white mb-4">Join Our Journey</h2>
+            <p className="text-sm sm:text-base text-[#FAF7F3] mb-8 max-w-2xl mx-auto leading-relaxed">
               Experience authentic Pakistani heritage craft alongside high-quality everyday essentials. Browse our curated collection or connect with our merchant team.
             </p>
             
