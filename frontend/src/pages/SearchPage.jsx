@@ -4,7 +4,7 @@ import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import ProductService from '../services/productService';
 import { getImageUrl, getApiUrl } from '../config';
-import EnhancedProductCard from '../components/EnhancedProductCard';
+import ShopProductCard from '../components/ShopProductCard';
 
 // Icons
 const ShoppingCartIcon = (props) => (
@@ -30,6 +30,16 @@ const SearchPage = () => {
   const navigate = useNavigate();
   const { addToCart, cartItems } = useCart();
   const { user } = useAuth();
+  const [wishlist, setWishlist] = useState(new Set());
+
+  const handleToggleWishlist = (productId) => {
+    setWishlist(prev => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
+    });
+  };
   
   // Search state
   const [products, setProducts] = useState([]);
@@ -323,7 +333,7 @@ const SearchPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Search Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1 max-w-2xl">
               <form onSubmit={handleSearch} className="relative">
@@ -358,7 +368,7 @@ const SearchPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-6">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           
           {/* Filters Sidebar */}
@@ -474,19 +484,23 @@ const SearchPage = () => {
 
 
                 {/* Products Grid with Infinite Scroll */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                   {products.map((product, index) => (
-                    <EnhancedProductCard
+                    <div
                       key={product._id}
-                      product={product}
                       ref={products.length === index + 1 ? lastProductElementRef : null}
-                      onAddToCart={handleAddToCart}
-                      onBuyNow={handleBuyNow}
-                      cartQuantity={getCartQuantity(product._id)}
-                      isInCart={isProductInCart(product._id)}
-                      isAddingToCart={addingToCart[product._id] || false}
-                      showBuyNow={true}
-                    />
+                    >
+                      <ShopProductCard
+                        product={product}
+                        onAddToCart={handleAddToCart}
+                        onBuyNow={handleBuyNow}
+                        cartQuantity={getCartQuantity(product._id)}
+                        isInCart={isProductInCart(product._id)}
+                        isAddingToCart={addingToCart[product._id] || false}
+                        isFavorite={wishlist.has(product._id)}
+                        onFavoriteToggle={handleToggleWishlist}
+                      />
+                    </div>
                   ))}
                 </div>
 
