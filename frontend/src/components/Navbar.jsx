@@ -110,60 +110,57 @@ const Navbar = () => {
 
   return (
     <header className="bg-[#0f172a] shadow-lg sticky top-0 z-50 border-b border-gray-800 header-glass-dark">
-      {/* Main Navigation */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-18 py-2">
+      {/* Main Navigation - Full Width with consistent padding */}
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 py-1.5">
           
-          {/* Logo */}
+          {/* Logo on Left */}
           <Link to="/" className="flex items-center space-x-2 group flex-shrink-0 transition-transform hover:scale-105">
             <img
               src="/IT Images/ITLOGO2.png"
               alt="Logo"
-              className="w-32 h-auto rounded drop-shadow-md"
+              className="h-9 w-auto rounded drop-shadow-md object-contain"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </Link>
 
-          {/* Search Bar - Modernized with Shimmer */}
-          <div className="flex-1 max-w-[140px] mx-1 md:max-w-xl md:mx-6 relative group">
+          {/* Search Bar - Stretched across entire remaining space */}
+          <div className="flex-1 mx-2 sm:mx-4 md:mx-6 min-w-0">
             <form onSubmit={handleSearch} className="flex w-full overflow-hidden rounded-md border border-gray-700 focus-within:border-orange-500 transition-all shadow-inner bg-gray-900/50">
-              <div className="hidden md:block bg-gray-800 px-4 py-2 text-xs font-bold text-gray-300 uppercase tracking-wider border-r border-gray-700" style={{ fontFamily: 'var(--font-serif)' }}>
-                Categories
-              </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search premium products..."
-                className="bg-transparent text-white flex-1 px-4 py-2 text-sm focus:outline-none placeholder-gray-500"
+                className="bg-transparent text-white flex-1 px-3 sm:px-4 py-1.5 text-xs sm:text-sm focus:outline-none placeholder-gray-500 min-w-0"
               />
               <button
                 type="submit"
-                className="shimmer-bg px-5 py-2 transition-all hover:opacity-90 flex-shrink-0"
+                className="shimmer-bg px-4 sm:px-5 py-1.5 transition-all hover:opacity-90 flex-shrink-0"
               >
-                <SearchIcon className="w-5 h-5 text-white" />
+                <SearchIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </button>
             </form>
           </div>
 
           {/* Right Side Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-6 flex-shrink-0">
             {/* Account Info */}
             <div className="flex items-center">
               {isVendorAuthenticated || isAuthenticated ? (
                 <div className="flex flex-col items-end mr-3">
-                  <span className="text-gray-400 text-[10px] uppercase tracking-widest">Welcome</span>
-                  <span className="text-white text-sm font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
+                  <span className="text-gray-400 text-[10px] uppercase tracking-widest leading-none">Welcome</span>
+                  <span className="text-white text-xs sm:text-sm font-bold truncate max-w-[150px]" style={{ fontFamily: 'var(--font-serif)' }}>
                     {isVendorAuthenticated ? (vendor?.businessName || vendor?.name) : user?.name}
                   </span>
                 </div>
               ) : null}
 
               <div className="relative group">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-all duration-300 border border-transparent hover:border-gray-700 hover:bg-gray-800 ${!isAuthenticated && !isVendorAuthenticated ? 'shimmer-bg text-white shadow-lg' : 'text-white'}`}>
-                  <UserIcon className="w-5 h-5" />
-                  <span className="font-bold text-sm" style={{ fontFamily: 'var(--font-serif)' }}>Account</span>
-                  <ChevronDownIcon className="w-4 h-4" />
+                <button className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md transition-all duration-300 border border-transparent hover:border-gray-700 hover:bg-gray-800 ${!isAuthenticated && !isVendorAuthenticated ? 'shimmer-bg text-white shadow-lg' : 'text-white'}`}>
+                  <UserIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="font-bold text-xs sm:text-sm" style={{ fontFamily: 'var(--font-serif)' }}>Account</span>
+                  <ChevronDownIcon className="w-3.5 h-3.5" />
                 </button>
                 
                 {/* Dropdown Menu */}
@@ -207,24 +204,24 @@ const Navbar = () => {
             </div>
 
             {/* Cart */}
-            <Link to="/cart" className="relative flex items-center space-x-3 text-white hover:text-orange-400 group transition-all">
+            <Link to="/cart" className="relative flex items-center space-x-2 text-white hover:text-orange-400 group transition-all">
               <div className="relative">
-                <ShoppingCartIcon className="w-8 h-8 transition-transform group-hover:scale-110" />
+                <ShoppingCartIcon className="w-7 h-7 transition-transform group-hover:scale-110" />
                 {cartStats.totalItems > 0 && (
-                  <span className="absolute -top-2 -right-2 shimmer-bg text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg border-2 border-[#0f172a]">
+                  <span className="absolute -top-1.5 -right-2 shimmer-bg text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-lg border-2 border-[#0f172a]">
                     {cartStats.totalItems}
                   </span>
                 )}
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-tighter text-gray-400">Your Cart</span>
-                <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-serif)' }}>Checkout</span>
+              <div className="flex flex-col leading-tight">
+                <span className="text-[9px] uppercase tracking-tighter text-gray-400">Your Cart</span>
+                <span className="text-xs sm:text-sm font-bold" style={{ fontFamily: 'var(--font-serif)' }}>Checkout</span>
               </div>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center space-x-4 md:hidden">
+          <div className="flex items-center space-x-3 md:hidden">
             <Link to="/cart" className="relative text-white">
               <ShoppingCartIcon className="w-6 h-6" />
               {cartStats.totalItems > 0 && (
@@ -234,22 +231,23 @@ const Navbar = () => {
               )}
             </Link>
             <button onClick={() => setIsOpen(!isOpen)} className="text-white p-1">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isOpen ? <path d="M6 18L18 6M6 6l12 12" strokeWidth="2" /> : <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" />}
               </svg>
             </button>
           </div>
         </div>
       </div>
-      {/* Secondary Navigation */}
+
+      {/* Secondary Navigation - Full Width with consistent padding & decreased height */}
       <div className="bg-[#1e293b] border-b border-gray-800 shadow-inner">
-        <div className="max-w-screen-xl mx-auto px-4">
-          <nav className="hidden md:flex items-center h-12 justify-between">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+          <nav className="hidden md:flex items-center h-10 justify-between">
             
-            {/* All Categories Dropdown */}
-            <div className="relative" ref={categoriesRef} onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
-              <button className="shimmer-bg flex items-center space-x-2 px-4 py-1.5 rounded text-white text-xs font-bold uppercase tracking-widest shadow-md hover:scale-105 transition-transform" style={{ fontFamily: 'var(--font-serif)' }}>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" /></svg>
+            {/* All Categories Dropdown - Placed on the Left */}
+            <div className="relative flex-shrink-0" ref={categoriesRef} onMouseEnter={() => setCatOpen(true)} onMouseLeave={() => setCatOpen(false)}>
+              <button className="shimmer-bg flex items-center space-x-1.5 px-3 py-1 rounded text-white text-xs font-bold uppercase tracking-widest shadow-md hover:scale-105 transition-transform" style={{ fontFamily: 'var(--font-serif)' }}>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" /></svg>
                 <span>Browse All</span>
               </button>
 
@@ -263,7 +261,7 @@ const Navbar = () => {
                            onMouseEnter={(e) => { if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current); setHoveredCategory(main); const rect = e.currentTarget.getBoundingClientRect(); setSubmenuPosition(rect.top - e.currentTarget.closest('.overflow-y-auto').getBoundingClientRect().top); }}
                            onMouseLeave={() => { hoverTimeoutRef.current = setTimeout(() => setHoveredCategory(null), 150); }}>
                         <Link to={`/category-group/${main.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`} 
-                              className="flex justify-between items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all border-l-4 border-transparent hover:border-orange-500"
+                              className="flex justify-between items-center px-4 py-2.5 text-sm font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all border-l-4 border-transparent hover:border-orange-500"
                               style={{ fontFamily: 'var(--font-serif)' }} onClick={() => setCatOpen(false)}>
                           <span>{main}</span>
                           {subs.length > 0 && <ChevronDownIcon className="w-4 h-4 -rotate-90 text-gray-300" />}
@@ -276,7 +274,7 @@ const Navbar = () => {
                             <div className="bg-gray-50 px-4 py-2 border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{main} Collection</div>
                             {subs.sort().map((sub, i) => (
                               <Link key={i} to={`/category-group/${sub.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`}
-                                    className="block px-4 py-3 text-sm font-bold text-gray-600 hover:bg-orange-50 hover:text-orange-600"
+                                    className="block px-4 py-2.5 text-sm font-bold text-gray-600 hover:bg-orange-50 hover:text-orange-600"
                                     style={{ fontFamily: 'var(--font-serif)' }} onClick={() => setCatOpen(false)}>{sub}</Link>
                             ))}
                           </div>
@@ -289,15 +287,15 @@ const Navbar = () => {
             </div>
 
             {/* Main Links */}
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 h-full">
               {mainPages.map((page) => (
                 <NavLink
                   key={page.label}
                   to={page.path}
                   className={({ isActive }) => {
                     const isWholesale = page.label === 'Wholesale Dealership';
-                    if (isWholesale) return `mx-2 px-5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all shimmer-bg text-white shadow-lg border border-white/20 hover:scale-105 active:scale-95`;
-                    return `px-4 py-4 text-xs font-bold uppercase tracking-widest transition-all ${isActive ? 'text-orange-400 border-b-2 border-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5'}`;
+                    if (isWholesale) return `mx-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest transition-all shimmer-bg text-white shadow-lg border border-white/20 hover:scale-105 active:scale-95`;
+                    return `px-3 py-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center h-full ${isActive ? 'text-orange-400 border-b-2 border-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5'}`;
                   }}
                   style={{ fontFamily: 'var(--font-serif)' }}
                 >
@@ -307,15 +305,15 @@ const Navbar = () => {
             </div>
 
             {/* Other Pages Dropdown */}
-            <div className="relative group">
-              <button className="flex items-center space-x-1 px-4 py-4 text-xs font-bold text-gray-400 hover:text-white uppercase tracking-widest">
+            <div className="relative group flex items-center h-full">
+              <button className="flex items-center space-x-1 px-3 py-2 text-xs font-bold text-gray-400 hover:text-white uppercase tracking-widest">
                 <span>More</span>
                 <ChevronDownIcon className="w-3 h-3" />
               </button>
-              <div className="absolute right-0 w-48 bg-[#0f172a] rounded-b-lg shadow-2xl border border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all py-2">
+              <div className="absolute right-0 top-full w-48 bg-[#0f172a] rounded-b-lg shadow-2xl border border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all py-2 z-50">
                 {otherPages.map((page) => (
                   <NavLink key={page.label} to={page.path} style={{ fontFamily: 'var(--font-serif)' }}
-                           className="block px-4 py-3 text-xs font-bold text-gray-400 hover:text-orange-400 hover:bg-white/5 uppercase tracking-widest">
+                           className="block px-4 py-2.5 text-xs font-bold text-gray-400 hover:text-orange-400 hover:bg-white/5 uppercase tracking-widest">
                     {page.label}
                   </NavLink>
                 ))}
@@ -325,37 +323,37 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu - Logic Preserved, Styling Updated */}
+      {/* Mobile Menu - Logic Preserved */}
       {isOpen && (
-        <div ref={mobileMenuRef} className="md:hidden fixed inset-0 top-[64px] bg-white z-40 overflow-y-auto animate-in slide-in-from-right duration-300">
+        <div ref={mobileMenuRef} className="md:hidden fixed inset-0 top-[56px] bg-white z-40 overflow-y-auto animate-in slide-in-from-right duration-300">
           <div className="p-4 space-y-2">
             {mainPages.map((page) => (
               <NavLink key={page.label} to={page.path} onClick={() => setIsOpen(false)}
-                       className="block p-4 rounded-lg text-lg font-bold text-gray-800 border-b border-gray-50 active:bg-gray-50"
+                       className="block p-3 rounded-lg text-base font-bold text-gray-800 border-b border-gray-50 active:bg-gray-50"
                        style={{ fontFamily: 'var(--font-serif)' }}>
                 {page.label}
               </NavLink>
             ))}
-            <button onClick={() => setMobileCatOpen(!mobileCatOpen)} className="w-full flex justify-between items-center p-4 text-lg font-bold text-gray-800" style={{ fontFamily: 'var(--font-serif)' }}>
+            <button onClick={() => setMobileCatOpen(!mobileCatOpen)} className="w-full flex justify-between items-center p-3 text-base font-bold text-gray-800" style={{ fontFamily: 'var(--font-serif)' }}>
               <span>Categories</span>
-              <ChevronDownIcon className={`w-6 h-6 transition-transform ${mobileCatOpen ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon className={`w-5 h-5 transition-transform ${mobileCatOpen ? 'rotate-180' : ''}`} />
             </button>
             {mobileCatOpen && (
               <div className="grid grid-cols-1 gap-1 pl-4 bg-gray-50 rounded-xl py-2">
                 {Object.keys(categories).sort().map(main => (
                   <Link key={main} to={`/category-group/${main.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`}
-                        className="p-3 text-sm font-bold text-gray-600" onClick={() => setIsOpen(false)}>{main}</Link>
+                        className="p-2.5 text-sm font-bold text-gray-600" onClick={() => setIsOpen(false)}>{main}</Link>
                 ))}
               </div>
             )}
-            <div className="pt-6 border-t border-gray-100 space-y-4">
+            <div className="pt-4 border-t border-gray-100 space-y-3">
               {!isAuthenticated && !isVendorAuthenticated ? (
-                <div className="grid grid-cols-2 gap-4">
-                  <Link to="/login" className="p-4 text-center font-bold bg-gray-100 rounded-xl" style={{ fontFamily: 'var(--font-serif)' }}>Login</Link>
-                  <Link to="/register" className="p-4 text-center font-bold shimmer-bg text-white rounded-xl" style={{ fontFamily: 'var(--font-serif)' }}>Register</Link>
+                <div className="grid grid-cols-2 gap-3">
+                  <Link to="/login" className="p-3 text-center font-bold bg-gray-100 rounded-xl" style={{ fontFamily: 'var(--font-serif)' }}>Login</Link>
+                  <Link to="/register" className="p-3 text-center font-bold shimmer-bg text-white rounded-xl" style={{ fontFamily: 'var(--font-serif)' }}>Register</Link>
                 </div>
               ) : (
-                <button onClick={isAuthenticated ? logout : vendorLogout} className="w-full p-4 text-center font-bold text-red-600 bg-red-50 rounded-xl" style={{ fontFamily: 'var(--font-serif)' }}>Logout</button>
+                <button onClick={isAuthenticated ? logout : vendorLogout} className="w-full p-3 text-center font-bold text-red-600 bg-red-50 rounded-xl" style={{ fontFamily: 'var(--font-serif)' }}>Logout</button>
               )}
             </div>
           </div>
