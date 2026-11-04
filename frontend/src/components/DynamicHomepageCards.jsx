@@ -75,7 +75,7 @@ const DynamicHomepageCards = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="bg-gray-100 animate-pulse rounded-2xl h-80 sm:h-96"></div>
+              <div key={num} className="bg-gray-100 animate-pulse rounded-2xl h-56 sm:h-72 lg:h-80"></div>
             ))}
           </div>
         </div>
@@ -99,14 +99,14 @@ const DynamicHomepageCards = () => {
           - lg:grid-cols-4: 4 columns on widescreen desktops
           - items-stretch: all cards share equal dynamic height
         */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 items-stretch">
           {cardPositions.map((card, index) => {
             // 1. Placeholder card if no card is configured
             if (!card) {
               return (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl border border-dashed border-black/25 p-4 sm:p-5 flex items-center justify-center min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] text-gray-400"
+                  className="bg-white rounded-2xl border border-dashed border-black/25 p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-gray-400"
                 >
                   <div className="text-center">
                     <div className="w-6 h-6 bg-gray-200/50 rounded-full mx-auto mb-2 animate-pulse"></div>
@@ -125,7 +125,7 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={card._id} 
-                  className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-4 sm:p-5 flex flex-col justify-between min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] group"
+                  className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
                     <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-orange-600 transition-colors">
@@ -152,7 +152,7 @@ const DynamicHomepageCards = () => {
                   
                   <Link 
                     to={mainUrl} 
-                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-3 block"
+                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-2 sm:pt-3 block"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     Explore Now →
@@ -167,7 +167,7 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={card._id} 
-                  className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-4 sm:p-5 flex flex-col justify-between min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] group"
+                  className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
                     <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-orange-600 transition-colors">
@@ -182,7 +182,7 @@ const DynamicHomepageCards = () => {
                         return (
                           <div key={idx} className="flex flex-col items-start group/sub">
                             <Link to={getCategoryUrl(item.category._id, item.category.name)} className="w-full block">
-                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center p-2 border border-black/5 group-hover/sub:border-black/15 transition-all duration-300">
+                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center p-1.5 sm:p-2 border border-black/5 group-hover/sub:border-black/15 transition-all duration-300">
                                 <LazyImage 
                                   src={getSubcategoryImageUrl(item)}
                                   alt={item.name}
@@ -217,7 +217,7 @@ const DynamicHomepageCards = () => {
             return (
               <div 
                 key={card._id} 
-                className="bg-white rounded-2xl border border-black/25 p-5 flex items-center justify-center min-h-[380px] sm:min-h-[440px] lg:min-h-[480px] text-gray-400"
+                className="bg-white rounded-2xl border border-black/25 p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-gray-400"
               >
                 <div className="text-center">
                   <p className="text-xs font-bold text-red-500 uppercase tracking-widest font-serif" style={{ fontFamily: 'var(--font-serif)' }}>Invalid Configuration</p>
