@@ -3,6 +3,7 @@ import { contactAPI } from '../services/contactAPI';
 
 // Validation utilities - optimized with memoization
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
 // Phone number validation function
 const validatePhone = (phone) => {
   // Remove all non-digit characters except +
@@ -14,22 +15,18 @@ const validatePhone = (phone) => {
   // 3. International numbers: +countrycode + number (7-15 digits after +)
   // 4. Local numbers: xxxxxxxxxx (10-15 digits)
   
-  // Pakistani format: +92xxxxxxxxxx
   if (cleanPhone.match(/^\+92\d{10}$/)) {
     return true;
   }
   
-  // Pakistani format starting with 0: 0xxxxxxxxxx (11 digits)
   if (cleanPhone.match(/^0\d{10}$/)) {
     return true;
   }
   
-  // International format: +countrycode + 7-15 digits
   if (cleanPhone.match(/^\+\d{7,15}$/)) {
     return true;
   }
   
-  // Local format: 10-15 digits (can start with any digit)
   if (cleanPhone.match(/^\d{10,15}$/)) {
     return true;
   }
@@ -37,7 +34,7 @@ const validatePhone = (phone) => {
   return false;
 };
 
-// Mock API call - simulated with realistic timing
+// API submission
 const submitContactForm = async (formData) => {
   try {
     const response = await contactAPI.submitContact(formData);
@@ -49,12 +46,12 @@ const submitContactForm = async (formData) => {
   }
 };
 
-// Move FormField outside the component to prevent recreation
+// FormField component
 const FormField = memo(({ label, name, type = "text", required = false, error, placeholder, children, value, onChange, ...props }) => (
-  <div className="space-y-1">
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+  <div className="space-y-1.5 font-body">
+    <label htmlFor={name} className="block text-sm font-medium text-[#241A1D]">
       {label}
-      {required && <span className="text-red-500 ml-1">*</span>}
+      {required && <span className="text-[#C43D43] ml-1">*</span>}
     </label>
     {children || (
       <input
@@ -64,14 +61,14 @@ const FormField = memo(({ label, name, type = "text", required = false, error, p
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full border rounded-md py-2.5 px-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
-          error ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+        className={`w-full border rounded-xl py-2.5 px-3.5 text-[#241A1D] placeholder-[#8B8080] bg-[#FCFAF8] focus:outline-none focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all text-sm ${
+          error ? 'border-[#C43D43] focus:ring-[#C43D43]' : 'border-[#E8DED8] hover:border-[#D8C9C0]'
         }`}
         {...props}
       />
     )}
     {error && (
-      <p className="text-red-600 text-sm flex items-center mt-1">
+      <p className="text-[#C43D43] text-xs flex items-center mt-1">
         <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
@@ -113,11 +110,10 @@ const ContactUsPage = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error for this field if it exists
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
-  }, []); // Remove errors dependency to prevent re-creation
+  }, [errors]);
 
   const validateForm = useCallback(() => {
     const newErrors = {};
@@ -169,7 +165,7 @@ const ContactUsPage = () => {
     try {
       const response = await submitContactForm(formData);
       setSubmitStatus('success');
-      setSubmitMessage(response.message);
+      setSubmitMessage(response.message || "Your message has been sent successfully! We will get back to you shortly.");
       
       setFormData({
         name: "",
@@ -189,23 +185,22 @@ const ContactUsPage = () => {
     }
   }, [formData, validateForm]);
 
-  // Memoized components for better performance
   const ContactCard = ({ icon, title, content, href, linkText }) => (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white rounded-2xl p-6 shadow-2xs border border-[#E8DED8] hover:shadow-md hover:border-[#B97855]/50 transition-all font-body">
       <div className="flex items-start space-x-4">
-        <div className="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+        <div className="flex-shrink-0 w-12 h-12 bg-[#F4E9ED] border border-[#5B1830]/20 rounded-xl flex items-center justify-center">
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-          <p className="text-gray-600 text-sm mb-3 leading-relaxed">{content}</p>
+          <h3 className="text-base sm:text-lg font-semibold text-[#241A1D] mb-1.5 font-display">{title}</h3>
+          <p className="text-[#746B6C] text-xs sm:text-sm mb-3 leading-relaxed">{content}</p>
           {href && linkText && (
             <a 
               href={href}
-              className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium text-sm transition-colors"
+              className="inline-flex items-center text-[#5B1830] hover:text-[#350A1B] font-semibold text-xs sm:text-sm transition-colors cursor-pointer group"
             >
-              {linkText}
-              <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span>{linkText}</span>
+              <svg className="ml-1 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
               </svg>
             </a>
@@ -219,14 +214,14 @@ const ContactUsPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     
     return (
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-[#E8DED8] rounded-xl overflow-hidden bg-white hover:border-[#B97855]/40 transition-colors font-body">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors focus:outline-none focus:bg-gray-50"
+          className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-[#FAF7F3] transition-colors focus:outline-none cursor-pointer"
         >
-          <span className="font-medium text-gray-900 pr-4">{question}</span>
+          <span className="font-semibold text-sm sm:text-base text-[#241A1D] pr-4">{question}</span>
           <svg 
-            className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} 
+            className={`w-5 h-5 text-[#8B8080] transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180 text-[#5B1830]' : ''}`} 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -235,8 +230,8 @@ const ContactUsPage = () => {
           </svg>
         </button>
         {isOpen && (
-          <div className="px-6 pb-4 border-t border-gray-100">
-            <p className="text-gray-600 leading-relaxed pt-4">{answer}</p>
+          <div className="px-6 pb-4 pt-1 border-t border-[#E8DED8]/60 bg-[#FCFAF8]">
+            <p className="text-[#746B6C] text-sm leading-relaxed">{answer}</p>
           </div>
         )}
       </div>
@@ -254,7 +249,7 @@ const ContactUsPage = () => {
 
   const contactMethods = [
     {
-      icon: <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      icon: <svg className="w-6 h-6 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
       </svg>,
       title: "Phone Support",
@@ -263,7 +258,7 @@ const ContactUsPage = () => {
       linkText: "+92 300 5567507"
     },
     {
-      icon: <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      icon: <svg className="w-6 h-6 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 7.89a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
       </svg>,
       title: "Email Support",
@@ -272,7 +267,7 @@ const ContactUsPage = () => {
       linkText: "support@internationaltijarat.com"
     },
     {
-      icon: <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      icon: <svg className="w-6 h-6 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>,
       title: "Live Chat",
@@ -295,7 +290,6 @@ const ContactUsPage = () => {
       question: "How can I track my order?",
       answer: "Once your order ships, you'll receive a tracking number via email and SMS. You can also track your order by logging into your account or using our order tracking page with your order number."
     },
-     
     {
       question: "How do I become a business partner?",
       answer: "We welcome business partnerships! Please contact us through the contact options above selecting 'Business Partnership', or email partnerships@internationaltijarat.com with your proposal and company information."
@@ -303,7 +297,7 @@ const ContactUsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3] font-body text-[#241A1D]">
       {/* SEO Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify({
@@ -327,13 +321,13 @@ const ContactUsPage = () => {
       </script>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-white border-b border-[#E8DED8]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-[#241A1D]">
               Contact Customer Service
             </h1>
-            <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="mt-3 text-base sm:text-lg text-[#746B6C] max-w-2xl mx-auto font-light">
               We're here to help with any questions about your orders, our products, or our services.
             </p>
           </div>
@@ -341,7 +335,7 @@ const ContactUsPage = () => {
       </div>
 
       {/* Quick Contact Methods */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {contactMethods.map((method, index) => (
             <ContactCard key={index} {...method} />
@@ -352,11 +346,11 @@ const ContactUsPage = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
+            <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-6 sm:p-8">
+              <h2 className="text-xl sm:text-2xl font-display font-bold text-[#241A1D] mb-6">Send us a message</h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <FormField
                     label="Full Name"
                     name="name"
@@ -378,7 +372,7 @@ const ContactUsPage = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <FormField
                     label="Phone Number"
                     name="phone"
@@ -398,7 +392,7 @@ const ContactUsPage = () => {
                       name="inquiryType"
                       value={formData.inquiryType}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md py-2.5 px-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full border border-[#E8DED8] rounded-xl py-2.5 px-3.5 text-[#241A1D] bg-[#FCFAF8] focus:outline-none focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] text-sm cursor-pointer"
                     >
                       {inquiryTypes.map((type) => (
                         <option key={type.value} value={type.value}>
@@ -431,23 +425,23 @@ const ContactUsPage = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
-                    rows="6"
+                    rows="5"
                     placeholder="Please provide details about your inquiry..."
-                    className={`w-full border rounded-md py-2.5 px-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none ${
-                      errors.message ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+                    className={`w-full border rounded-xl py-2.5 px-3.5 text-[#241A1D] placeholder-[#8B8080] bg-[#FCFAF8] focus:outline-none focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] resize-none text-sm ${
+                      errors.message ? 'border-[#C43D43] focus:ring-[#C43D43]' : 'border-[#E8DED8]'
                     }`}
                   />
                 </FormField>
 
                 {/* Submit Status */}
                 {submitStatus && (
-                  <div className={`p-4 rounded-md flex items-start ${
+                  <div className={`p-4 rounded-xl flex items-start ${
                     submitStatus === 'success' 
-                      ? 'bg-green-50 border border-green-200' 
-                      : 'bg-red-50 border border-red-200'
+                      ? 'bg-[#EAF4EF] border border-[#23845B]/30' 
+                      : 'bg-[#FBECEE] border border-[#C43D43]/30'
                   }`}>
                     <svg className={`w-5 h-5 mt-0.5 mr-3 flex-shrink-0 ${
-                      submitStatus === 'success' ? 'text-green-500' : 'text-red-500'
+                      submitStatus === 'success' ? 'text-[#23845B]' : 'text-[#C43D43]'
                     }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       {submitStatus === 'success' ? (
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -455,7 +449,7 @@ const ContactUsPage = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       )}
                     </svg>
-                    <p className={`text-sm ${submitStatus === 'success' ? 'text-green-700' : 'text-red-700'}`}>
+                    <p className={`text-sm ${submitStatus === 'success' ? 'text-[#23845B] font-medium' : 'text-[#C43D43]'}`}>
                       {submitMessage}
                     </p>
                   </div>
@@ -465,7 +459,7 @@ const ContactUsPage = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white font-medium py-3 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:cursor-not-allowed"
+                  className="w-full bg-[#5B1830] hover:bg-[#350A1B] disabled:bg-[#8B8080] text-white font-medium py-3 px-5 rounded-xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[#5B1830] focus:ring-offset-2 disabled:cursor-not-allowed cursor-pointer font-body text-sm sm:text-base"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center justify-center">
@@ -473,7 +467,7 @@ const ContactUsPage = () => {
                       Sending message...
                     </div>
                   ) : (
-                    "Send message"
+                    "Send Message"
                   )}
                 </button>
               </form>
@@ -483,52 +477,52 @@ const ContactUsPage = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Business Hours */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg className="w-5 h-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-6">
+              <h3 className="text-base sm:text-lg font-semibold font-display text-[#241A1D] mb-4 flex items-center">
+                <svg className="w-5 h-5 text-[#B97855] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Business Hours
               </h3>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2.5 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Monday - Friday</span>
-                  <span className="font-medium text-gray-900">9:00 AM - 8:00 PM PST</span>
+                  <span className="text-[#746B6C]">Monday - Friday</span>
+                  <span className="font-semibold text-[#241A1D]">9:00 AM - 8:00 PM PST</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Saturday</span>
-                  <span className="font-medium text-gray-900">10:00 AM - 6:00 PM PST</span>
+                  <span className="text-[#746B6C]">Saturday</span>
+                  <span className="font-semibold text-[#241A1D]">10:00 AM - 6:00 PM PST</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Sunday</span>
-                  <span className="font-medium text-gray-900">12:00 PM - 5:00 PM PST</span>
+                  <span className="text-[#746B6C]">Sunday</span>
+                  <span className="font-semibold text-[#241A1D]">12:00 PM - 5:00 PM PST</span>
                 </div>
               </div>
-              <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                <p className="text-blue-700 text-sm flex items-start">
-                  <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="mt-5 p-3.5 bg-[#F4E9ED] border border-[#5B1830]/20 rounded-xl">
+                <p className="text-[#5B1830] text-xs sm:text-sm font-medium flex items-start">
+                  <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Phone support available 24/7 for urgent issues
+                  Phone support available 24/7 for urgent inquiries
                 </p>
               </div>
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Why customers trust us</h3>
-              <div className="space-y-3">
+            <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-6">
+              <h3 className="text-base sm:text-lg font-semibold font-display text-[#241A1D] mb-4">Why customers trust us</h3>
+              <div className="space-y-4">
                 <div className="flex items-center">
-                  <div className="text-2xl font-bold text-orange-600 mr-3">24/7</div>
-                  <div className="text-sm text-gray-600">Customer Support</div>
+                  <div className="text-2xl sm:text-3xl font-display font-bold text-[#5B1830] w-20">24/7</div>
+                  <div className="text-xs sm:text-sm text-[#746B6C]">Customer Support</div>
                 </div>
                 <div className="flex items-center">
-                  <div className="text-2xl font-bold text-orange-600 mr-3">99.5%</div>
-                  <div className="text-sm text-gray-600">Customer Satisfaction</div>
+                  <div className="text-2xl sm:text-3xl font-display font-bold text-[#5B1830] w-20">99.5%</div>
+                  <div className="text-xs sm:text-sm text-[#746B6C]">Customer Satisfaction</div>
                 </div>
                 <div className="flex items-center">
-                  <div className="text-2xl font-bold text-orange-600 mr-3">100+</div>
-                  <div className="text-sm text-gray-600">Countries Served</div>
+                  <div className="text-2xl sm:text-3xl font-display font-bold text-[#5B1830] w-20">100+</div>
+                  <div className="text-xs sm:text-sm text-[#746B6C]">Countries Served</div>
                 </div>
               </div>
             </div>
@@ -538,9 +532,9 @@ const ContactUsPage = () => {
         {/* FAQ Section */}
         <div className="mt-16">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Find answers to common questions. Can't find what you're looking for? Use the contact options above.
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#241A1D] mb-2">Frequently Asked Questions</h2>
+            <p className="text-[#746B6C] text-sm max-w-xl mx-auto">
+              Find answers to common questions. Can't find what you're looking for? Reach out to our team above.
             </p>
           </div>
 

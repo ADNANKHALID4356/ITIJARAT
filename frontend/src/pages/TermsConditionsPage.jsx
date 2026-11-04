@@ -21,17 +21,17 @@ const TermsConditionsPage = () => {
         <meta name="robots" content="index, follow" />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F3] font-body text-[#241A1D]">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-16">
+        <div className="bg-[#350A1B] text-white py-14 sm:py-16 border-b border-[#B97855]/20">
           <div className="container mx-auto px-6 lg:px-12 max-w-4xl">
-            <h1 className="text-4xl lg:text-5xl font-bold text-center mb-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-center mb-3">
               Terms and Conditions
             </h1>
-            <p className="text-xl text-center text-orange-100">
+            <p className="text-base sm:text-lg text-center text-[#F0E7DF] font-light">
               Please read these terms carefully before using our platform.
             </p>
-            <p className="text-center text-orange-200 mt-4">
+            <p className="text-center text-[#B97855] text-xs sm:text-sm mt-3">
               Last updated: October 11, 2025
             </p>
           </div>
@@ -39,7 +39,7 @@ const TermsConditionsPage = () => {
 
         {/* Content Section */}
         <div className="container mx-auto px-6 lg:px-12 max-w-4xl py-12">
-          <div className="bg-white rounded-lg shadow-lg p-8 lg:p-12">
+          <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-6 sm:p-8 lg:p-12">
             
             {/* Introduction */}
             <section className="mb-12">
@@ -373,7 +373,7 @@ const TermsConditionsPage = () => {
                 <p className="mb-4">
                   If you have any questions about these Terms and Conditions, please contact us:
                 </p>
-                <div className="bg-orange-50 p-6 rounded-lg border border-orange-200">
+                <div className="bg-[#FAF7F3] p-6 rounded-xl border border-[#E8DED8]">
                   <p className="mb-2"><strong>Email:</strong> legal@internationaltijarat.com</p>
                   <p className="mb-2"><strong>Support:</strong> support@internationaltijarat.com</p>
                   <p className="mb-2"><strong>Address:</strong> International Tijarat Legal Department</p>
