@@ -297,7 +297,11 @@ const Navbar = () => {
                     to={page.path}
                     className={({ isActive }) => {
                       const isWholesale = page.label === 'Wholesale Dealership';
-                      if (isWholesale) return `mx-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider transition-all bg-[#F4E9ED] text-[#5B1830] border border-[#B97855]/40 hover:bg-[#5B1830] hover:text-white shadow-2xs font-body`;
+                      if (isWholesale) {
+                        return isActive
+                          ? 'mx-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-all bg-[#5B1830] text-white border border-[#5B1830] shadow-2xs font-body'
+                          : 'mx-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-all bg-[#F4E9ED] text-[#5B1830] border border-[#B97855]/40 hover:bg-[#5B1830] hover:text-white shadow-2xs font-body';
+                      }
                       return `px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-all flex items-center h-full font-body ${isActive ? 'text-[#5B1830] border-b-2 border-[#5B1830]' : 'text-[#746B6C] hover:text-[#241A1D] hover:bg-black/5'}`;
                     }}
                   >

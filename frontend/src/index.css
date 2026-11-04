@@ -81,22 +81,6 @@ h1, h2, h3, h4, .section-heading, .font-display {
   color: var(--text-primary);
 }
 
-/* On burgundy and dark surfaces, default text and headings to bright inverse white */
-[class*="bg-[#350A1B]"],
-[class*="bg-[#5B1830]"],
-[class*="bg-[#270713]"],
-[class*="bg-[#1E040E]"],
-.dark-brand-surface {
-  color: var(--text-inverse);
-}
-
-[class*="bg-[#350A1B]"] :where(h1, h2, h3, h4, h5, h6, .section-heading, .font-display),
-[class*="bg-[#5B1830]"] :where(h1, h2, h3, h4, h5, h6, .section-heading, .font-display),
-[class*="bg-[#270713]"] :where(h1, h2, h3, h4, h5, h6, .section-heading, .font-display),
-[class*="bg-[#1E040E]"] :where(h1, h2, h3, h4, h5, h6, .section-heading, .font-display) {
-  color: var(--text-inverse);
-}
-
 /* Interface Font Utility */
 .font-body {
   font-family: var(--font-body);
