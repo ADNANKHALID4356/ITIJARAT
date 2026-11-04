@@ -71,11 +71,11 @@ const DynamicHomepageCards = () => {
   // Loading skeleton matching the 2-column mobile / 4-column desktop layout
   if (loading) {
     return (
-      <div className="bg-white pt-3 sm:pt-4 pb-0">
+      <div className="bg-[#FAF7F3] pt-3 sm:pt-4 pb-0">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="bg-gray-100 animate-pulse rounded-2xl h-56 sm:h-72 lg:h-80"></div>
+              <div key={num} className="bg-white border border-[#E8DED8] animate-pulse rounded-2xl h-56 sm:h-72 lg:h-80"></div>
             ))}
           </div>
         </div>
@@ -89,7 +89,7 @@ const DynamicHomepageCards = () => {
   );
 
   return (
-    <div className="w-full bg-white pt-3 sm:pt-4 pb-1">
+    <div className="w-full bg-[#FAF7F3] pt-3 sm:pt-4 pb-1">
       <div className="w-full px-3 sm:px-6">
         {/* 
           Main Grid Wrapper:
@@ -106,14 +106,14 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={index} 
-                  className="bg-white rounded-2xl border border-dashed border-black/25 p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-gray-400"
+                  className="bg-white rounded-2xl border border-dashed border-[#E8DED8] p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-[#8B8080]"
                 >
                   <div className="text-center">
-                    <div className="w-6 h-6 bg-gray-200/50 rounded-full mx-auto mb-2 animate-pulse"></div>
-                    <p className="text-[10px] sm:text-xs font-serif uppercase tracking-wider text-gray-500" style={{ fontFamily: 'var(--font-serif)' }}>
+                    <div className="w-6 h-6 bg-[#FAF7F3] rounded-full mx-auto mb-2 animate-pulse"></div>
+                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-[#746B6C] font-body">
                       Card {index + 1}
                     </p>
-                    <p className="text-[9px] text-gray-400 mt-0.5">Not Configured</p>
+                    <p className="text-[9px] text-[#8B8080] mt-0.5 font-body">Not Configured</p>
                   </div>
                 </div>
               );
@@ -125,18 +125,18 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={card._id} 
-                  className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
+                  className="bg-white rounded-2xl border border-[#E8DED8] hover:border-[#D8C9C0] shadow-2xs hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
-                    <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-orange-600 transition-colors">
-                      <h3 className="text-xs sm:text-base font-bold text-gray-900 tracking-tight leading-snug line-clamp-2">
+                    <Link to={mainUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-[#5B1830] transition-colors">
+                      <h3 className="text-xs sm:text-base font-semibold text-[#241A1D] tracking-tight leading-snug line-clamp-2 font-body">
                         {card.title}
                       </h3>
-                      <ChevronRight className="w-4 h-4 text-gray-700 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-4 h-4 text-[#746B6C] flex-shrink-0 group-hover:text-[#5B1830] group-hover:translate-x-0.5 transition-all" />
                     </Link>
                     {card.mainImage && (
                       <Link to={mainUrl} className="block group/img">
-                        <div className="aspect-[4/3] sm:aspect-square w-full rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center p-2 border border-black/5 group-hover/img:border-black/15 transition-all duration-300">
+                        <div className="aspect-[4/3] sm:aspect-square w-full rounded-xl overflow-hidden bg-[#FAF7F3] flex items-center justify-center p-2 border border-[#E8DED8] group-hover/img:border-[#D8C9C0] transition-all duration-300">
                           <LazyImage 
                             src={getCardImageUrl(card)}
                             alt={card.title}
@@ -152,8 +152,7 @@ const DynamicHomepageCards = () => {
                   
                   <Link 
                     to={mainUrl} 
-                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-2 sm:pt-3 block"
-                    style={{ fontFamily: 'var(--font-serif)' }}
+                    className="text-[10px] sm:text-xs font-semibold text-[#5B1830] hover:text-[#350A1B] font-body transition-colors tracking-wider uppercase mt-auto pt-2 sm:pt-3 block"
                   >
                     Explore Now →
                   </Link>
@@ -167,14 +166,14 @@ const DynamicHomepageCards = () => {
               return (
                 <div 
                   key={card._id} 
-                  className="bg-white rounded-2xl border border-black/25 hover:border-black/60 shadow-sm hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
+                  className="bg-white rounded-2xl border border-[#E8DED8] hover:border-[#D8C9C0] shadow-2xs hover:shadow-md transition-all duration-300 p-3 sm:p-4 lg:p-5 flex flex-col justify-between h-full group"
                 >
                   <div className="w-full">
-                    <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-orange-600 transition-colors">
-                      <h3 className="text-xs sm:text-base font-bold text-gray-900 tracking-tight leading-snug line-clamp-2">
+                    <Link to={firstSubUrl} className="flex items-center justify-between gap-2 mb-3 sm:mb-4 group-hover:text-[#5B1830] transition-colors">
+                      <h3 className="text-xs sm:text-base font-semibold text-[#241A1D] tracking-tight leading-snug line-clamp-2 font-body">
                         {card.title}
                       </h3>
-                      <ChevronRight className="w-4 h-4 text-gray-700 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-4 h-4 text-[#746B6C] flex-shrink-0 group-hover:text-[#5B1830] group-hover:translate-x-0.5 transition-all" />
                     </Link>
                     <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-2">
                       {card.subcategoryItems.map((item, idx) => {
@@ -182,7 +181,7 @@ const DynamicHomepageCards = () => {
                         return (
                           <div key={idx} className="flex flex-col items-start group/sub">
                             <Link to={getCategoryUrl(item.category._id, item.category.name)} className="w-full block">
-                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center p-1.5 sm:p-2 border border-black/5 group-hover/sub:border-black/15 transition-all duration-300">
+                              <div className="aspect-square w-full rounded-xl overflow-hidden bg-[#FAF7F3] flex items-center justify-center p-1.5 sm:p-2 border border-[#E8DED8] group-hover/sub:border-[#D8C9C0] transition-all duration-300">
                                 <LazyImage 
                                   src={getSubcategoryImageUrl(item)}
                                   alt={item.name}
@@ -193,7 +192,7 @@ const DynamicHomepageCards = () => {
                                 />
                               </div>
                             </Link>
-                            <p className="text-[10px] sm:text-xs text-gray-800 font-medium mt-1.5 text-left line-clamp-1 w-full">
+                            <p className="text-[10px] sm:text-xs text-[#241A1D] font-medium mt-1.5 text-left line-clamp-1 w-full font-body">
                               {item.name}
                             </p>
                           </div>
@@ -204,8 +203,7 @@ const DynamicHomepageCards = () => {
 
                   <Link 
                     to={firstSubUrl} 
-                    className="text-[10px] sm:text-xs font-bold text-orange-500 hover:text-orange-600 font-serif transition-colors tracking-widest uppercase mt-auto pt-3 block"
-                    style={{ fontFamily: 'var(--font-serif)' }}
+                    className="text-[10px] sm:text-xs font-semibold text-[#5B1830] hover:text-[#350A1B] font-body transition-colors tracking-wider uppercase mt-auto pt-3 block"
                   >
                     Discover →
                   </Link>
@@ -217,11 +215,11 @@ const DynamicHomepageCards = () => {
             return (
               <div 
                 key={card._id} 
-                className="bg-white rounded-2xl border border-black/25 p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-gray-400"
+                className="bg-white rounded-2xl border border-[#E8DED8] p-3 sm:p-4 lg:p-5 flex items-center justify-center h-full min-h-[200px] text-[#8B8080]"
               >
                 <div className="text-center">
-                  <p className="text-xs font-bold text-red-500 uppercase tracking-widest font-serif" style={{ fontFamily: 'var(--font-serif)' }}>Invalid Configuration</p>
-                  <p className="text-[10px] text-gray-500 mt-1">{card.title}</p>
+                  <p className="text-xs font-semibold text-[#C43D43] uppercase tracking-wider font-body">Invalid Configuration</p>
+                  <p className="text-[10px] text-[#746B6C] mt-1 font-body">{card.title}</p>
                 </div>
               </div>
             );

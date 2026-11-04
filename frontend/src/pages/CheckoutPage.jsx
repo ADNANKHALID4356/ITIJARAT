@@ -58,19 +58,19 @@ const StepIndicator = ({ currentStep }) => {
           <div key={step.number} className="flex items-center">
             <div className={`flex items-center justify-center w-7 h-7 lg:w-8 lg:h-8 rounded-full text-xs lg:text-sm font-medium ${
               currentStep >= step.number 
-                ? 'bg-orange-500 text-white' 
+                ? 'bg-[#5B1830] text-white' 
                 : 'bg-gray-200 text-gray-600'
             }`}>
               {step.number}
             </div>
             <span className={`ml-1 lg:ml-2 text-xs lg:text-sm whitespace-nowrap ${
-              currentStep >= step.number ? 'text-orange-600 font-medium' : 'text-gray-500'
+              currentStep >= step.number ? 'text-[#5B1830] font-semibold' : 'text-gray-500'
             }`}>
               {step.title}
             </span>
             {index < steps.length - 1 && (
               <div className={`w-8 lg:w-12 h-px mx-2 lg:mx-4 ${
-                currentStep > step.number ? 'bg-orange-500' : 'bg-gray-200'
+                currentStep > step.number ? 'bg-[#5B1830]' : 'bg-gray-200'
               }`} />
             )}
           </div>
@@ -85,7 +85,7 @@ const PaymentMethod = ({ id, title, description, selected, onClick }) => (
   <div
     onClick={onClick}
     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-      selected ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-gray-300'
+      selected ? 'border-[#5B1830] bg-[#F4E9ED]' : 'border-gray-200 hover:border-gray-300'
     }`}
   >
     <div className="flex items-center">
@@ -879,7 +879,7 @@ const CheckoutPage = () => {
           {checkoutStats && checkoutStats.isEmpty && (
             <button
               onClick={() => navigate('/products')}
-              className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600"
+              className="bg-[#5B1830] text-white px-6 py-2 rounded-lg hover:bg-[#350A1B] font-body"
             >
               Continue Shopping
             </button>
@@ -890,11 +890,11 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-[#E8DED8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-          <h1 className="text-xl lg:text-2xl font-bold text-gray-900">Checkout</h1>
+          <h1 className="text-xl lg:text-2xl font-bold text-[#241A1D] font-display">Checkout</h1>
         </div>
       </div>
 
@@ -971,7 +971,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-end mt-4 lg:mt-6">
                   <button
                     onClick={nextStep}
-                    className="w-full lg:w-auto bg-orange-500 text-white px-6 py-2.5 lg:py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                    className="w-full lg:w-auto bg-[#5B1830] text-white px-6 py-2.5 lg:py-2 rounded-lg hover:bg-[#350A1B] transition-colors text-sm font-semibold font-body cursor-pointer"
                   >
                     Continue to Address
                   </button>
@@ -1153,7 +1153,7 @@ const CheckoutPage = () => {
                   </button>
                   <button
                     onClick={nextStep}
-                    className="w-full sm:w-auto bg-orange-500 text-white px-6 py-2.5 lg:py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                    className="w-full sm:w-auto bg-[#5B1830] text-white px-6 py-2.5 lg:py-2 rounded-lg hover:bg-[#350A1B] transition-colors text-sm font-semibold font-body cursor-pointer"
                   >
                     Continue to Payment
                   </button>
@@ -1471,7 +1471,7 @@ const CheckoutPage = () => {
                   </button>
                   <button
                     onClick={nextStep}
-                    className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                    className="bg-[#5B1830] text-white px-6 py-2 rounded-lg hover:bg-[#350A1B] transition-colors font-semibold font-body cursor-pointer"
                   >
                     Review Order
                   </button>
@@ -1596,7 +1596,7 @@ const CheckoutPage = () => {
                   <button
                     onClick={handleSubmitOrder}
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2.5 lg:py-2 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 text-sm font-medium"
+                    className="w-full sm:w-auto bg-[#5B1830] text-white px-5 py-2.5 lg:py-2 rounded-lg hover:bg-[#350A1B] transition-colors disabled:opacity-50 text-sm font-semibold font-body cursor-pointer shadow-sm"
                   >
                     {isSubmitting ? 'Processing...' : `${cartAnalysis.notification?.buttonText || 'Place Order'} - PKR ${(orderTotals?.total || 0).toFixed(2)}`}
                   </button>

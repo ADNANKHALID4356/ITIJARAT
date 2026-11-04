@@ -332,7 +332,7 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
   };
 
   return (
-    <section className="w-full py-1 sm:py-2 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
+    <section className="w-full py-1 sm:py-2 bg-[#FAF7F3] relative overflow-hidden font-body">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-orange-200/30 to-pink-200/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
@@ -348,8 +348,8 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
                 onClick={() => setActiveTab(tab.id)}
                 className={`group relative px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${
                   activeTab === tab.id
-                    ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white shadow-lg shadow-orange-500/25 scale-105'
-                    : 'bg-white text-gray-600 hover:text-gray-900 shadow-md hover:shadow-lg border border-gray-200'
+                    ? 'bg-[#5B1830] text-white shadow-sm border border-[#5B1830]'
+                    : 'bg-white text-[#746B6C] hover:text-[#241A1D] shadow-2xs hover:shadow-xs border border-[#E8DED8]'
                 }`}
               >
                 <div className="flex items-center gap-1.5 sm:gap-2">
@@ -369,7 +369,7 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
         {/* Products Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5B1830]"></div>
             <span className="ml-4 text-gray-600">Loading products...</span>
           </div>
         ) : error ? (
@@ -377,7 +377,7 @@ const PremiumProductDisplay = ({ premiumProducts = [], featuredProducts = [], ne
             <p className="text-red-500 mb-4">{error}</p>
             <button 
               onClick={() => window.location.reload()} 
-              className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+              className="bg-[#5B1830] text-white px-6 py-2 rounded-lg hover:bg-[#350A1B] transition-colors"
             >
               Retry
             </button>

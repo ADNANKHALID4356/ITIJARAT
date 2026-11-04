@@ -15,12 +15,12 @@ const ModernProductGrid = lazy(() => import('../components/ModernProductGrid'));
 
 // Ultra-lightweight skeleton - no heavy animations - Phase 3.4: Reserve space to prevent CLS
 const SectionSkeleton = () => (
-  <div className="w-full py-8 px-4 bg-gray-50" style={{ minHeight: '320px' }}>
+  <div className="w-full py-8 px-4 bg-[#FAF7F3]" style={{ minHeight: '320px' }}>
     <div className="max-w-7xl mx-auto">
       <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className="bg-white rounded border border-gray-100" style={{ aspectRatio: '1/1.3', minHeight: '240px' }}></div>
+          <div key={i} className="bg-white rounded-xl border border-[#E8DED8]" style={{ aspectRatio: '1/1.3', minHeight: '240px' }}></div>
         ))}
       </div>
     </div>
@@ -44,7 +44,7 @@ const Home = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FAF7F3]">
       {/* Hero Section - renders immediately with placeholder */}
       <HeroSection banners={homepageData?.banners || []} />
       

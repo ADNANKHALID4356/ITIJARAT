@@ -126,7 +126,7 @@ const CartPage = () => {
   // Show login requirement if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F3]">
         {/* Header Section */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -238,7 +238,7 @@ const CartPage = () => {
   // Empty Cart Component
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F3]">
         {/* Header Section */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -425,7 +425,7 @@ const CartPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3]">
       {/* Amazon-style Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -481,7 +481,7 @@ const CartPage = () => {
             {/* Continue Shopping */}
             <button
               onClick={() => window.location.href = '/products'}
-              className="text-orange-600 hover:text-orange-700 font-medium flex items-center gap-2"
+              className="text-[#5B1830] hover:text-[#350A1B] font-medium flex items-center gap-2 font-body"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
@@ -523,7 +523,7 @@ const CartPage = () => {
                 
                 <div className="flex justify-between text-lg font-medium">
                   <span>Total</span>
-                  <span className="text-orange-600">PKR {total.toFixed(2)}</span>
+                  <span className="text-[#5B1830] font-bold font-body">PKR {total.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -531,7 +531,7 @@ const CartPage = () => {
               <button
                 onClick={() => navigate('/checkout')}
                 disabled={isLoading}
-                className="w-full mt-6 bg-gradient-to-r from-orange-400 to-orange-500 text-white py-3 px-4 rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-200 font-medium disabled:opacity-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none"
+                className="w-full mt-6 bg-[#5B1830] hover:bg-[#350A1B] text-white py-3 px-4 rounded-lg font-semibold font-body transition-all duration-200 disabled:opacity-50 shadow-sm cursor-pointer"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">

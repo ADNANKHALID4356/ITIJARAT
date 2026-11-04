@@ -366,7 +366,7 @@ const GroupCategoryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3]">
       {/* SEO Head Tags */}
       <Helmet>
         {/* Basic Meta Tags */}
@@ -414,11 +414,11 @@ const GroupCategoryPage = () => {
       </Helmet>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-[#E8DED8]">
         <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 capitalize">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#241A1D] capitalize font-display">
                 {displayGroup} Products
               </h1>
             </div>
@@ -429,7 +429,7 @@ const GroupCategoryPage = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full max-w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors truncate"
+                  className="w-full max-w-full px-3 py-2 border border-[#E8DED8] rounded-lg bg-white text-[#241A1D] text-sm focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-colors truncate font-body"
                 >
                   <option value="newest">Newest First</option>
                   <option value="price-low">Price: Low to High</option>
@@ -484,7 +484,7 @@ const GroupCategoryPage = () => {
             <div className="inline-flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-lg border border-gray-100">
               <div className="relative">
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-200"></div>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-orange-500 border-t-transparent absolute top-0 left-0"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#5B1830] border-t-transparent absolute top-0 left-0"></div>
               </div>
               <span className="text-gray-700 text-sm font-medium">Loading more...</span>
             </div>

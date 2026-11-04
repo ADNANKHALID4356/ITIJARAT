@@ -102,16 +102,16 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#350A1B] text-white border-t border-[#4A1526]">
       {/* Newsletter Section */}
-      <div className="bg-gray-800 border-b border-gray-700">
+      <div className="bg-[#270713] border-b border-[#4A1526]">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-12">
           <div className="text-center max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-white mb-3">
+            <h3 className="text-2xl sm:text-3xl font-display font-medium text-white mb-3">
               Stay Updated with International Tijarat
             </h3>
-            <p className="text-gray-300 mb-6">
-              Get the latest deals, new arrivals, and exclusive offers delivered to your inbox.
+            <p className="text-[#E8DED8]/80 mb-6 font-body text-sm sm:text-base">
+              Discover authentic Pakistani craftsmanship, everyday essentials, and exclusive seasonal releases.
             </p>
             
             <form onSubmit={handleSubscribe} className="max-w-md mx-auto">
@@ -122,12 +122,12 @@ const Footer = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   disabled={isSubscribing}
-                  className="flex-1 px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 border border-[#4A1526] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#B97855] focus:border-transparent bg-[#350A1B] text-white placeholder-[#8B8080] disabled:opacity-50 disabled:cursor-not-allowed font-body text-sm"
                 />
                 <button 
                   type="submit"
                   disabled={isSubscribing}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center min-w-[120px]"
+                  className="bg-[#5B1830] hover:bg-[#431223] disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center min-w-[120px] font-body text-sm border border-[#B97855]/30 cursor-pointer"
                 >
                   {isSubscribing ? (
                     <>
@@ -145,10 +145,10 @@ const Footer = () => {
               
               {/* Message Display */}
               {message && (
-                <div className={`mt-4 p-3 rounded-lg text-sm ${
+                <div className={`mt-4 p-3 rounded-lg text-sm font-body ${
                   messageType === 'success' 
-                    ? 'bg-green-800 text-green-200 border border-green-700' 
-                    : 'bg-red-800 text-red-200 border border-red-700'
+                    ? 'bg-[#EAF4EF] text-[#23845B] border border-[#23845B]/30' 
+                    : 'bg-[#FBECEE] text-[#C43D43] border border-[#C43D43]/30'
                 }`}>
                   {message}
                 </div>
@@ -164,21 +164,19 @@ const Footer = () => {
           
           {/* Company Info */}
           <div className="lg:col-span-1">
-          <div className="flex items-center space-x-2">
-            <div className="bg-transparent">
+            <div className="flex items-center space-x-2 mb-4">
               <img
                 src="/IT Images/ITLOGO2.png"
                 alt="Logo"
-                className="w-30 h-13"
+                className="w-32 h-auto object-contain brightness-0 invert"
                 onError={(e) => {
                   console.error('Footer logo failed to load:', e.target.src);
                   e.target.style.display = 'none';
                 }}
               />
             </div>
-          </div>
-            <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-              Your trusted global marketplace connecting millions of buyers and sellers worldwide with premium products and exceptional service.
+            <p className="text-[#E8DED8]/80 mb-6 text-sm leading-relaxed font-body">
+              An international marketplace celebrating Pakistani craftsmanship and heritage while providing customers with premium products for everyday life.
             </p>
             
             {/* Social Media */}
@@ -210,11 +208,11 @@ const Footer = () => {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors duration-200"
+                  className="w-8 h-8 bg-[#4A1526] hover:bg-[#B97855] rounded-lg flex items-center justify-center transition-colors duration-200"
                   title={social.name}
                   aria-label={`Visit our ${social.name} page`}
                 >
-                  <svg className="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d={social.icon} />
                   </svg>
                 </a>
@@ -224,13 +222,13 @@ const Footer = () => {
 
           {/* Shop */}
           <div>
-            <h5 className="text-sm font-semibold text-white uppercase tracking-wide mb-4">Shop</h5>
-            <ul className="space-y-2">
+            <h5 className="text-sm font-semibold text-[#B97855] uppercase tracking-wider mb-4 font-body">Shop</h5>
+            <ul className="space-y-2 font-body">
               {footerCategories.map((category, index) => (
                 <li key={index}>
                   <Link 
                     to={`/category-group/${encodeURIComponent(category.toLowerCase())}`}
-                    className="text-gray-300 hover:text-white text-sm transition-colors duration-200"
+                    className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200"
                   >
                     {category}
                   </Link>
@@ -241,46 +239,36 @@ const Footer = () => {
 
           {/* Customer Care */}
           <div>
-            <h5 className="text-sm font-semibold text-white uppercase tracking-wide mb-4">Customer Care</h5>
-            <ul className="space-y-2">
+            <h5 className="text-sm font-semibold text-[#B97855] uppercase tracking-wider mb-4 font-body">Customer Care</h5>
+            <ul className="space-y-2 font-body">
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/contact" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   Returns & Exchanges
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Size Guide
-                </Link>
-              </li>
-              <li>
-                <Link to="/simple-order-history" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/simple-order-history" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   Track Your Order
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   Payment Options
-                </Link>
-              </li>
-              <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Product Care
                 </Link>
               </li>
             </ul>
@@ -288,54 +276,34 @@ const Footer = () => {
 
           {/* Company */}
           <div>
-            <h5 className="text-sm font-semibold text-white uppercase tracking-wide mb-4">Company</h5>
-            <ul className="space-y-2 mb-6">
+            <h5 className="text-sm font-semibold text-[#B97855] uppercase tracking-wider mb-4 font-body">Company</h5>
+            <ul className="space-y-2 mb-6 font-body">
               <li>
-                <Link to="/about" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                <Link to="/about" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Careers
+                <Link to="/contact-wholeseller" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                  Wholesale Dealership
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Press Center
+                <Link to="/vendor/login" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                  Sell With Us
                 </Link>
               </li>
               <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Investor Relations
-                </Link>
-              </li>
-              <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Corporate Social Responsibility
-                </Link>
-              </li>
-              <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Affiliate Program
-                </Link>
-              </li>
-              <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Partnerships
-                </Link>
-              </li>
-              <li>
-                <Link to="/coming-soon" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                  Sustainability
+                <Link to="/coming-soon" className="text-[#E8DED8]/80 hover:text-[#B97855] text-sm transition-colors duration-200">
+                  Sustainability & Heritage
                 </Link>
               </li>
             </ul>
 
             {/* Contact Info */}
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h6 className="font-medium text-white mb-2 text-sm">Contact Information</h6>
-              <div className="space-y-1 text-xs text-gray-300">
+            <div className="bg-[#270713] rounded-lg p-4 border border-[#4A1526]">
+              <h6 className="font-semibold text-white mb-2 text-sm font-body">Contact Information</h6>
+              <div className="space-y-1 text-xs text-[#E8DED8]/80 font-body">
                 <p>📧 support@internationaltijarat.com</p>
                 <p>📞 +92 300 5567507</p>
               </div>
@@ -345,47 +313,47 @@ const Footer = () => {
       </div>
 
       {/* Payment Methods & Security */}
-      <div className="bg-gray-800 border-t border-gray-700">
+      <div className="bg-[#270713] border-t border-[#4A1526]">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             
             {/* Payment Methods */}
             <div>
-              <h6 className="text-sm font-medium text-white mb-3">Payment Methods</h6>
+              <h6 className="text-xs font-semibold uppercase tracking-wider text-[#B97855] mb-3 font-body">Payment Methods</h6>
               <div className="flex flex-wrap gap-3">
                 {/* EasyPaisa */}
-                <div className="bg-white border border-gray-600 px-3 py-2 rounded flex items-center gap-2 min-w-[120px]">
+                <div className="bg-white px-3 py-2 rounded-md flex items-center gap-2 min-w-[120px] shadow-xs">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
                     <rect width="24" height="24" rx="4" fill="#00A651"/>
                     <path d="M7 8h10v2H7V8zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" fill="white"/>
                   </svg>
                   <div>
-                    <span className="text-sm font-semibold text-gray-800 block">EasyPaisa</span>
-                    <span className="text-xs text-gray-600">Mobile Wallet</span>
+                    <span className="text-sm font-semibold text-gray-800 block font-body">EasyPaisa</span>
+                    <span className="text-[10px] text-gray-500 font-body">Mobile Wallet</span>
                   </div>
                 </div>
 
                 {/* JazzCash */}
-                <div className="bg-white border border-gray-600 px-3 py-2 rounded flex items-center gap-2 min-w-[120px]">
+                <div className="bg-white px-3 py-2 rounded-md flex items-center gap-2 min-w-[120px] shadow-xs">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
                     <rect width="24" height="24" rx="4" fill="#FF6B35"/>
                     <path d="M12 6l4 6h-3v6h-2v-6H8l4-6z" fill="white"/>
                   </svg>
                   <div>
-                    <span className="text-sm font-semibold text-gray-800 block">JazzCash</span>
-                    <span className="text-xs text-gray-600">Mobile Wallet</span>
+                    <span className="text-sm font-semibold text-gray-800 block font-body">JazzCash</span>
+                    <span className="text-[10px] text-gray-500 font-body">Mobile Wallet</span>
                   </div>
                 </div>
 
                 {/* Bank Transfer */}
-                <div className="bg-white border border-gray-600 px-3 py-2 rounded flex items-center gap-2 min-w-[120px]">
+                <div className="bg-white px-3 py-2 rounded-md flex items-center gap-2 min-w-[120px] shadow-xs">
                   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
                     <rect width="24" height="24" rx="4" fill="#1F4E79"/>
                     <path d="M12 3l8 5v2H4V8l8-5zm0 2L6 8h12L12 5zm-6 7h12v8H6v-8zm2 2v4h8v-4H8z" fill="white"/>
                   </svg>
                   <div>
-                    <span className="text-sm font-semibold text-gray-800 block">Bank Transfer</span>
-                    <span className="text-xs text-gray-600">Direct Banking</span>
+                    <span className="text-sm font-semibold text-gray-800 block font-body">Bank Transfer</span>
+                    <span className="text-[10px] text-gray-500 font-body">Direct Banking</span>
                   </div>
                 </div>
               </div>
@@ -393,14 +361,14 @@ const Footer = () => {
 
             {/* Security & Certifications */}
             <div className="text-center lg:text-right">
-              <h6 className="text-sm font-medium text-white mb-3">Security & Trust</h6>
+              <h6 className="text-xs font-semibold uppercase tracking-wider text-[#B97855] mb-3 font-body">Security & Trust</h6>
               <div className="flex flex-wrap gap-2 justify-center lg:justify-end">
                 {[
-                  "SSL Secured", "PCI Compliant", "ISO 27001", "BBB Accredited"
+                  "SSL Secured", "PCI Compliant", "ISO 27001", "Authentic Craftsmanship"
                 ].map((cert, index) => (
                   <div
                     key={index}
-                    className="bg-gray-700 border border-gray-600 px-3 py-1 rounded text-xs font-medium text-gray-300"
+                    className="bg-[#350A1B] border border-[#4A1526] px-3 py-1 rounded text-xs font-medium text-[#E8DED8]/80 font-body"
                   >
                     {cert}
                   </div>
@@ -412,18 +380,17 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="bg-gray-900 border-t border-gray-700">
+      <div className="bg-[#1E040E] border-t border-[#4A1526]">
         <div className="container mx-auto px-6 lg:px-12 max-w-7xl py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#8B8080] font-body">
             <div className="flex flex-wrap items-center gap-4">
               <p>© 2025 International Tijarat. All rights reserved.</p>
               <div className="flex gap-4">
-                <Link to="/privacy" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
-                <Link to="/terms" className="hover:text-white transition-colors duration-200">Terms of Service</Link>
-                <a href="#" className="hover:text-white transition-colors duration-200">Cookies</a>
+                <Link to="/privacy" className="hover:text-[#B97855] transition-colors duration-200">Privacy Policy</Link>
+                <Link to="/terms" className="hover:text-[#B97855] transition-colors duration-200">Terms of Service</Link>
               </div>
             </div>
-            <p className="text-gray-500">Powered by cutting-edge e-commerce technology</p>
+            <p className="text-[#8B8080]/70">Premium International E-Commerce Marketplace</p>
           </div>
         </div>
       </div>

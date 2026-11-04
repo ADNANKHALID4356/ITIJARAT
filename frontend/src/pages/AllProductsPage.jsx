@@ -367,7 +367,7 @@ const AllProductsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3]">
       {/* SEO Head Tags */}
       <Helmet>
         {/* Basic Meta Tags */}
@@ -425,12 +425,12 @@ const AllProductsPage = () => {
 
 
       {/* Enhanced Modern Header */}
-      <div className="bg-white shadow-lg border-b border-gray-200">
+      <div className="bg-white shadow-2xs border-b border-[#E8DED8]">
         <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-3">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             {/* Title and Stats */}
             <div className="flex-1">
-              <h1 className="text-xl font-bold text-gray-900 mb-1">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#241A1D] mb-1 font-display">
                 All Products
               </h1>
             </div>
@@ -509,7 +509,7 @@ const AllProductsPage = () => {
             <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 shadow-lg border border-gray-100">
               <div className="relative">
                 <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200"></div>
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-orange-500 border-t-transparent absolute top-0 left-0"></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#5B1830] border-t-transparent absolute top-0 left-0"></div>
               </div>
               <span className="text-gray-700 font-medium">Loading more products...</span>
             </div>
@@ -519,7 +519,7 @@ const AllProductsPage = () => {
         {/* End of Products Message */}
         {!hasNextPage && products.length > 0 && !isLoading && (
           <div className="text-center mt-12 mb-8">
-            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-50 to-orange-100 rounded-full px-6 py-3 border border-orange-200">
+            <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 border border-[#E8DED8] shadow-2xs font-body">
               <div className="text-left">
                 <p className="text-gray-800 font-semibold">You've reached the end!</p>
               </div>
@@ -546,7 +546,7 @@ const AllProductsPage = () => {
             {(filters.category && filters.category !== '') && (
               <button
                 onClick={() => handleCategoryChange('')}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                className="bg-[#5B1830] hover:bg-[#350A1B] text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 font-body cursor-pointer"
               >
                 View All Products
               </button>

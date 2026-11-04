@@ -331,12 +331,12 @@ const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
           >
             {direction === 1 ? (
               <>
-                <ChevronRight className="w-3.5 h-3.5 text-orange-600 animate-pulse" />
+                <ChevronRight className="w-3.5 h-3.5 text-[#5B1830] animate-pulse" />
                 <span className="hidden sm:inline text-gray-600 font-medium text-[11px]">Left → Right</span>
               </>
             ) : (
               <>
-                <ChevronLeft className="w-3.5 h-3.5 text-orange-600 animate-pulse" />
+                <ChevronLeft className="w-3.5 h-3.5 text-[#5B1830] animate-pulse" />
                 <span className="hidden sm:inline text-gray-600 font-medium text-[11px]">Right → Left</span>
               </>
             )}

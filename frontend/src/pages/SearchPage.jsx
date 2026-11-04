@@ -330,9 +330,9 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3]">
       {/* Search Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-[#E8DED8]">
         <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex-1 max-w-2xl">
@@ -347,7 +347,7 @@ const SearchPage = () => {
                 <SearchIcon className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                 <button
                   type="submit"
-                  className="absolute right-2 top-2 bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition-colors"
+                  className="absolute right-2 top-2 bg-[#5B1830] hover:bg-[#350A1B] text-white p-2 rounded-lg transition-colors cursor-pointer"
                 >
                   <SearchIcon className="h-4 w-4" />
                 </button>
@@ -373,8 +373,8 @@ const SearchPage = () => {
           
           {/* Filters Sidebar */}
           <div className={`lg:col-span-3 ${showFilters ? 'block' : 'hidden'} lg:block`}>
-            <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+            <div className="bg-white rounded-xl border border-[#E8DED8] p-6 sticky top-8 shadow-2xs">
+              <h3 className="text-lg font-semibold text-[#241A1D] mb-4 font-display">Filters</h3>
               
               {/* Category Filter */}
               <div className="mb-6">
@@ -418,7 +418,7 @@ const SearchPage = () => {
                 </div>
                 <button
                   onClick={handlePriceRangeChange}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-md transition-colors text-sm"
+                  className="w-full bg-[#5B1830] hover:bg-[#350A1B] text-white py-2 px-4 rounded-md transition-colors text-sm font-semibold font-body cursor-pointer"
                 >
                   Apply Price Filter
                 </button>
@@ -445,7 +445,7 @@ const SearchPage = () => {
           <div className="lg:col-span-9">
             {isLoading && products.length === 0 ? (
               <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5B1830]"></div>
                 <span className="ml-3 text-gray-600">Searching products...</span>
               </div>
             ) : error ? (
@@ -507,7 +507,7 @@ const SearchPage = () => {
                 {/* Loading More Indicator */}
                 {loadingMore && (
                   <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5B1830]"></div>
                     <span className="ml-3 text-gray-600">Loading more products...</span>
                   </div>
                 )}
