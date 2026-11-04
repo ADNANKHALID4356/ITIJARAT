@@ -115,11 +115,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-14 py-1.5">
           
           {/* Logo on Left */}
-          <Link to="/" className="flex items-center space-x-2 group flex-shrink-0 transition-transform hover:scale-105">
+          <Link to="/" className="flex items-center space-x-2 group flex-shrink-0 transition-transform hover:scale-105" aria-label="International Tijarat Home">
             <img
               src="/IT Images/ITLOGO2.png"
-              alt="Logo"
-              className="h-9 w-auto rounded drop-shadow-xs object-contain"
+              alt="International Tijarat"
+              className="h-9 sm:h-10 w-auto object-contain drop-shadow-xs"
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </Link>

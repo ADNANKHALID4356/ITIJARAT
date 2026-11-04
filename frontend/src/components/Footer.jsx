@@ -160,7 +160,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2 mb-4">
               <img
                 src="/IT Images/ITLOGO2.png"
-                alt="Logo"
+                alt="International Tijarat"
                 className="w-32 h-auto object-contain brightness-0 invert"
                 onError={(e) => {
                   console.error('Footer logo failed to load:', e.target.src);
