@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,31 +9,24 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '@mui/material/Pagination';
-import { Eye, ArrowLeft } from 'lucide-react';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Paper from '@mui/material/Paper';
+import { Eye, ArrowLeft, ArrowUp, ArrowDown, Star } from 'lucide-react';
 
 import CategorySelector from './CategorySelector';
 import ProductSelectionModal from './ProductSelectionModal';
+import FeaturedBentoGrid from '../../FeaturedBentoGrid';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { config, getApiUrl, getImageUrl } from '../../../config';
 
-const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '90%',
-    maxWidth: '1200px',
-    maxHeight: '90vh',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    overflowY: 'auto'
-};
-
 const getProductImage = (product) => {
     if (!product) return null;
-    // Try different image fields in order of preference
     if (Array.isArray(product.images) && product.images.length > 0) {
         return product.image || product.images[0];
     }
@@ -77,7 +69,6 @@ const SpecialProductsManager = ({ type }) => {
     }, [selectedCategory, page]);
 
     const loadSelectedProducts = async () => {
-        // Check cache (valid for 30 seconds)
         const now = Date.now();
         if (cache.current.selectedProducts.data && 
             now - cache.current.selectedProducts.timestamp < 30000) {
@@ -95,7 +86,6 @@ const SpecialProductsManager = ({ type }) => {
             });
             const data = response.data || [];
             
-            // Update cache
             cache.current.selectedProducts = {
                 timestamp: now,
                 data: data
@@ -118,22 +108,16 @@ const SpecialProductsManager = ({ type }) => {
         setError(null);
         
         try {
-            // Backend expects category name, not ID
             const response = await axios.get(getApiUrl('products'), {
                 params: {
-                    category: selectedCategory.name, // Use category name as backend expects
+                    category: selectedCategory.name,
                     isActive: true,
                     page,
                     limit: PAGE_SIZE,
                     populate: ['category']
                 }
             });
-
-            console.log('Category products response:', response.data);
-            console.log('Selected category name:', selectedCategory.name);
-            console.log('Total products returned:', response.data.products?.length);
             
-            // Filter out already selected products
             const availableProducts = (response.data.products || []).filter(product => 
                 !selectedProducts.some(sp => sp._id === product._id)
             );
@@ -149,90 +133,103 @@ const SpecialProductsManager = ({ type }) => {
         }
     };
 
+    const persistProducts = async (updatedProducts, successMessage) => {
+        setSelectedProducts(updatedProducts);
+
+        try {
+            const token = localStorage.getItem('token');
+            const payload = {
+                productIds: updatedProducts.map(p => p._id)
+            };
+
+            if (type === 'featured') {
+                payload.layoutConfig = updatedProducts.map((p, idx) => ({
+                    productId: p._id,
+                    slotSize: p.slotSize || (idx === 0 ? 'hero' : 'small'),
+                    order: idx
+                }));
+            }
+
+            await axios.put(
+                getApiUrl(endpoint),
+                payload,
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
+
+            cache.current.selectedProducts = {
+                data: updatedProducts,
+                timestamp: Date.now()
+            };
+
+            if (successMessage) {
+                toast.success(successMessage);
+            }
+        } catch (error) {
+            console.error('Error updating special products:', error);
+            toast.error(error.response?.data?.message || 'Error saving changes');
+            loadSelectedProducts();
+        }
+    };
+
     const handleCategoryChange = async (category) => {
-        console.log('🏷️ [SPECIAL PRODUCTS] Category selected:', category);
         if (!category) {
             setSelectedCategory(null);
             setCategoryProducts([]);
             return;
         }
-
-        // Reset pagination when changing category
         setPage(1);
-        setSelectedCategory(category); // Directly set the category object
-        
-        // Products will be loaded by the useEffect watching selectedCategory and page
+        setSelectedCategory(category);
     };
 
     const handleAddProduct = async (product) => {
-        // Optimistic update
-        const updatedProducts = [...selectedProducts, product];
-        setSelectedProducts(updatedProducts);
+        const enrichedProduct = {
+            ...product,
+            slotSize: selectedProducts.length === 0 ? 'hero' : 'small'
+        };
+        const updatedProducts = [...selectedProducts, enrichedProduct];
         setCategoryProducts(prev => prev.filter(p => p._id !== product._id));
-
-        try {
-            const token = localStorage.getItem('token');
-            await axios.put(
-                getApiUrl(endpoint), 
-                { productIds: updatedProducts.map(p => p._id) },
-                { headers: { 'Authorization': `Bearer ${token}` } }
-            );
-
-            // Update cache
-            cache.current.selectedProducts = {
-                data: updatedProducts,
-                timestamp: Date.now()
-            };
-
-            toast.success(`Product added to ${title} successfully`);
-        } catch (error) {
-            // Rollback on error
-            setSelectedProducts(selectedProducts);
-            setCategoryProducts(prev => [...prev, product]);
-            console.error('Error adding product:', error);
-            toast.error(error.response?.data?.message || 'Error adding product');
-        }
+        await persistProducts(updatedProducts, `Product added to ${title}`);
     };
 
     const handleRemoveProduct = async (productId) => {
-        // Optimistic update
-        const updatedProducts = selectedProducts.filter(p => p._id !== productId);
         const removedProduct = selectedProducts.find(p => p._id === productId);
+        const updatedProducts = selectedProducts.filter(p => p._id !== productId);
         
-        setSelectedProducts(updatedProducts);
         if (selectedCategory && removedProduct) {
             setCategoryProducts(prev => [...prev, removedProduct]);
         }
-
-        try {
-            const token = localStorage.getItem('token');
-            await axios.put(
-                getApiUrl(endpoint),
-                { productIds: updatedProducts.map(p => p._id) },
-                { headers: { 'Authorization': `Bearer ${token}` } }
-            );
-
-            // Update cache
-            cache.current.selectedProducts = {
-                data: updatedProducts,
-                timestamp: Date.now()
-            };
-
-            toast.success('Product removed successfully');
-        } catch (error) {
-            // Rollback on error
-            setSelectedProducts(selectedProducts);
-            if (selectedCategory && removedProduct) {
-                setCategoryProducts(prev => prev.filter(p => p._id !== productId));
-            }
-            toast.error('Error removing product');
-            console.error('Error:', error);
-        }
+        await persistProducts(updatedProducts, 'Product removed successfully');
     };
 
-    if (loading) {
+    const handleMoveProduct = async (index, direction) => {
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= selectedProducts.length) return;
+
+        const newProducts = [...selectedProducts];
+        const [moved] = newProducts.splice(index, 1);
+        newProducts.splice(targetIndex, 0, moved);
+
+        await persistProducts(newProducts, 'Layout order updated');
+    };
+
+    const handleSetSlotSize = async (productId, newSlotSize) => {
+        const updatedProducts = selectedProducts.map(p => {
+            if (p._id === productId) {
+                return { ...p, slotSize: newSlotSize };
+            }
+            // If promoting this item to hero, demote any other hero to small
+            if (newSlotSize === 'hero' && p.slotSize === 'hero') {
+                return { ...p, slotSize: 'small' };
+            }
+            return p;
+        });
+
+        await persistProducts(updatedProducts, 'Tile size updated');
+    };
+
+    if (loading && selectedProducts.length === 0) {
         return (
-            <Box sx={{ p: 3 }}>
+            <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
                 <CircularProgress />
             </Box>
         );
@@ -248,185 +245,266 @@ const SpecialProductsManager = ({ type }) => {
 
     return (
         <Box sx={{ p: 3 }}>
-            <Typography variant="h5" gutterBottom>
-                Manage {title}
-            </Typography>
-
-            {/* Category Selection */}
-            <Box sx={{ mb: 4 }}>
-                <CategorySelector 
-                    onCategoryChange={handleCategoryChange} 
-                    returnFullObject={true}
-                />
-            </Box>
-
-            {/* Selected Products Section */}
-            <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6">
-                        Selected Products ({selectedProducts.length})
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <div>
+                    <Typography variant="h5" fontWeight="bold">
+                        Manage {title}
                     </Typography>
+                    {type === 'featured' && (
+                        <Typography variant="body2" color="text.secondary">
+                            Configure products, arrange layout order, and allocate Bento tile sizes (Hero, Wide, Tall, Small).
+                        </Typography>
+                    )}
+                </div>
+
+                {type === 'featured' && selectedProducts.length > 0 && (
                     <Button
+                        variant={isPreviewMode ? "contained" : "outlined"}
                         onClick={() => setIsPreviewMode(!isPreviewMode)}
                         startIcon={<Eye />}
                     >
-                        {isPreviewMode ? 'Exit Preview' : 'Preview Layout'}
+                        {isPreviewMode ? 'Exit Preview' : 'Preview Bento Grid'}
                     </Button>
-                </Box>
-
-                {!isPreviewMode ? (
-                    <Grid container spacing={2}>
-                        {selectedProducts.map((product) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-                                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', maxWidth: 300 }}>
-                                <CardMedia
-                                    component="img"
-                                    sx={{
-                                        height: 200,
-                                        objectFit: 'cover',
-                                        bgcolor: 'grey.200'
-                                    }}
-                                    image={getImageUrl('products', getProductImage(product)) || '/placeholder-image.png'}
-                                    alt={product.title || product.name || 'Product'}
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        // Create a properly sized placeholder
-                                        if (!e.target.nextSibling) {
-                                            const placeholder = document.createElement('div');
-                                            placeholder.style.cssText = 'height: 200px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; border: 1px solid #e0e0e0;';
-                                            placeholder.textContent = 'No Image Available';
-                                            e.target.parentNode.appendChild(placeholder);
-                                        }
-                                    }}
-                                />
-                                <CardContent sx={{ flexGrow: 1 }}>
-                                    <Typography variant="body1" noWrap>
-                                        {product.title || product.name || 'Untitled Product'}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                        PKR {product.price || '0.00'}
-                                    </Typography>
-                                </CardContent>
-                                <Box sx={{ p: 1 }}>
-                                    <Button 
-                                        fullWidth 
-                                        variant="outlined" 
-                                        color="error"
-                                        onClick={() => handleRemoveProduct(product._id)}
-                                    >
-                                        Remove
-                                    </Button>
-                                </Box>
-                            </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                ) : null}
+                )}
             </Box>
 
-            {/* Products Selection Section */}
-            {selectedCategory && (
+            {/* Live Bento Preview Mode */}
+            {isPreviewMode && type === 'featured' ? (
+                <Paper 
+                    elevation={0} 
+                    sx={{ 
+                        p: 3, 
+                        mb: 4, 
+                        bgcolor: 'grey.50', 
+                        borderRadius: 3, 
+                        border: '1px solid', 
+                        borderColor: 'grey.200' 
+                    }}
+                >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <div>
+                            <Typography variant="subtitle1" fontWeight="bold">
+                                Live Bento Grid Preview
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Exact image-only display as seen by homepage visitors ({selectedProducts.length} items)
+                            </Typography>
+                        </div>
+                        <Button 
+                            variant="outlined" 
+                            size="small" 
+                            onClick={() => setIsPreviewMode(false)}
+                        >
+                            Back to Management
+                        </Button>
+                    </Box>
+                    <Box sx={{ bgcolor: 'white', p: { xs: 1, sm: 2, md: 3 }, borderRadius: 2, border: '1px solid', borderColor: 'grey.200' }}>
+                        <FeaturedBentoGrid 
+                            products={selectedProducts} 
+                            title="Featured Products"
+                            subtitle="Live layout preview"
+                        />
+                    </Box>
+                </Paper>
+            ) : null}
+
+            {/* Selected Products List */}
+            {!isPreviewMode && (
                 <Box sx={{ mb: 4 }}>
-                    <Typography variant="h6" gutterBottom>
-                        Available Products in {selectedCategory.name}
-                    </Typography>
-                    
-                    <Box sx={{ position: 'relative' }}>
-                        {loading && (
-                            <Box 
-                                sx={{ 
-                                    position: 'absolute', 
-                                    top: 0, 
-                                    left: 0, 
-                                    right: 0, 
-                                    bottom: 0, 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'center',
-                                    bgcolor: 'rgba(255, 255, 255, 0.7)',
-                                    zIndex: 1
-                                }}
-                            >
-                                <CircularProgress />
-                            </Box>
-                        )}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h6">
+                            Selected Products ({selectedProducts.length})
+                        </Typography>
+                    </Box>
+
+                    {selectedProducts.length === 0 ? (
+                        <Paper sx={{ p: 4, textAlign: 'center', bgcolor: 'grey.50', border: '1px dashed', borderColor: 'grey.300' }}>
+                            <Typography color="text.secondary">
+                                No products selected for {title}. Select a category below to add products.
+                            </Typography>
+                        </Paper>
+                    ) : (
                         <Grid container spacing={2}>
-                            {categoryProducts.map((product) => (
-                                <Grid 
-                                    item xs={12} sm={6} md={4} lg={3}
-                                    key={product._id}
-                                >
-                                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', maxWidth: 300 }}>
+                            {selectedProducts.map((product, index) => (
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                                    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                        {/* Card Header with position & tactile order buttons */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1, bgcolor: 'grey.50', borderBottom: '1px solid', borderColor: 'grey.100' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Chip 
+                                                    label={`#${index + 1}`} 
+                                                    size="small" 
+                                                    sx={{ fontWeight: 'bold', height: 22 }} 
+                                                />
+                                                {type === 'featured' && (
+                                                    <Chip 
+                                                        label={product.slotSize === 'hero' || (index === 0 && !product.slotSize) ? '⭐ Hero' : (product.slotSize || 'Small').toUpperCase()} 
+                                                        color={product.slotSize === 'hero' || (index === 0 && !product.slotSize) ? 'primary' : 'default'}
+                                                        size="small"
+                                                        sx={{ height: 22, textTransform: 'capitalize' }}
+                                                    />
+                                                )}
+                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                                <IconButton 
+                                                    size="small" 
+                                                    onClick={() => handleMoveProduct(index, -1)}
+                                                    disabled={index === 0}
+                                                    title="Move earlier"
+                                                >
+                                                    <ArrowUp size={16} />
+                                                </IconButton>
+                                                <IconButton 
+                                                    size="small" 
+                                                    onClick={() => handleMoveProduct(index, 1)}
+                                                    disabled={index === selectedProducts.length - 1}
+                                                    title="Move later"
+                                                >
+                                                    <ArrowDown size={16} />
+                                                </IconButton>
+                                            </Box>
+                                        </Box>
+
                                         <CardMedia
                                             component="img"
                                             sx={{
                                                 height: 160,
                                                 objectFit: 'cover',
-                                                background: '#f5f5f5'
+                                                bgcolor: 'grey.200'
                                             }}
                                             image={getImageUrl('products', getProductImage(product)) || '/placeholder-image.png'}
                                             alt={product.title || product.name || 'Product'}
                                             onError={(e) => {
-                                                // Prevent infinite loop
-                                                if (!e.target.dataset.errorHandled) {
-                                                    e.target.dataset.errorHandled = 'true';
-                                                    e.target.style.display = 'none';
-                                                    // Create a small placeholder
-                                                    const placeholder = document.createElement('div');
-                                                    placeholder.style.cssText = 'height: 160px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; border: 1px solid #e0e0e0;';
-                                                    placeholder.textContent = 'No Image';
-                                                    e.target.parentNode.appendChild(placeholder);
-                                                }
+                                                e.target.style.display = 'none';
                                             }}
-                                            loading="lazy"
                                         />
-                                        <CardContent sx={{ flexGrow: 1 }}>
-                                            <Typography variant="body1" noWrap>
+
+                                        <CardContent sx={{ flexGrow: 1, p: 1.5 }}>
+                                            <Typography variant="body2" fontWeight="bold" noWrap title={product.title || product.name}>
                                                 {product.title || product.name || 'Untitled Product'}
                                             </Typography>
-                                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                            <Typography variant="caption" color="text.secondary" display="block">
                                                 PKR {product.price || '0.00'}
                                             </Typography>
-                                            {product.stock > 0 && (
-                                                <Typography variant="caption" color="success.main">
-                                                    In Stock ({product.stock})
-                                                </Typography>
+
+                                            {type === 'featured' && (
+                                                <FormControl fullWidth size="small" sx={{ mt: 1.5 }}>
+                                                    <InputLabel id={`slot-size-label-${product._id}`}>Tile Size</InputLabel>
+                                                    <Select
+                                                        labelId={`slot-size-label-${product._id}`}
+                                                        value={product.slotSize || (index === 0 ? 'hero' : 'small')}
+                                                        label="Tile Size"
+                                                        onChange={(e) => handleSetSlotSize(product._id, e.target.value)}
+                                                    >
+                                                        <MenuItem value="hero">Hero (2x2 Dominant)</MenuItem>
+                                                        <MenuItem value="wide">Wide (2x1 Horizontal)</MenuItem>
+                                                        <MenuItem value="tall">Tall (1x2 Vertical)</MenuItem>
+                                                        <MenuItem value="small">Small (1x1 Standard)</MenuItem>
+                                                    </Select>
+                                                </FormControl>
                                             )}
                                         </CardContent>
-                                        <Box sx={{ p: 1 }}>
+
+                                        <CardActions sx={{ p: 1, pt: 0 }}>
                                             <Button 
                                                 fullWidth 
-                                                variant="contained"
-                                                onClick={() => handleAddProduct(product)}
-                                                disabled={loading}
-                                                sx={{
-                                                    '&.Mui-disabled': {
-                                                        bgcolor: 'rgba(25, 118, 210, 0.7)',
-                                                        color: 'white'
-                                                    }
-                                                }}
+                                                variant="outlined" 
+                                                color="error" 
+                                                size="small"
+                                                onClick={() => handleRemoveProduct(product._id)}
                                             >
-                                                {loading ? 'Adding...' : `Add to ${title}`}
+                                                Remove
                                             </Button>
-                                        </Box>
+                                        </CardActions>
                                     </Card>
                                 </Grid>
                             ))}
                         </Grid>
+                    )}
+                </Box>
+            )}
+
+            {/* Category Product Selection Section */}
+            {!isPreviewMode && (
+                <Box sx={{ mb: 4 }}>
+                    <Typography variant="h6" gutterBottom>
+                        Add Products from Category
+                    </Typography>
+                    
+                    <Box sx={{ mb: 3 }}>
+                        <CategorySelector 
+                            onCategoryChange={handleCategoryChange} 
+                            returnFullObject={true}
+                        />
                     </Box>
 
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-                            <Pagination
-                                count={totalPages}
-                                page={page}
-                                onChange={(e, value) => setPage(value)}
-                                color="primary"
-                                disabled={loading}
-                                siblingCount={1}
-                                boundaryCount={1}
-                            />
+                    {selectedCategory && (
+                        <Box sx={{ position: 'relative' }}>
+                            <Typography variant="subtitle1" gutterBottom>
+                                Available in {selectedCategory.name}
+                            </Typography>
+                            
+                            {loading && (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                                    <CircularProgress />
+                                </Box>
+                            )}
+
+                            {!loading && categoryProducts.length === 0 ? (
+                                <Typography color="text.secondary">
+                                    No available products found in this category.
+                                </Typography>
+                            ) : (
+                                <Grid container spacing={2}>
+                                    {categoryProducts.map((product) => (
+                                        <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                                            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                                <CardMedia
+                                                    component="img"
+                                                    sx={{
+                                                        height: 140,
+                                                        objectFit: 'cover',
+                                                        background: '#f5f5f5'
+                                                    }}
+                                                    image={getImageUrl('products', getProductImage(product)) || '/placeholder-image.png'}
+                                                    alt={product.title || product.name || 'Product'}
+                                                    loading="lazy"
+                                                />
+                                                <CardContent sx={{ flexGrow: 1, p: 1.5 }}>
+                                                    <Typography variant="body2" fontWeight="bold" noWrap>
+                                                        {product.title || product.name || 'Untitled Product'}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        PKR {product.price || '0.00'}
+                                                    </Typography>
+                                                </CardContent>
+                                                <Box sx={{ p: 1 }}>
+                                                    <Button 
+                                                        fullWidth 
+                                                        variant="contained"
+                                                        size="small"
+                                                        onClick={() => handleAddProduct(product)}
+                                                    >
+                                                        Add to {title}
+                                                    </Button>
+                                                </Box>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            )}
+
+                            {totalPages > 1 && (
+                                <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                                    <Pagination
+                                        count={totalPages}
+                                        page={page}
+                                        onChange={(e, value) => setPage(value)}
+                                        color="primary"
+                                        disabled={loading}
+                                    />
+                                </Box>
+                            )}
                         </Box>
                     )}
                 </Box>

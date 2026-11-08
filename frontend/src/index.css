@@ -1,28 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  /* Google-inspired Professional Palette */
-  --google-blue: #4285F4;
-  --google-red: #DB4437;
-  --google-yellow: #F4B400;
-  --google-green: #0F9D58;
+  /* ==========================================================================
+     INTERNATIONAL TIJARAT - OFFICIAL BRAND DESIGN SYSTEM TOKENS
+     ========================================================================== */
   
-  /* Multi-color Diffused Shimmer Gradient */
-  --shimmer-gradient: linear-gradient(
-    -45deg, 
-    #4285f4, #db4437, #f4b400, #0f9d58, #4285f4
-  );
+  /* A. Primary Brand Colors */
+  --brand-primary: #5B1830;        /* Royal Burgundy: Primary buttons, active nav, brand identity */
+  --brand-dark: #350A1B;           /* Deep Burgundy: Footer, hover states, dark sections */
+  --brand-light: #F4E9ED;          /* Soft Burgundy: Selected states, badges, subtle backdrops */
+  --brand-accent: #B97855;         /* Champagne Copper: Craftsmanship accents, heritage details */
+  --brand-accent-text: #75462F;    /* Readable Dark Copper: For text contrast on light surfaces */
 
-  /* Typography */
-  --font-serif: "Times New Roman", Times, serif;
-  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+  /* B. Neutral Surfaces & Backgrounds */
+  --background: #FAF7F3;           /* Warm Ivory: Primary website canvas (70-80% area) */
+  --surface: #FFFFFF;              /* Pure White: Product cards, header, forms, search field */
+  --surface-alt: #FCFAF8;          /* Subtle Surface: Alternate subtle panels */
+  --surface-beige: #F0E7DF;        /* Warm Beige: Editorial sections, heritage storytelling */
+  --surface-disabled: #F0ECE9;     /* Disabled Surface */
+
+  /* C. Borders */
+  --border-default: #E8DED8;       /* Default Border: Cards, dividers, inputs */
+  --border-strong: #D8C9C0;        /* Strong Border: Emphasized/active borders */
+
+  /* D. Text Colors */
+  --text-primary: #241A1D;         /* Primary Charcoal Text */
+  --text-secondary: #746B6C;       /* Secondary Text: Descriptions */
+  --text-muted: #8B8080;           /* Muted Text: Metadata, timestamps */
+  --text-inverse: #FFFFFF;         /* Inverse Text: On burgundy/dark surfaces */
+
+  /* E. Semantic Colors */
+  --color-success: #23845B;
+  --color-success-bg: #EAF4EF;
+  --color-error: #C43D43;
+  --color-error-bg: #FBECEE;
+  --color-warning: #A66A12;
+  --color-warning-bg: #FBF3E5;
+  --color-info: #3977B8;
+  --color-info-bg: #EAF1F8;
+
+  /* F. Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-urdu: 'Noto Nastaliq Urdu', serif;
+
+  /* Legacy aliases for backward compatibility */
+  --font-serif: var(--font-display);
+  --font-sans: var(--font-body);
+
+  /* Subtle Brand Shimmer Gradient (Burgundy & Copper) */
+  --shimmer-gradient: linear-gradient(
+    135deg, 
+    #5B1830 0%, #7A2242 35%, #B97855 70%, #5B1830 100%
+  );
 }
 
 /* Base Body Styles */
 body {
-  font-family: var(--font-sans);
-  color: #1f2937;
-  background-color: #ffffff;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background-color: var(--background);
   margin: 0;
   overflow-x: hidden;
 }
@@ -32,26 +69,41 @@ html, * {
   scroll-behavior: smooth;
 }
 
-/* Professional Headings (Bold & Serif) */
-h1, h2, h3, h4, .section-heading {
-  font-family: var(--font-serif);
-  font-weight: 700 !important; /* Headings must be bold */
+/* Professional Headings (Display Typography) */
+h1, h2, h3, h4, .section-heading, .font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
   letter-spacing: -0.01em;
-  color: #000;
 }
 
-/* Logic for Product Prices (Strictly NOT bold as requested) */
+/* Headings default to text-primary on light surfaces with zero specificity */
+:where(h1, h2, h3, h4, .section-heading) {
+  color: var(--text-primary);
+}
+
+/* Interface Font Utility */
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Urdu Typography Utility */
+.font-urdu {
+  font-family: var(--font-urdu);
+  direction: rtl;
+}
+
+/* Logic for Product Prices */
 .product-price {
-  font-family: var(--font-sans);
-  font-weight: 400 !important; /* Regular weight for prices */
-  color: #374151;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--brand-primary);
 }
 
-/* The Google-Style Shimmering Animation */
+/* The Brand Shimmering Animation */
 .shimmer-bg {
   background: var(--shimmer-gradient);
-  background-size: 400% 400%;
-  animation: diffusedShimmer 15s ease infinite;
+  background-size: 300% 300%;
+  animation: diffusedShimmer 10s ease infinite;
 }
 
 @keyframes diffusedShimmer {
@@ -60,29 +112,82 @@ h1, h2, h3, h4, .section-heading {
   100% { background-position: 0% 50%; }
 }
 
-/* Premium Header Glass (No overflow clipping, so dropdowns expand fully!) */
-/* Premium Header Glass (No overflow clipping, so dropdowns expand fully!) */
+/* Brand Button & Utility Classes */
+.bg-brand-primary { background-color: var(--brand-primary); }
+.bg-brand-dark { background-color: var(--brand-dark); }
+.bg-brand-light { background-color: var(--brand-light); }
+.bg-brand-accent { background-color: var(--brand-accent); }
+.bg-ivory { background-color: var(--background); }
+.bg-beige { background-color: var(--surface-beige); }
+
+.text-brand-primary { color: var(--brand-primary); }
+.text-brand-dark { color: var(--brand-dark); }
+.text-brand-accent { color: var(--brand-accent); }
+.text-brand-accent-readable { color: var(--brand-accent-text); }
+.text-primary-charcoal { color: var(--text-primary); }
+.text-secondary-charcoal { color: var(--text-secondary); }
+.text-muted-charcoal { color: var(--text-muted); }
+
+.border-brand-default { border-color: var(--border-default); }
+.border-brand-strong { border-color: var(--border-strong); }
+.border-brand-primary { border-color: var(--brand-primary); }
+
+.btn-brand-primary {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+.btn-brand-primary:hover {
+  background-color: var(--brand-dark);
+}
+
+.btn-brand-secondary {
+  background-color: transparent;
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+  transition: all 0.2s ease;
+}
+.btn-brand-secondary:hover {
+  background-color: var(--brand-light);
+}
+
+.btn-brand-copper {
+  background-color: var(--brand-accent);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+.btn-brand-copper:hover {
+  background-color: var(--brand-accent-text);
+}
+
+/* Header Glass */
+.header-glass-white {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-default);
+}
+
 .header-glass-dark {
-  background: rgba(15, 23, 42, 0.95) !important; /* Premium Slate-900 with opacity */
+  background: rgba(53, 10, 27, 0.98) !important; /* Deep Burgundy glass */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  /* NO overflow: hidden here! Dropdowns can render fully. */
 }
 
-/* Shining "Glass" Effect for Light UI Elements (Cards/Modals - safe for overflow clipping) */
+/* Shining "Glass" Effect for Light UI Elements */
 .glass-shining-light {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border-default);
   position: relative;
   overflow: hidden;
 }
 
 /* Shining "Glass" Effect for small Dark UI Elements (Buttons/Badges) */
 .glass-shining-dark {
-  background: rgba(15, 23, 42, 0.95) !important;
+  background: rgba(53, 10, 27, 0.95) !important;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
@@ -111,8 +216,6 @@ img {
   content-visibility: auto;
 }
 
-/* --- MERGED ORIGINAL STYLES FOR COMPATIBILITY --- */
-
 /* Hide scrollbar utility */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -131,7 +234,7 @@ img {
 /* Custom scrollbars scrollbar-thin styles */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f3f4f6;
+  scrollbar-color: var(--border-strong) var(--background);
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -140,48 +243,35 @@ img {
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: var(--background);
   border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--border-strong);
   border-radius: 3px;
   transition: background-color 0.2s ease;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--brand-accent);
 }
 
 /* Dark theme scrollbar */
 .scrollbar-thumb-gray-700 {
-  scrollbar-color: #374151 #1f2937;
+  scrollbar-color: #5B1830 #350A1B;
 }
 
 .scrollbar-thumb-gray-700::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: #5B1830;
 }
 
 .scrollbar-thumb-gray-700::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #B97855;
 }
 
 .scrollbar-track-gray-900::-webkit-scrollbar-track {
-  background: #1f2937;
-}
-
-/* Professional scrollbar for light themes */
-.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-}
-
-.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-.scrollbar-track-gray-100::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: #350A1B;
 }
 
 /* Line clamping utilities */
@@ -242,14 +332,5 @@ img {
 
 /* Enhanced focus styles for accessibility */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2;
-}
-
-/* Custom gradient backgrounds */
-.gradient-orange {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-}
-
-.gradient-black-orange {
-  background: linear-gradient(135deg, #000000 0%, #1f2937 50%, #f97316 100%);
+  @apply focus:outline-none focus:ring-2 focus:ring-[#5B1830] focus:ring-offset-2;
 }

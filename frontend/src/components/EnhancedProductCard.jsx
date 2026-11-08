@@ -18,6 +18,7 @@ const EnhancedProductCard = ({
   showFavorite = true,
   showQuickView = true,
   showTitle = true, // New prop to control title visibility
+  showPrice = true, // New prop to control price visibility
   isAddingToCart = false,
   cartQuantity = 0,
   isInCart = false,
@@ -210,7 +211,7 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Media Container - Square 1:1 aspect ratio for images */}
-      <div className="relative w-full overflow-hidden rounded-t-xl bg-gray-100" style={{ paddingBottom: '100%', height: 0 }}>
+      <div className={`relative w-full overflow-hidden ${(!showTitle && !showPrice) ? "rounded-xl" : "rounded-t-xl"} bg-gray-100`} style={{ paddingBottom: '100%', height: 0 }}>
         <div className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
         {/* Video - shown on hover if available */}
         {product.video && !videoError && (
@@ -301,7 +302,7 @@ const EnhancedProductCard = ({
                 rounded-lg font-semibold text-sm transition-all shadow-lg
                 ${isAddingToCart || (product.stock !== undefined && product.stock <= 0)
                   ? 'bg-gray-400 cursor-not-allowed text-white'
-                  : 'bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white transform hover:scale-105'
+                  : 'bg-[#5B1830] hover:bg-[#350A1B] text-white transform hover:scale-105'
                 }
               `}
             >
@@ -317,7 +318,7 @@ const EnhancedProductCard = ({
             <button
               onClick={handleQuickView}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 
-                       rounded-lg bg-white/90 text-gray-700 hover:bg-white hover:text-orange-600 
+                       rounded-lg bg-white/90 text-gray-700 hover:bg-white hover:text-[#5B1830] 
                        transition-all shadow-md hover:scale-105 font-medium text-sm"
               aria-label="Quick view"
             >
@@ -330,10 +331,11 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Product Info */}
+      {(showTitle || showPrice) && (
       <div className="p-1 flex flex-col h-auto min-h-0">
         {/* Product Title - Conditionally shown */}
         {showTitle && (
-          <h3 className="font-semibold text-gray-900 text-[10px] leading-tight mb-1 line-clamp-2 group-hover:text-orange-600 transition-colors min-h-[1.5rem]">
+          <h3 className="font-semibold text-gray-900 text-[10px] leading-tight mb-1 line-clamp-2 group-hover:text-[#5B1830] transition-colors min-h-[1.5rem]">
             {product.title || 'Untitled Product'}
           </h3>
         )}
@@ -341,7 +343,7 @@ const EnhancedProductCard = ({
         {/* Price Section */}
         <div className="flex items-center justify-between mb-0">
           <div className="flex flex-col">
-            <span className="text-xs font-bold text-gray-900">
+            <span className="text-xs font-bold text-[#5B1830] font-body">
                PKR {product.price || '0.00'}
             </span>
             {product.originalPrice && product.originalPrice > product.price && (
@@ -386,6 +388,7 @@ const EnhancedProductCard = ({
           </div>
         )}
       </div>
+      )}
       
       {/* Size Selection Modal - Rendered via Portal to be completely outside card DOM */}
       {showSizeModal && createPortal(
@@ -426,8 +429,8 @@ const EnhancedProductCard = ({
                       className={`
                         py-2.5 px-3 rounded-lg border-2 font-semibold text-sm transition-all relative
                         ${selectedSize === size
-                          ? 'border-orange-500 bg-orange-50 text-orange-600 scale-105'
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50'
+                          ? 'border-[#5B1830] bg-[#F4E9ED] text-[#5B1830] scale-105'
+                          : 'border-[#E8DED8] bg-white text-[#241A1D] hover:border-[#B97855]/50 hover:bg-[#FAF7F3]'
                         }
                       `}
                     >
@@ -456,8 +459,8 @@ const EnhancedProductCard = ({
                   flex-1 py-2.5 px-4 rounded-lg font-medium transition-colors
                   ${selectedSize
                     ? sizeAction === 'buy' 
-                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white'
-                      : 'bg-orange-500 text-white hover:bg-orange-600'
+                      ? 'bg-[#B97855] hover:bg-[#75462F] text-white'
+                      : 'bg-[#5B1830] text-white hover:bg-[#350A1B]'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }
                 `}

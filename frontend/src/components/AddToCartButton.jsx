@@ -38,10 +38,10 @@ const AddToCartButton = ({
 
   // Variant styles
   const variants = {
-    primary: 'bg-orange-500 hover:bg-orange-600 text-white',
+    primary: 'bg-[#5B1830] hover:bg-[#350A1B] text-white',
     secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
-    outline: 'border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white',
-    success: 'bg-green-500 hover:bg-green-600 text-white',
+    outline: 'border-2 border-[#5B1830] text-[#5B1830] hover:bg-[#F4E9ED]',
+    success: 'bg-[#5B1830] hover:bg-[#350A1B] text-white',
     disabled: 'bg-gray-300 text-gray-500 cursor-not-allowed'
   };
 

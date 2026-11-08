@@ -176,10 +176,10 @@ const BestSellers = () => {
           {Object.entries(categoryProducts).map(([categoryId, { name, products }]) => (
             <div key={categoryId}>
               <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Best Sellers in {name}</h2>
+                <h2 className="text-xl sm:text-2xl font-display font-bold text-[#241A1D]">Best Sellers in {name}</h2>
                 <Link
                   to={`/category-group/${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                  className="text-sm sm:text-base text-blue-600 hover:text-blue-800 font-medium"
+                  className="text-sm sm:text-base text-[#5B1830] hover:text-[#350A1B] font-medium"
                 >
                   See all
                 </Link>

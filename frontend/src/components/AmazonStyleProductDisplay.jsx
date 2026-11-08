@@ -251,15 +251,15 @@ const AmazonStyleProductDisplay = ({ staticCategories: staticCategoriesProp = []
 
   const ProductSection = ({ section }) => {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+      <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-4 sm:p-6 mb-4">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-0">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#241A1D] font-display">
             {section.title}
           </h2>
           <Link 
             to={`/category-group/${section.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`}
-            className="text-blue-600 font-medium text-sm flex items-center gap-1 hover:text-blue-700 transition-colors">
+            className="text-[#5B1830] font-semibold text-sm flex items-center gap-1 hover:text-[#350A1B] transition-colors font-body">
             {section.linkText || 'See all'}
             <ArrowRight className="w-4 h-4" />
           </Link>
@@ -322,19 +322,8 @@ const AmazonStyleProductDisplay = ({ staticCategories: staticCategoriesProp = []
   };
 
   return (
-    <section className="w-full py-1 sm:py-2 bg-gray-50">
+    <section className="w-full pt-0 pb-4 bg-[#FAF7F3]">
       <div className="w-full px-3 sm:px-4">
-        {/* Section Header */}
-        <div className="text-center mb-2 sm:mb-3">
-          <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-1">
-            Discover Amazing
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Products</span>
-          </h2>
-          <p className="text-[10px] sm:text-xs text-gray-600 max-w-2xl mx-auto">
-            Explore our handpicked selection of top-rated products across all categories
-          </p>
-        </div>
-
         {/* Product Sections */}
         <div className="space-y-2 sm:space-y-3">
           {loading ? (

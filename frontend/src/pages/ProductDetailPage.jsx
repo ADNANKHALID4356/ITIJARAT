@@ -551,7 +551,7 @@ const ProductDetailPage = () => {
 
                   {/* Price */}
                   <div>
-                    <span className="text-2xl lg:text-3xl font-bold text-orange-600">
+                    <span className="text-2xl lg:text-3xl font-bold text-[#5B1830] font-body">
                       PKR {(discountedPrice || 0).toFixed(2)}
                     </span>
                     {product && product.discount > 0 && (
@@ -568,8 +568,8 @@ const ProductDetailPage = () => {
 
                   {/* Stock Status */}
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                    <span className={`text-sm font-medium ${product && product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className={`w-2 h-2 rounded-full ${product && product.stock > 0 ? 'bg-[#23845B]' : 'bg-[#C43D43]'}`}></div>
+                    <span className={`text-sm font-medium ${product && product.stock > 0 ? 'text-[#23845B]' : 'text-[#C43D43]'}`}>
                       {product && product.stock > 0 ? 'In Stock' : 'Out of Stock'}
                     </span>
                   </div>
@@ -590,10 +590,10 @@ const ProductDetailPage = () => {
                               disabled={isOutOfStock}
                               className={`px-4 py-2 border-2 rounded-lg text-sm font-medium transition-all ${
                                 selectedSize === size
-                                  ? 'border-orange-500 bg-orange-50 text-orange-600'
+                                  ? 'border-[#5B1830] bg-[#F4E9ED] text-[#5B1830]'
                                   : isOutOfStock
                                     ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed line-through'
-                                    : 'border-gray-300 hover:border-orange-400 text-gray-700'
+                                    : 'border-gray-300 hover:border-[#5B1830] text-gray-700'
                               }`}
                             >
                               {size}
@@ -636,7 +636,7 @@ const ProductDetailPage = () => {
                             (product?.stock || 0) === 0 
                             ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                             : quantity >= (product?.stock || 0)
-                              ? 'bg-orange-100 text-orange-600 hover:bg-orange-200'
+                              ? 'bg-[#F4E9ED] text-[#5B1830] hover:bg-[#ebdbe0]'
                               : 'hover:bg-gray-100'
                         }`}
                           disabled={(product?.stock || 0) === 0}
@@ -653,7 +653,7 @@ const ProductDetailPage = () => {
                         className={`flex-1 py-2.5 rounded-lg font-semibold text-base transition-colors ${
                           (product?.stock || 0) === 0
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-orange-500 text-white hover:bg-orange-600'
+                            : 'bg-[#5B1830] text-white hover:bg-[#350A1B] cursor-pointer'
                         }`}
                       >
                         {isAddingToCart ? (
@@ -674,7 +674,7 @@ const ProductDetailPage = () => {
                         className={`flex-1 py-2.5 rounded-lg font-semibold text-base transition-colors ${
                           (product?.stock || 0) === 0
                             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-green-600 text-white hover:bg-green-700'
+                            : 'bg-[#B97855] text-white hover:bg-[#75462F] shadow-sm font-body cursor-pointer'
                         }`}
                       >
                         {(product?.stock || 0) === 0 ? 'Out of Stock' : 'Buy Now'}
@@ -702,7 +702,7 @@ const ProductDetailPage = () => {
                         {product?.mainCategory?.name && (
                           <button
                             onClick={() => navigate(`/shop?mainCategory=${product.mainCategory._id || product.mainCategory}`)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors text-xs font-medium"
+                            className="px-3 py-1.5 bg-[#F4E9ED] text-[#5B1830] rounded-md hover:bg-[#5B1830] hover:text-white transition-colors text-xs font-medium font-body border border-[#5B1830]/20 cursor-pointer"
                           >
                             {product.mainCategory.name}
                           </button>
@@ -710,7 +710,7 @@ const ProductDetailPage = () => {
                         {product?.subCategory?.name && (
                           <button
                             onClick={() => navigate(`/shop?subCategory=${product.subCategory._id || product.subCategory}`)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors text-xs font-medium"
+                            className="px-3 py-1.5 bg-[#F4E9ED] text-[#5B1830] rounded-md hover:bg-[#5B1830] hover:text-white transition-colors text-xs font-medium font-body border border-[#5B1830]/20 cursor-pointer"
                           >
                             {product.subCategory.name}
                           </button>
@@ -718,7 +718,7 @@ const ProductDetailPage = () => {
                         {product?.category?.name && (
                           <button
                             onClick={() => navigate(`/shop?category=${product.category._id || product.category}`)}
-                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors text-xs font-medium"
+                            className="px-3 py-1.5 bg-[#F4E9ED] text-[#5B1830] rounded-md hover:bg-[#5B1830] hover:text-white transition-colors text-xs font-medium font-body border border-[#5B1830]/20 cursor-pointer"
                           >
                             {product.category.name}
                           </button>
@@ -731,7 +731,7 @@ const ProductDetailPage = () => {
                   {product?.vendor?.businessName && (
                     <div className="pt-4 border-t border-gray-200">
                       <h3 className="text-base font-semibold text-gray-900 mb-2">Sold by</h3>
-                      <p className="text-orange-600 font-medium text-sm">{product.vendor.businessName}</p>
+                      <p className="text-[#5B1830] font-medium text-sm">{product.vendor.businessName}</p>
                     </div>
                   )}
                 </div>
@@ -835,7 +835,7 @@ const ProductDetailPage = () => {
                     {product.wholesaleContact?.contactNumber && (
                       <button
                         onClick={() => window.open(`tel:${product.wholesaleContact.contactNumber}`, '_self')}
-                        className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                        className="flex-1 bg-[#5B1830] hover:bg-[#350A1B] text-white px-4 py-2.5 rounded-lg transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                       >
                         <Phone className="w-5 h-5" />
                         <span className="font-medium">Call</span>

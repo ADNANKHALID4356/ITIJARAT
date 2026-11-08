@@ -42,12 +42,17 @@
     <!-- NOTE: Do NOT modulepreload /src/main.jsx - Vite transforms it, raw JSX has wrong MIME type -->
     <link rel="prefetch" href="/api/homepage/all-data" as="fetch" crossorigin>
     
+    <!-- Google Fonts: Cormorant Garamond, Manrope, Noto Nastaliq Urdu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    
     <title>International Tijarat - Premium Online Shopping | Fragrances, Jewelry, Mobile Phones & More</title>
     
     <!-- CRITICAL CSS - Inlined for INSTANT first paint (eliminates white screen) -->
     <style>
       /* Instant skeleton - shows your brand IMMEDIATELY */
-      body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f8fafc;overflow-x:hidden}
+      body{margin:0;font-family:'Manrope',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#FAF7F3;overflow-x:hidden}
       *{box-sizing:border-box}
       
       /* Instant header skeleton */
@@ -79,7 +84,7 @@
       @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
       
       /* Hide skeleton when React loads */
-      #skeleton-loader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#f8fafc;transition:opacity .3s ease-in-out}
+      #skeleton-loader{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#FAF7F3;transition:opacity .3s ease-in-out}
       #skeleton-loader.hidden{opacity:0;pointer-events:none}
       
       /* Fade in real content - keep hidden until fully loaded */

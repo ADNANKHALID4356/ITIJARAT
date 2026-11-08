@@ -5,6 +5,7 @@ import ProductService from "../services/productService";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import EnhancedProductCard from "../components/EnhancedProductCard";
+import ShopProductCard from "../components/ShopProductCard";
 import { generateCategorySEO, getCanonicalUrl, generateBreadcrumbs } from "../utils/seoHelpers";
 import { getCategorySchema, getBreadcrumbSchema } from "../utils/schemaGenerator";
 
@@ -19,6 +20,15 @@ const ProductPage = () => {
   const [quantities, setQuantities] = useState({});
   const [sortBy, setSortBy] = useState("popularity");
   const [addingToCart, setAddingToCart] = useState({});
+  const [wishlist, setWishlist] = useState(new Set());
+  const handleToggleWishlist = (productId) => {
+    setWishlist(prev => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
+    });
+  };
   const [errorMessages, setErrorMessages] = useState({});
   
   // Use cart and auth contexts - UPDATED TO MATCH AllProductsPage
@@ -378,7 +388,7 @@ const ProductPage = () => {
         </script>
       </Helmet>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6">
         {/* Header */}
         <div className="mb-8">
           <nav className="flex items-center space-x-2 text-sm text-slate-600 mb-4">
@@ -403,7 +413,7 @@ const ProductPage = () => {
 
         <FilterControls />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {sortedProducts.map((product) => (
             <EnhancedProductCard 
               key={product._id} 

@@ -1,59 +1,168 @@
-# Dependencies
+# ============================================================
+# International Tijarat - MERN Stack Project .gitignore
+# Professional GitHub-ready configuration
+# ============================================================
+
+# ----------------------------------------------------------
+# ENVIRONMENT & SECRETS (NEVER COMMIT THESE)
+# ----------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template.example
+
+# Backend specific env files
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Frontend specific env files
+frontend/.env
+frontend/.env.*
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+!frontend/.env.example
+
+# ----------------------------------------------------------
+# DEPENDENCIES
+# ----------------------------------------------------------
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnp
+.pnp.js
 
-# Production builds
-backend/dist/
+# ----------------------------------------------------------
+# BUILD OUTPUTS
+# ----------------------------------------------------------
+dist/
+build/
 frontend/dist/
 frontend/build/
+backend/dist/
+frontend/dist-ssr/
+*.tgz
+*.tar.gz
 
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.prod
-.env.vercel
-backend/.env*
+# ----------------------------------------------------------
+# LOGS
+# ----------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Database backups (contains sensitive data)
+# ----------------------------------------------------------
+# UPLOADED USER CONTENT (binary blobs, managed separately)
+# ----------------------------------------------------------
+backend/uploads/
+uploads/
+public/uploads/
+# Keep the uploads directory itself in repo
+!backend/uploads/.gitkeep
+
+# ----------------------------------------------------------
+# DATABASE
+# ----------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.rdb
 backend/database-backup/
 
-# Cache and temp files
+# ----------------------------------------------------------
+# CACHE & TEMPORARY FILES
+# ----------------------------------------------------------
 .cache/
+.parcel-cache/
 .tmp/
 .temp/
-*.log
+tmp/
+temp/
 *.tmp
+*.temp
 
-# IDE files
+# ----------------------------------------------------------
+# TESTING & COVERAGE
+# ----------------------------------------------------------
+coverage/
+.nyc_output/
+*.lcov
+
+# ----------------------------------------------------------
+# SSL CERTIFICATES & KEYS
+# ----------------------------------------------------------
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.cer
+
+# ----------------------------------------------------------
+# PROCESS MANAGERS
+# ----------------------------------------------------------
+ecosystem.config.js
+pm2.config.js
+*.pid
+*.seed
+*.pid.lock
+
+# ----------------------------------------------------------
+# IDE & EDITOR FILES
+# ----------------------------------------------------------
 .vscode/settings.json
+.vscode/*.code-snippets
 .idea/
 *.swp
 *.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*~
 
-# OS files
+# Allow shared VSCode extension recommendations
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# ----------------------------------------------------------
+# OPERATING SYSTEM FILES
+# ----------------------------------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Debug files
+# ----------------------------------------------------------
+# RUNTIME DATA
+# ----------------------------------------------------------
+pids/
+
+# ----------------------------------------------------------
+# DEBUG FILES
+# ----------------------------------------------------------
 debug*.js
 debug*.html
 *.debug.js
 
-# Test files (if any)
-coverage/
-.nyc_output/
-
-# Uploaded files
-uploads/
-public/uploads/
-
-# Redis dump
-*.rdb
-
-# PM2 files
-ecosystem.config.js
+# ----------------------------------------------------------
+# OPTIONAL / MISC
+# ----------------------------------------------------------
+.yarn-integrity
+.node_repl_history
+.npm
+jspm_packages/
+.vscode-test
+.eslintcache
+*.tsbuildinfo

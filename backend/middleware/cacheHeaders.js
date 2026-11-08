@@ -24,7 +24,7 @@ const cacheHeaders = (req, res, next) => {
   // API responses - short cache with revalidation
   else if (path.startsWith('/api/')) {
     // Admin operations and mutations - NO CACHE (POST, PUT, DELETE, PATCH)
-    if (req.method !== 'GET' || path.includes('/admin')) {
+    if (req.method !== 'GET' || path.includes('/admin') || req.query?.all === 'true' || req.query?.admin === 'true' || !!req.headers.authorization) {
       res.set({
         'Cache-Control': 'private, no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',

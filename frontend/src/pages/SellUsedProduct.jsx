@@ -345,11 +345,11 @@ const SellUsedProduct = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-[#FAF7F3] font-body py-12 text-[#241A1D]">
         <div className="max-w-2xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-[#F4E9ED] border border-[#5B1830]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
@@ -360,13 +360,13 @@ const SellUsedProduct = () => {
             <div className="space-y-4">
               <button
                 onClick={() => navigate('/login?redirect=/sell-used-products')}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 w-full"
+                className="bg-[#5B1830] hover:bg-[#350A1B] text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 w-full"
               >
                 Sign In
               </button>
               <button
                 onClick={() => navigate('/register?redirect=/sell-used-products')}
-                className="border border-orange-500 text-orange-500 hover:bg-orange-50 px-6 py-3 rounded-lg font-medium transition-colors duration-200 w-full"
+                className="border border-[#5B1830] text-[#5B1830] hover:bg-[#F4E9ED] px-6 py-3 rounded-xl font-medium transition-colors duration-200 w-full"
               >
                 Create Account
               </button>
@@ -379,7 +379,7 @@ const SellUsedProduct = () => {
 
   if (submitSuccess) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-[#FAF7F3] font-body py-12 text-[#241A1D]">
         <div className="max-w-2xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -415,7 +415,7 @@ const SellUsedProduct = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#FAF7F3] font-body py-8 text-[#241A1D]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header - Only show when user has existing products */}
         {!loadingProducts && userProducts.length > 0 && (
@@ -606,20 +606,20 @@ const SellUsedProduct = () => {
         {!loadingProducts && userProducts.length === 0 && (
           <div className="max-w-6xl mx-auto">
             {/* Hero Section */}
-            <div className="text-center py-12 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl mb-8">
+            <div className="text-center py-12 px-6 bg-[#F0E7DF] border border-[#E8DED8] rounded-2xl mb-8">
               <div className="max-w-3xl mx-auto px-6">
-                <div className="w-24 h-24 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-20 h-20 bg-[#F4E9ED] border-2 border-[#5B1830]/25 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xs">
+                  <svg className="w-10 h-10 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to Used Products Marketplace</h2>
-                <p className="text-lg text-gray-700 mb-6">
+                <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#241A1D] mb-3">Welcome to Used Products Marketplace</h2>
+                <p className="text-base sm:text-lg text-[#746B6C] mb-6 font-light max-w-2xl mx-auto">
                   Turn your unused items into cash! Start selling your pre-owned products to thousands of buyers worldwide.
                 </p>
                 <button
                   onClick={() => setShowForm(true)}
-                  className="bg-orange-600 text-white px-8 py-4 rounded-lg hover:bg-orange-700 transition-colors font-semibold text-lg shadow-lg"
+                  className="bg-[#5B1830] hover:bg-[#350A1B] text-white px-8 py-3.5 rounded-xl transition-colors font-medium text-base sm:text-lg shadow-sm font-body cursor-pointer"
                 >
                   Start Selling Now
                 </button>
@@ -627,12 +627,12 @@ const SellUsedProduct = () => {
             </div>
 
             {/* How It Works Section */}
-            <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">How It Works</h3>
+            <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-6 sm:p-8 mb-8">
+              <h3 className="text-2xl font-display font-bold text-[#241A1D] mb-8 text-center">How It Works</h3>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-14 h-14 bg-[#F4E9ED] border border-[#5B1830]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-7 h-7 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                   </div>
@@ -640,8 +640,8 @@ const SellUsedProduct = () => {
                   <p className="text-gray-600">Upload photos, add description, set your price, and provide product details.</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-14 h-14 bg-[#F4E9ED] border border-[#5B1830]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-7 h-7 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -649,8 +649,8 @@ const SellUsedProduct = () => {
                   <p className="text-gray-600">Our team reviews your listing to ensure quality and authenticity.</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-14 h-14 bg-[#F4E9ED] border border-[#5B1830]/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-7 h-7 text-[#5B1830]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                     </svg>
                   </div>
@@ -661,11 +661,11 @@ const SellUsedProduct = () => {
             </div>
 
             {/* Categories Section */}
-            <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">What Can You Sell?</h3>
+            <div className="bg-white rounded-2xl shadow-2xs border border-[#E8DED8] p-6 sm:p-8 mb-8">
+              <h3 className="text-2xl font-display font-bold text-[#241A1D] mb-6 text-center">What Can You Sell?</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {categories.map((category, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-4 text-center hover:bg-orange-50 transition-colors">
+                  <div key={index} className="bg-[#FCFAF8] border border-[#E8DED8] rounded-xl p-3.5 text-center hover:bg-[#F4E9ED] hover:border-[#5B1830]/30 transition-all cursor-pointer">
                     <div className="text-sm font-medium text-gray-700">{category}</div>
                   </div>
                 ))}
@@ -678,7 +678,7 @@ const SellUsedProduct = () => {
             {/* Benefits Section */}
             <div className="grid md:grid-cols-2 gap-8 mb-8">
               <div className="bg-white rounded-xl shadow-lg p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Why Sell With Us?</h3>
+                <h3 className="text-xl font-display font-bold text-[#241A1D] mb-4">Why Sell With Us?</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -708,7 +708,7 @@ const SellUsedProduct = () => {
               </div>
 
               <div className="bg-white rounded-xl shadow-lg p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Selling Tips</h3>
+                <h3 className="text-xl font-display font-bold text-[#241A1D] mb-4">Selling Tips</h3>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <svg className="w-5 h-5 text-orange-500 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -739,15 +739,15 @@ const SellUsedProduct = () => {
             </div>
 
             {/* Call to Action */}
-            <div className="text-center bg-gradient-to-r from-orange-600 to-orange-700 rounded-xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-4">Ready to Start Selling?</h3>
-              <p className="text-orange-100 mb-6 max-w-2xl mx-auto">
+            <div className="text-center bg-[#350A1B] border border-[#B97855]/30 rounded-2xl p-8 sm:p-10 text-white shadow-sm">
+              <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">Ready to Start Selling?</h3>
+              <p className="text-[#FAF7F3] mb-6 max-w-2xl mx-auto font-light">
                 Join thousands of sellers who have successfully sold their used products on our platform. 
                 Create your first listing in just a few minutes!
               </p>
               <button
                 onClick={() => setShowForm(true)}
-                className="bg-white text-orange-600 px-8 py-4 rounded-lg hover:bg-orange-50 transition-colors font-semibold text-lg shadow-lg"
+                className="bg-[#B97855] text-white px-8 py-3.5 rounded-xl hover:bg-[#75462F] transition-colors font-semibold text-base sm:text-lg shadow-sm cursor-pointer"
               >
                 List Your First Product
               </button>
@@ -786,7 +786,7 @@ const SellUsedProduct = () => {
                       onChange={handleInputChange}
                       required
                       placeholder="e.g., iPhone 13 Pro Max 256GB"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                     />
                   </div>
 
@@ -800,7 +800,7 @@ const SellUsedProduct = () => {
                       value={formData.category}
                       onChange={handleInputChange}
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                     >
                       <option value="">Select a category</option>
                       {categories.map(cat => (
@@ -823,7 +823,7 @@ const SellUsedProduct = () => {
                       min="1"
                       step="0.01"
                       placeholder="0.00"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                     />
                   </div>
 
@@ -837,7 +837,7 @@ const SellUsedProduct = () => {
                       value={formData.condition}
                       onChange={handleInputChange}
                       required
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                     >
                       <option value="">Select condition</option>
                       {conditions.map(cond => (
@@ -858,7 +858,7 @@ const SellUsedProduct = () => {
                         value={formData.brand}
                         onChange={handleInputChange}
                         placeholder="e.g., Apple"
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                       />
                     </div>
                     <div>
@@ -871,7 +871,7 @@ const SellUsedProduct = () => {
                         value={formData.model}
                         onChange={handleInputChange}
                         placeholder="e.g., iPhone 13 Pro Max"
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -889,7 +889,7 @@ const SellUsedProduct = () => {
                       min="1900"
                       max={new Date().getFullYear()}
                       placeholder={new Date().getFullYear()}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -908,7 +908,7 @@ const SellUsedProduct = () => {
                       required
                       rows={6}
                       placeholder="Describe your product in detail. Include its current condition, any accessories included, reason for selling, etc."
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 resize-none"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200 resize-none"
                     />
                   </div>
 
@@ -925,7 +925,7 @@ const SellUsedProduct = () => {
                         onChange={handleInputChange}
                         required
                         placeholder="+923001234567 or 03001234567"
-                        className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 ${
+                        className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200 ${
                           phoneError ? 'border-red-500 bg-red-50' : 'border-gray-300'
                         }`}
                       />
@@ -947,7 +947,7 @@ const SellUsedProduct = () => {
                         onChange={handleInputChange}
                         required
                         placeholder="your.email@example.com"
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                       />
                     </div>
                   </div>
@@ -964,7 +964,7 @@ const SellUsedProduct = () => {
                       onChange={handleInputChange}
                       required
                       placeholder="City, State"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#5B1830] focus:border-[#5B1830] transition-all duration-200"
                     />
                   </div>
 
@@ -1038,7 +1038,7 @@ const SellUsedProduct = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
+                      className="bg-[#5B1830] hover:bg-[#350A1B] disabled:bg-gray-400 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-sm cursor-pointer disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <div className="flex items-center space-x-2">

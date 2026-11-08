@@ -144,18 +144,18 @@ const Properties = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F3] font-body">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-2xs border-b border-[#E8DED8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Properties</h1>
+              <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#241A1D]">Properties</h1>
               <p className="text-gray-600 mt-1">Find your dream property</p>
             </div>
             <Link
               to="/sell-property"
-              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors inline-flex items-center space-x-2"
+              className="bg-[#B97855] hover:bg-[#75462F] text-white px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center space-x-2 shadow-2xs text-sm"
             >
               <Home className="w-5 h-5" />
               <span>Sell Property</span>
@@ -173,7 +173,7 @@ const Properties = () => {
                 <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
                 <button
                   onClick={clearFilters}
-                  className="text-orange-500 hover:text-orange-600 text-sm font-medium"
+                  className="text-[#5B1830] hover:text-[#350A1B] text-sm font-medium"
                 >
                   Clear All
                 </button>
@@ -192,7 +192,7 @@ const Properties = () => {
                       placeholder="Search properties..."
                       value={filters.search}
                       onChange={(e) => handleFilterChange('search', e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -205,7 +205,7 @@ const Properties = () => {
                   <select
                     value={filters.propertyType}
                     onChange={(e) => handleFilterChange('propertyType', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-transparent"
                   >
                     <option value="">All Types</option>
                     <option value="House">House</option>
@@ -229,7 +229,7 @@ const Properties = () => {
                     placeholder="Enter city"
                     value={filters.city}
                     onChange={(e) => handleFilterChange('city', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-transparent"
                   />
                 </div>
 
@@ -244,14 +244,14 @@ const Properties = () => {
                       placeholder="Min"
                       value={filters.minPrice}
                       onChange={(e) => handleFilterChange('minPrice', e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-transparent"
                     />
                     <input
                       type="number"
                       placeholder="Max"
                       value={filters.maxPrice}
                       onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -264,7 +264,7 @@ const Properties = () => {
                   <select
                     value={filters.bedrooms}
                     onChange={(e) => handleFilterChange('bedrooms', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B1830] focus:border-transparent"
                   >
                     <option value="">Any</option>
                     <option value="1">1</option>
@@ -305,7 +305,7 @@ const Properties = () => {
                 {Object.values(filters).some(filter => filter) && (
                   <button
                     onClick={clearFilters}
-                    className="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+                    className="mt-4 bg-[#5B1830] hover:bg-[#350A1B] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
                   >
                     Clear All Filters
                   </button>
@@ -345,10 +345,10 @@ const Properties = () => {
                     {/* Property Details */}
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-1">
+                        <h3 className="text-base sm:text-lg font-semibold text-[#241A1D] group-hover:text-[#5B1830] transition-colors line-clamp-1">
                           {property.title}
                         </h3>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#F4E9ED] text-[#5B1830] border border-[#5B1830]/20">
                           {property.propertyType}
                         </span>
                       </div>
@@ -378,7 +378,7 @@ const Properties = () => {
                             e.preventDefault();
                             window.open(`https://wa.me/923005567507?text=Hi, I'm interested in your property: ${property.title}`, '_blank');
                           }}
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors"
+                          className="inline-flex items-center px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-[#25D366] rounded-xl hover:bg-[#20ba5a] shadow-2xs transition-colors cursor-pointer"
                         >
                           <MessageCircle className="w-4 h-4 mr-2" />
                           Get more Details
@@ -395,7 +395,7 @@ const Properties = () => {
                   <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 shadow-lg border border-gray-100">
                     <div className="relative">
                       <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200"></div>
-                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-orange-500 border-t-transparent absolute top-0 left-0"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#5B1830] border-t-transparent absolute top-0 left-0"></div>
                     </div>
                     <span className="text-gray-700 font-medium">Loading more properties...</span>
                   </div>
@@ -405,7 +405,7 @@ const Properties = () => {
               {/* End of Properties Message */}
               {!hasNextPage && properties.length > 0 && !loading && (
                 <div className="text-center mt-12 mb-8">
-                  <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-50 to-orange-100 rounded-full px-6 py-3 border border-orange-200">
+                  <div className="inline-flex items-center space-x-2 bg-white rounded-full px-6 py-3 border border-[#E8DED8] shadow-2xs">
                     <div className="text-left">
                       <p className="text-gray-800 font-semibold">You've reached the end!</p>
                     </div>
@@ -431,7 +431,7 @@ const Properties = () => {
                     setHasNextPage(true);
                     fetchProperties(1, true);
                   }}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                  className="bg-[#5B1830] hover:bg-[#350A1B] text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
                 >
                   Try Again
                 </button>

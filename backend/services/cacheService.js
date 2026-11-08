@@ -116,9 +116,15 @@ class CacheService {
 
       // Clear memory cache by pattern
       const keys = this.memoryCache.keys();
-      const patternBase = pattern.replace(/\*/g, '');
+      const rawTerm = pattern.replace(/[\*:]/g, '').replace(/^cache\/?/, '');
       keys.forEach(key => {
-        if (key.startsWith(patternBase) || key.includes('/products') || key.includes('/categories') || key.includes('/homepage')) {
+        if (
+          (rawTerm && key.toLowerCase().includes(rawTerm.toLowerCase())) ||
+          (pattern.includes('banner') && key.includes('banner')) ||
+          key.includes('/products') ||
+          key.includes('/categories') ||
+          key.includes('/homepage')
+        ) {
           logger.debug(`Clearing cache key: ${key}`);
           this.memoryCache.del(key);
         }
@@ -145,8 +151,8 @@ class CacheService {
         return next();
       }
 
-      // Skip cache for authenticated admin requests
-      if (req.headers.authorization && req.path.includes('/admin/')) {
+      // Skip cache for authenticated admin requests or query for all items
+      if (req.query?.all === 'true' || req.query?.admin === 'true' || (req.headers.authorization && (req.path.includes('/admin') || (req.originalUrl && req.originalUrl.includes('all=true'))))) {
         return next();
       }
 

@@ -11,6 +11,7 @@ const createUploadDirs = () => {
     'uploads/properties',
     'uploads/products',
     'uploads/banner',
+    'uploads/banner-slides',
     'uploads/wholesale-suppliers'
   ];
 
@@ -310,7 +311,7 @@ const deleteUploadedFile = (filePath) => {
 // Storage configuration for banner images
 const bannerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../uploads/banner');
+    const uploadDir = path.join(__dirname, '../uploads/banner-slides');
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
@@ -332,6 +333,21 @@ const uploadBannerImage = multer({
     }
   }
 }).array('images', 10); // Allow up to 10 images
+
+// Single slide banner image upload (supports field 'image' or 'bannerImage')
+const uploadBannerSlide = multer({
+  storage: bannerStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files (JPEG, PNG, WebP, AVIF, GIF) are allowed'), false);
+    }
+  }
+}).single('image');
 
 // Storage configuration for wholesale supplier profile images
 const wholesaleSupplierStorage = multer.diskStorage({
@@ -388,6 +404,7 @@ module.exports = {
   uploadMultipleProductImages,
   uploadProductMedia,  // New enhanced upload for images + video
   uploadBannerImage,
+  uploadBannerSlide,
   uploadWholesaleSupplierImage,
   uploadWholesaleSupplierProductImages,
   uploadWholesaleSupplierAllImages,

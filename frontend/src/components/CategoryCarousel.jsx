@@ -1,412 +1,349 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { config, getApiUrl, getImageUrl } from '../config';
-import { Link } from 'react-router-dom';
-import LazyImage from './LazyImage';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { config } from '../config';
+
+// Fallback high quality category images if none configured in admin
+const DEFAULT_FALLBACK_CATEGORIES = [
+  { id: 'fb-1', name: 'Shawls & Apparel', src: '/IT Images/1.jpeg' },
+  { id: 'fb-2', name: 'Leather Goods', src: '/IT Images/2.jpeg' },
+  { id: 'fb-3', name: '48 Hours Plus', src: '/IT Images/3.jpeg' },
+  { id: 'fb-4', name: 'Luxury Watches', src: '/IT Images/4.jpeg' },
+  { id: 'fb-5', name: 'Designer Belts', src: '/IT Images/5.jpeg' },
+  { id: 'fb-6', name: 'Fragrances & Perfumery', src: '/IT Images/6.jpeg' },
+  { id: 'fb-7', name: 'Traditional Wear', src: '/IT Images/7.jpeg' }
+];
 
 const CategoryCarousel = ({ categories: homepageCategoriesProp = [] }) => {
-                          
-  const [isPaused, setIsPaused] = useState(false);
-  const [isMouseOverCard, setIsMouseOverCard] = useState(false);
-  const [failedImages, setFailedImages] = useState(new Set());
-  const [loadedImages, setLoadedImages] = useState(new Set());
-  const [homepageCategories, setHomepageCategories] = useState(homepageCategoriesProp);
-  const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const scrollRef = useRef(null);
-  const isPausedRef = useRef(false);
-  const autoScrollTimeoutRef = useRef(null);
-  const lastScrollTime = useRef(Date.now());
-  const savedScrollPosition = useRef(0);
+  const navigate = useNavigate();
 
-  // Sync isPaused with isMouseOverCard
-  useEffect(() => {
-    if (!isMobile) {
-      setIsPaused(isMouseOverCard);
-      isPausedRef.current = isMouseOverCard;
-    } else {
-      setIsPaused(false);
-      isPausedRef.current = false;
+  // Primary categories list
+  const baseItems = useMemo(() => {
+    const valid = Array.isArray(homepageCategoriesProp) && homepageCategoriesProp.length > 0
+      ? homepageCategoriesProp
+      : DEFAULT_FALLBACK_CATEGORIES;
+
+    // Ensure at least 6 base items so loop is seamless across all screen sizes
+    let list = [...valid];
+    while (list.length < 6) {
+      list = [...list, ...valid];
     }
-  }, [isMouseOverCard, isMobile]);
-
-  // Initialize isPausedRef on mount
-  useEffect(() => {
-    isPausedRef.current = false;
-  }, []);
-
-  // Detect mobile device
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Update categories when props change
-  useEffect(() => {
-    if (homepageCategoriesProp && homepageCategoriesProp.length > 0) {
-      setHomepageCategories(homepageCategoriesProp);
-    }
+    return list;
   }, [homepageCategoriesProp]);
 
-  // Initialize scroll position to start for mobile, middle for desktop
+  // Triple items for continuous infinite seamless wrap
+  const displayItems = useMemo(() => {
+    return [...baseItems, ...baseItems, ...baseItems];
+  }, [baseItems]);
+
+  // Animation & control state
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [direction, setDirection] = useState(1); // 1 = Left-to-Right (as requested), -1 = Right-to-Left
+
+  const containerRef = useRef(null);
+  const trackRef = useRef(null);
+  const cardRefs = useRef([]);
+  const posRef = useRef(0);
+  const rafIdRef = useRef(null);
+  const isHoveredRef = useRef(false);
+  const isPlayingRef = useRef(true);
+  const directionRef = useRef(1);
+  const singleSetWidthRef = useRef(0);
+
+  // Sync refs with state
   useEffect(() => {
-    if (scrollRef.current && homepageCategories.length > 0) {
-      const scrollElement = scrollRef.current;
-      
-      // On mobile, just start at the beginning - simple and intuitive
-      if (isMobile) {
-        scrollElement.scrollLeft = 0;
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    directionRef.current = direction;
+  }, [direction]);
+
+  // Measure single-set width for seamless pixel-perfect wrapping
+  const measureWidth = useCallback(() => {
+    if (!trackRef.current) return;
+    const totalScrollWidth = trackRef.current.scrollWidth;
+    if (totalScrollWidth > 0) {
+      singleSetWidthRef.current = totalScrollWidth / 3;
+
+      // Initialize position centered on middle set so it can scroll in either direction seamlessly
+      if (posRef.current === 0) {
+        posRef.current = -singleSetWidthRef.current;
+        trackRef.current.style.transform = `translate3d(${posRef.current}px, 0, 0)`;
       }
     }
-  }, [homepageCategories, isMobile]);
+  }, []);
 
-  // Auto-scroll functionality (desktop only)
   useEffect(() => {
-    if (!scrollRef.current || homepageCategories.length === 0 || isMobile) return;
+    measureWidth();
 
-    const scrollElement = scrollRef.current;
-    const scrollSpeed = 1; // Increased speed
-    let animationFrameId;
+    let ro;
+    if (typeof ResizeObserver !== 'undefined' && trackRef.current) {
+      ro = new ResizeObserver(() => {
+        measureWidth();
+      });
+      ro.observe(trackRef.current);
+    }
 
-    const autoScroll = () => {
-      if (!isPausedRef.current && scrollElement) {
-        scrollElement.scrollLeft += scrollSpeed;
-        
-        // Reset to beginning when reaching far end (simple approach)
-        const maxScroll = scrollElement.scrollWidth - scrollElement.clientWidth;
-        if (scrollElement.scrollLeft >= maxScroll - 100) {
-          scrollElement.scrollLeft = 0;
+    window.addEventListener('resize', measureWidth);
+    return () => {
+      window.removeEventListener('resize', measureWidth);
+      if (ro) ro.disconnect();
+    };
+  }, [measureWidth, displayItems]);
+
+  // 60FPS Silky Continuous Ticker with V-Shaped Stepped Layering Arrangement
+  useEffect(() => {
+    const speed = 0.85; // Steady, elegant luxury glide speed (pixels per frame)
+
+    const tick = () => {
+      if (trackRef.current && containerRef.current && singleSetWidthRef.current > 0) {
+        if (isPlayingRef.current && !isHoveredRef.current) {
+          // Continuous smooth motion
+          posRef.current += speed * directionRef.current;
+
+          const setWidth = singleSetWidthRef.current;
+
+          // Seamless infinite wrap-around
+          if (directionRef.current > 0 && posRef.current >= 0) {
+            posRef.current -= setWidth;
+          } else if (directionRef.current < 0 && posRef.current <= -setWidth * 2) {
+            posRef.current += setWidth;
+          }
+
+          trackRef.current.style.transform = `translate3d(${posRef.current}px, 0, 0)`;
+        }
+
+        // Apply V-shaped stepped height & layering arrangement from the screenshot:
+        // - Center card: in front, lowest top edge, highest z-index (z-30)
+        // - Mid cards: stepped behind center, slightly higher (z-20)
+        // - Outer cards: stepped behind mid cards, highest (z-10)
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const containerCenterX = containerRect.left + containerRect.width / 2;
+        const isMobile = window.innerWidth < 640;
+        const centerDown = isMobile ? 16 : 28;
+        const stepRate = isMobile ? 12 : 22;
+
+        const count = cardRefs.current.length;
+        for (let i = 0; i < count; i++) {
+          const cardEl = cardRefs.current[i];
+          if (!cardEl || !cardEl.getBoundingClientRect) continue;
+
+          const cardRect = cardEl.getBoundingClientRect();
+          const cardCenterX = cardRect.left + cardRect.width / 2;
+          const distFromCenter = Math.abs(cardCenterX - containerCenterX);
+          const normalizedDist = distFromCenter / (cardRect.width * 0.75 || 200);
+
+          // Calculate V-shaped vertical offset & z-index
+          const y = Math.max(0, centerDown - Math.min(normalizedDist, 2.2) * (stepRate * 0.7));
+          const zIndex = normalizedDist < 0.6 ? 30 : (normalizedDist < 1.5 ? 20 : 10);
+          const opacity = normalizedDist < 0.6 ? 1.0 : (normalizedDist < 1.5 ? 0.92 : 0.82);
+
+          cardEl.style.transform = `translate3d(0, ${y}px, 0)`;
+          cardEl.style.zIndex = String(zIndex);
+          cardEl.style.opacity = String(opacity);
         }
       }
-      animationFrameId = requestAnimationFrame(autoScroll);
+
+      rafIdRef.current = requestAnimationFrame(tick);
     };
 
-    animationFrameId = requestAnimationFrame(autoScroll);
+    rafIdRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     };
-  }, [homepageCategories, isMobile]);
+  }, []);
 
-  // Stats images
-  const statsImages = {
-    categories: "https://images.pexels.com/photos/1005638/pexels-photo-1005638.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop",
-    products: "https://images.pexels.com/photos/1267338/pexels-photo-1267338.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop",
-    satisfaction: "https://th.bing.com/th/id/R.9c6d9b71b974dada1e858aee2ffd7b74?rik=LI36TuwD42e7bw&pid=ImgRaw&r=0",
-    support: "https://images.pexels.com/photos/7688460/pexels-photo-7688460.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop"
-  };
+  // Image URL Resolver (Handles responsive webp, original, and relative /uploads/ paths)
+  const resolveImageUrl = useCallback((category) => {
+    if (!category) return '/placeholder-image.jpg';
 
-  // 15 Different Categories with consolidated image sources
-  const categories = [
-    {
-      id: 1,
-      name: "Electronics",
-      gradient: "from-blue-500 to-indigo-600",
-      src: "./IT Images/1.jpeg",
-      description: "Laptops, Phones, Gadgets"
-    },
-    {
-      id: 2,
-      name: "Fashion",
-      gradient: "from-pink-500 to-rose-600",
-      src: "./IT Images/2.jpeg",
-      description: "Clothing, Shoes, Accessories"
-    },
-    {
-      id: 3,
-      name: "Home & Garden",
-      gradient: "from-green-500 to-emerald-600",
-      src: "./IT Images/3.jpeg",
-      description: "Furniture, Decor, Plants"
-    },
-    {
-      id: 4,
-      name: "Beauty & Care",
-      gradient: "from-purple-500 to-violet-600",
-      src: "./IT Images/4.jpeg",
-      description: "Cosmetics, Skincare"
-    },
-    {
-      id: 5,
-      name: "Sports & Fitness",
-      gradient: "from-orange-500 to-red-600",
-      src: "./IT Images/5.jpeg",
-      description: "Gym, Equipment, Sportswear"
-    },
-    {
-      id: 6,
-      name: "Books & Media",
-      gradient: "from-amber-500 to-yellow-600",
-      src: "./IT Images/6.jpeg",
-      description: "Books, Movies, Games"
-    },
-    {
-      id: 7,
-      name: "Automotive",
-      gradient: "from-gray-600 to-slate-700",
-      src: "./IT Images/7.jpeg",
-      description: "Car Parts, Tools, Accessories"
-    },
-    {
-      id: 8,
-      name: "Baby & Kids",
-      gradient: "from-cyan-500 to-blue-600",
-      src: "./IT Images/8.jpeg",
-      description: "Toys, Clothes, Care"
-    },
-    {
-      id: 9,
-      name: "Food & Grocery",
-      gradient: "from-lime-500 to-green-600",
-      src: "./IT Images/9.jpeg",
-      description: "Fresh Produce, Snacks"
-    },
-    {
-      id: 10,
-      name: "Gaming",
-      gradient: "from-violet-500 to-purple-600",
-      src: "./IT Images/10.jpeg",
-      description: "Consoles, Games, Accessories"
-    },
-    {
-      id: 11,
-      name: "Jewelry",
-      gradient: "from-yellow-500 to-orange-600",
-      src: "./IT Images/11.jpeg",
-      description: "Rings, Necklaces, Watches"
-    },
-    {
-      id: 12,
-      name: "Tools & Hardware",
-      gradient: "from-red-500 to-pink-600",
-      src: "./IT Images/12.jpeg",
-      description: "Hand Tools, Power Tools"
-    },
-    {
-      id: 13,
-      name: "Pet Supplies",
-      gradient: "from-teal-500 to-cyan-600",
-      src: "./IT Images/13.jpeg",
-      description: "Food, Toys, Accessories"
-    },
-    {
-      id: 14,
-      name: "Music & Audio",
-      gradient: "from-indigo-500 to-blue-600",
-      src: "./IT Images/14.jpeg",
-      description: "Headphones, Speakers"
-    },
-    {
-      id: 15,
-      name: "Travel & Luggage",
-      gradient: "from-emerald-500 to-teal-600",
-      src: "./IT Images/15.jpeg",
-      description: "Suitcases, Backpacks"
+    const toFullUrl = (pathStr) => {
+      if (!pathStr || typeof pathStr !== 'string') return '';
+      if (pathStr.startsWith('http://') || pathStr.startsWith('https://') || pathStr.startsWith('data:')) {
+        return pathStr;
+      }
+      const cleanPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`;
+      return `${config.BASE_URL}${cleanPath}`;
+    };
+
+    const opt = category.optimizedImage || category.optimizedMainImage;
+    if (opt) {
+      const webpCandidate =
+        opt.webp?.['600w'] ||
+        opt.webp?.['300w'] ||
+        opt.webp?.large ||
+        opt.webp?.medium ||
+        opt.webp?.full;
+
+      if (webpCandidate) {
+        return toFullUrl(webpCandidate);
+      }
+      if (opt.original) {
+        return toFullUrl(opt.original);
+      }
     }
-  ];
 
-  // Duplicate categories for seamless infinite loop
-  const infiniteCategories = [...homepageCategories, ...homepageCategories, ...homepageCategories];
+    const raw = category.imageUrl || category.src || category.image;
+    if (!raw) return '/placeholder-image.jpg';
 
-  const handleImageError = (categoryId) => {
-    setFailedImages(prev => new Set([...prev, categoryId]));
+    if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) {
+      return raw;
+    }
+    if (raw.startsWith('/uploads/') || raw.startsWith('uploads/')) {
+      return toFullUrl(raw);
+    }
+    if (raw.startsWith('/')) {
+      return raw;
+    }
+    return toFullUrl(raw);
+  }, []);
+
+  // Card click navigates to category group
+  const handleCardClick = (category) => {
+    const rawName = category?.name || category?.categoryId?.name || '';
+    const slug = rawName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    if (slug) {
+      navigate(`/category-group/${slug}`);
+    } else {
+      navigate('/shop');
+    }
   };
 
-  const handleImageLoad = (categoryId) => {
-    setLoadedImages(prev => new Set([...prev, categoryId]));
+  // Toggle Direction (Left-to-Right <-> Right-to-Left)
+  const toggleDirection = () => {
+    setDirection((prev) => (prev === 1 ? -1 : 1));
   };
 
   return (
-    <>
-      <section className="py-2 sm:py-3 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden">
-        <div className="container mx-auto px-4 lg:px-8">
-          {/* Section Header */}
-          <div className="text-center mb-2 sm:mb-3">
-            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-1 sm:mb-2">
-              Shop by 
-              <span className="bg-gradient-to-r from-orange-500 to-blue-600 bg-clip-text text-transparent"> Category</span>
-            </h2>
-            <p className="text-[10px] sm:text-xs lg:text-sm text-gray-600 max-w-2xl mx-auto px-4 sm:px-0">
-              Discover amazing products across all categories with unbeatable prices and quality
-            </p>
-          </div>
-        </div>
+    <section 
+      ref={containerRef}
+      className="relative w-full overflow-hidden select-none bg-white py-1 sm:py-2 my-0"
+      onMouseEnter={() => { isHoveredRef.current = true; }}
+      onMouseLeave={() => { isHoveredRef.current = false; }}
+      onTouchStart={() => { isHoveredRef.current = true; }}
+      onTouchEnd={() => { isHoveredRef.current = false; }}
+      aria-label="Continuous Category Carousel"
+    >
+      {/* 
+        Moving Ribbon Track Wrapper:
+        - Snug height matching existing carousel
+        - Flush attachment to upper category cards
+      */}
+      <div className="relative w-full overflow-hidden h-[190px] xs:h-[220px] sm:h-[250px] md:h-[285px] lg:h-[310px] flex items-center">
+        <div
+          ref={trackRef}
+          className="flex items-start will-change-transform"
+          style={{ width: 'max-content' }}
+        >
+          {displayItems.map((category, idx) => {
+            const imgSrc = resolveImageUrl(category);
 
-        {/* Full Width Infinite Carousel Container */}
-        <div className="relative w-full overflow-hidden">
-          <div 
-            ref={scrollRef}
-            className="carousel-container scrollbar-hide overflow-x-scroll"
-            onMouseDown={(e) => !isMobile && e.preventDefault()}
-            onTouchStart={(e) => !isMobile && e.preventDefault()}
-            style={{
-              WebkitOverflowScrolling: 'touch',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              scrollBehavior: isMobile ? 'smooth' : 'auto',
-              cursor: isMobile ? 'grab' : 'default',
-              userSelect: isMobile ? 'none' : 'auto'
-            }}
-          >
-            {/* Infinite Moving Track */}
-            <div 
-              className="flex"
-              style={{
-                width: 'max-content'
-              }}
-            >
-              {infiniteCategories.map((category, index) => (
+            return (
+              <div
+                key={`${category._id || category.id || idx}-${idx}`}
+                ref={(el) => { cardRefs.current[idx] = el; }}
+                onClick={() => handleCardClick(category)}
+                className="
+                  flex-shrink-0 cursor-pointer group will-change-transform
+                  -mr-5 xs:-mr-6 sm:-mr-8 md:-mr-10 lg:-mr-12
+                "
+              >
+                {/* 
+                  Card Container (Arrangement & Look matching screenshot):
+                  - Rounded rectangle with subtle border and layered overlap
+                  - Strictly image-only, zero text
+                */}
                 <div 
-                  key={`${category._id}-${Math.floor(index / homepageCategories.length)}`}
-                  className="flex-shrink-0 w-44 sm:w-52 md:w-60 px-2 sm:px-3"
-                  onMouseEnter={() => !isMobile && setIsMouseOverCard(true)}
-                  onMouseLeave={() => !isMobile && setIsMouseOverCard(false)}
+                  className="
+                    relative overflow-hidden rounded-2xl sm:rounded-3xl
+                    w-[170px] h-[150px]
+                    xs:w-[200px] xs:h-[175px]
+                    sm:w-[240px] sm:h-[200px]
+                    md:w-[280px] md:h-[230px]
+                    lg:w-[320px] lg:h-[260px]
+                    bg-white border-2 border-white/90 shadow-[0_12px_28px_-6px_rgba(0,0,0,0.22)]
+                    hover:shadow-2xl transition-all duration-300
+                  "
                 >
-                  <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105">
-                    {/* Category Card */}
-                    <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden h-52 sm:h-56 md:h-64">
-                      {/* Image Container */}
-                      <div className="relative h-36 sm:h-40 md:h-48 overflow-hidden bg-gray-100">
-                        <Link 
-                          to={`/category-group/${category.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`} 
-                          className="block w-full h-full"
-                          style={{ pointerEvents: 'auto' }}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          onTouchStart={(e) => e.stopPropagation()}
-                        >
-                          <LazyImage 
-                            src={category.imageUrl}
-                            alt={category.name}
-                            enableModernFormats={true}
-                            priority={index < 2}
-                            optimizedImage={category.optimizedMainImage || null}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            onError={() => handleImageError(category._id)}
-                            onLoad={() => handleImageLoad(category._id)}
-                          />
-                          
-                          {/* Fallback Content (shown by default, hidden when image loads) */}
-                          <div 
-                            className={`absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 flex flex-col items-center justify-center text-white transition-opacity duration-300 ${
-                              loadedImages.has(category._id) ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                            }`}
-                          >
-                            <div className="text-lg font-bold text-center mb-1">{category.name}</div>
-                            <div className="text-sm opacity-90 text-center px-3">{category.description || 'Explore Products'}</div>
-                          </div>
-                          
-                          {/* Gradient Overlay for images */}
-                          {loadedImages.has(category._id) && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                          )}
-                        </Link>
-                        
-                        {/* Hover Overlay */}
-                        {/* <div className="absolute inset-0 bg-transparent bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-0 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                            <button className="bg-white text-gray-900 px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 shadow-lg">
-                              Shop Now
-                            </button>
-                          </div>
-                        </div> */}
-                      </div>
+                  <img
+                    src={imgSrc}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/placeholder-image.jpg';
+                    }}
+                    className="w-full h-full object-cover select-none pointer-events-none rounded-2xl sm:rounded-3xl transition-transform duration-500 ease-out group-hover:scale-105"
+                    draggable={false}
+                  />
 
-                      {/* Category Info */}
-                      <div className="p-4 text-center">
-                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-200">
-                          {category.name}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Top glass reflection highlight */}
+                  <div 
+                    className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-white/30 to-transparent rounded-t-2xl sm:rounded-t-3xl" 
+                    aria-hidden="true" 
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation Arrows (Desktop Only) */}
-          {!isMobile && (
-            <>
-              <button 
-                onClick={() => setIsPaused(!isPaused)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-200"
-                aria-label={isPaused ? "Play carousel" : "Pause carousel"}
-              >
-                {isPaused ? (
-                  <svg className="w-6 h-6 text-gray-600 group-hover:text-orange-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6 text-gray-600 group-hover:text-orange-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                  </svg>
-                )}
-              </button>
-              
-              <button 
-                onClick={() => setIsPaused(!isPaused)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 group border border-gray-200"
-                aria-label={isPaused ? "Play carousel" : "Pause carousel"}
-              >
-                {isPaused ? (
-                  <svg className="w-6 h-6 text-gray-600 group-hover:text-orange-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6 text-gray-600 group-hover:text-orange-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                  </svg>
-                )}
-              </button>
-            </>
-          )}
+              </div>
+            );
+          })}
         </div>
 
+        {/* 
+          Floating Controls:
+          - Play/Pause circular toggle button (|| / ▶)
+          - Subtle Direction toggle pill (Left <-> Right)
+        */}
+        <div className="absolute left-4 sm:left-6 bottom-3 sm:bottom-4 z-40 flex items-center gap-2">
+          {/* Play / Pause Toggle Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsPlaying((prev) => !prev);
+            }}
+            aria-label={isPlaying ? 'Pause carousel' : 'Play carousel'}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/95 text-gray-800 shadow-lg border border-black/15 flex items-center justify-center hover:bg-white active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/50"
+          >
+            {isPlaying ? (
+              <Pause className="w-4 h-4 text-gray-800 fill-current" />
+            ) : (
+              <Play className="w-4 h-4 text-gray-800 fill-current translate-x-0.5" />
+            )}
+          </button>
 
-
-        {/* Background Decorations */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 right-16 w-32 h-32 bg-blue-200 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute top-1/2 right-8 w-16 h-16 bg-purple-200 rounded-full opacity-20 animate-ping"></div>
-      </section>
-
-      {/* Custom CSS for Infinite Scroll Animation */}
-      <style>
-        {`
-          @keyframes infinite-scroll {
-            0% {
-              transform: translateX(0);
-            }
-            100% {
-              transform: translateX(-${homepageCategories.length * 250}px);
-            }
-          }
-          
-          .animate-infinite-scroll {
-            animation: infinite-scroll 25s linear infinite;
-            will-change: transform;
-          }
-          
-          /* Pause animation when hovering over the carousel container */
-          .carousel-container:hover .animate-infinite-scroll {
-            animation-play-state: paused;
-          }
-          
-          /* Override the paused state when isPaused is true */
-          .animate-infinite-scroll.paused {
-            animation-play-state: paused;
-          }
-        `}
-      </style>
-    </>
+          {/* Direction Toggle Pill */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDirection();
+            }}
+            title={direction === 1 ? 'Moving Left to Right (Click to reverse)' : 'Moving Right to Left (Click to reverse)'}
+            aria-label="Toggle carousel direction"
+            className="h-9 sm:h-10 px-3 rounded-full bg-white/95 text-gray-700 shadow-lg border border-black/15 flex items-center gap-1.5 hover:bg-white active:scale-95 transition-all duration-200 cursor-pointer text-xs font-semibold"
+          >
+            {direction === 1 ? (
+              <>
+                <ChevronRight className="w-3.5 h-3.5 text-[#5B1830] animate-pulse" />
+                <span className="hidden sm:inline text-gray-600 font-medium text-[11px]">Left → Right</span>
+              </>
+            ) : (
+              <>
+                <ChevronLeft className="w-3.5 h-3.5 text-[#5B1830] animate-pulse" />
+                <span className="hidden sm:inline text-gray-600 font-medium text-[11px]">Right → Left</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </section>
   );
 };
 

@@ -46,12 +46,14 @@ const UPLOAD_DIRS = {
     homepageCards: 'homepage-cards',
     wholesaleSuppliers: 'wholesale-suppliers',
     qrCodes: 'qr-codes',
-    paymentReceipts: 'payment-receipts'
+    paymentReceipts: 'payment-receipts',
+    bannerSlides: 'banner-slides'
 };
 
 // Base upload path configuration
 const UPLOADS_BASE_DIR = 'uploads';
 const UPLOADS_ABSOLUTE_PATH = path.join(__dirname, UPLOADS_BASE_DIR);
+const ROOT_UPLOADS_PATH = path.join(__dirname, '..', UPLOADS_BASE_DIR);
 
 // Ensure upload directories exist
 const ensureUploadDirectories = () => {
@@ -78,7 +80,17 @@ app.use(compressionMiddleware);
 // Apply cache headers SECOND (before serving static files)
 app.use(cacheHeaders);
 
-// Serve homepage category images with optimized settings
+// Serve homepage category images with optimized settings (both root and backend)
+app.use('/uploads/homepage-categories', express.static(path.join(ROOT_UPLOADS_PATH, 'homepage-categories'), {
+    fallthrough: true,
+    maxAge: '365d',
+    immutable: true,
+    etag: true,
+    lastModified: true,
+    setHeaders: (res) => {
+      res.set('X-Content-Type-Options', 'nosniff');
+    }
+}));
 app.use('/uploads/homepage-categories', express.static(path.join(UPLOADS_ABSOLUTE_PATH, 'homepage-categories'), {
     fallthrough: true,
     maxAge: '365d',
@@ -127,7 +139,7 @@ fixProductImages();
 const constants = require('./config/constants');
 
 // CORS headers for all upload routes - BEFORE static middleware
-app.use(['/uploads', '/uploads/products', '/uploads/used-products', '/uploads/vendor-logos', '/uploads/homepage-categories', '/uploads/homepage-cards', '/uploads/properties', '/uploads/qr-codes', '/uploads/payment-receipts'], (req, res, next) => {
+app.use(['/uploads', '/uploads/products', '/uploads/used-products', '/uploads/vendor-logos', '/uploads/homepage-categories', '/uploads/homepage-cards', '/uploads/properties', '/uploads/qr-codes', '/uploads/payment-receipts', '/uploads/banner-slides'], (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -157,12 +169,16 @@ const staticOptions = {
     }
 };
 
-// Serve all upload directories with consistent configuration
+// Serve all upload directories with consistent configuration (root and backend)
+app.use(`/${UPLOADS_BASE_DIR}`, express.static(ROOT_UPLOADS_PATH, staticOptions));
+app.use(`/${UPLOADS_BASE_DIR}`, express.static(UPLOADS_ABSOLUTE_PATH, staticOptions));
+
 Object.entries(UPLOAD_DIRS).forEach(([key, dir]) => {
     const urlPath = `/${UPLOADS_BASE_DIR}/${dir}`;
+    const rootDirPath = path.join(ROOT_UPLOADS_PATH, dir);
     const dirPath = path.join(UPLOADS_ABSOLUTE_PATH, dir);
     
-    // Single static middleware per directory
+    app.use(urlPath, express.static(rootDirPath, staticOptions));
     app.use(urlPath, express.static(dirPath, staticOptions));
     
     if (process.env.NODE_ENV !== 'production') {
@@ -404,8 +420,31 @@ app.get('/api/special/featured', async (req, res) => {
             return res.json([]);
         }
 
+        const layoutMap = new Map();
+        if (Array.isArray(featuredProducts.layoutConfig)) {
+            featuredProducts.layoutConfig.forEach(cfg => {
+                if (cfg && cfg.productId) {
+                    layoutMap.set(cfg.productId.toString(), cfg);
+                }
+            });
+        }
+
         // Filter out any null or undefined products
-        const validProducts = featuredProducts.products.filter(product => product && product._id);
+        const validProducts = featuredProducts.products
+            .filter(product => product && product._id)
+            .map(product => {
+                const prodObj = product.toObject ? product.toObject() : { ...product };
+                const cfg = layoutMap.get(prodObj._id.toString());
+                prodObj.slotSize = cfg?.slotSize || 'small';
+                prodObj.order = cfg?.order !== undefined ? cfg.order : 0;
+                return prodObj;
+            });
+
+        // If layoutConfig was defined, sort by order; otherwise keep current array order
+        if (layoutMap.size > 0) {
+            validProducts.sort((a, b) => a.order - b.order);
+        }
+
         res.json(validProducts);
     } catch (error) {
         console.error('Featured products error:', error);
@@ -433,139 +472,110 @@ app.get('/api/special/premium', async (req, res) => {
     }
 });
 
-// Banner Management Routes
-app.get('/api/banner', async (req, res) => {
-    try {
-        console.log('🎯 Banner GET request received');
-        
-        const cachedSlides = await cacheService.get('homepage_banner');
-        if (cachedSlides) {
-            console.log('✅ Serving cached banner data');
-            return res.json(cachedSlides);
-        }
-
-        const banner = await HomepageBanner.findOne().populate('slides.category');
-        console.log('📊 Banner found:', !!banner);
-        
-        const slides = banner ? banner.slides.sort((a, b) => a.order - b.order) : [];
-        console.log('📝 Slides count:', slides.length);
-        
-        // Cache the slides for 1 hour
-        await cacheService.set('homepage_banner', slides, 3600);
-        
-        console.log('✅ Banner data sent successfully');
-        res.json(slides);
-    } catch (error) {
-        console.error('❌ Error fetching banner:', error);
-        res.status(500).json({ message: 'Failed to fetch banner data' });
-    }
-});
-
-app.put('/api/banner', [authenticateAdmin, uploadMultipleProductImages], async (req, res) => {
-    try {
-        console.log('🎯 Banner PUT request received');
-        console.log('📝 Request body:', JSON.stringify(req.body, null, 2));
-        
-        const { slides } = req.body;
-        
-        // Input validation
-        if (!slides || !Array.isArray(slides)) {
-            console.log('❌ Invalid slides data');
-            return res.status(400).json({ message: 'Slides array is required' });
-        }
-
-        console.log('📊 Processing', slides.length, 'slides');
-
-        // Validate each slide
-        for (const [index, slide] of slides.entries()) {
-            console.log(`🔍 Validating slide ${index}:`, slide.title);
-            
-            if (!slide.title) {
-                console.log(`❌ Slide ${index} missing title`);
-                return res.status(400).json({ 
-                    message: `Slide ${index + 1} must have a title` 
-                });
-            }
-
-            // Validate category exists if provided
-            if (slide.category) {
-                const categoryExists = await Category.findById(slide.category);
-                if (!categoryExists) {
-                    console.log(`❌ Category ${slide.category} not found for slide ${index}`);
-                    return res.status(400).json({ message: `Category ${slide.category} not found` });
-                }
-            }
-        }
-
-        // Process uploaded files
-        if (req.files) {
-            console.log('📁 Processing uploaded files:', Object.keys(req.files));
-            for (const slide of slides) {
-                if (req.files[slide.image]) {
-                    slide.image = req.files[slide.image].filename;
-                }
-            }
-        }
-
-        const processedSlides = slides.map((slide, index) => ({
-            ...slide,
-            order: index
-        }));
-
-        // Use findOneAndUpdate with $set to bypass Mongoose change-detection issues
-        // with Mixed-type fields. Plain findOne() + .save() may silently skip the
-        // MongoDB write when Mongoose doesn't detect changes in Mixed fields.
-        const updatedBanner = await HomepageBanner.findOneAndUpdate(
-            {},
-            { $set: { slides: processedSlides, lastUpdated: new Date() } },
-            { upsert: true, new: true }
-        );
-        
-        // Invalidate all banner-related and homepage aggregate caches
-        await cacheService.del('homepage_banner');
-        await cacheService.del('cache:/api/homepage/all-data'); // used by homepage HeroSection
-        cacheService.clearPattern('cache:*/banner*');
-
-        // Purge Cloudflare edge cache so homepage reflects changes immediately
-        const siteUrl = process.env.SITE_URL || 'https://internationaltijarat.com';
-        purgeCloudflareUrls([
-          `${siteUrl}/api/homepage/all-data`,
-          `${siteUrl}/api/banner`,
-          `${siteUrl}/`
-        ]);
-
-        console.log('✅ Banner updated successfully');
-        res.json(updatedBanner.slides);
-    } catch (error) {
-        console.error('❌ Error updating banner:', error);
-        res.status(500).json({ message: error.message });
-    }
-});
+// Banner Management Routes mounted via bannerRoutes (see /api/banner below)
 
 // Update featured products (admin only)
 app.put('/api/special/featured', authenticateAdmin, async (req, res) => {
     try {
-        const { productIds } = req.body;
+        const { productIds, layoutConfig } = req.body;
+
+        if (!Array.isArray(productIds)) {
+            return res.status(400).json({ message: 'productIds must be an array of product IDs' });
+        }
+
+        // Limit maximum featured products (e.g. 30)
+        const MAX_FEATURED_PRODUCTS = 30;
+        if (productIds.length > MAX_FEATURED_PRODUCTS) {
+            return res.status(400).json({ 
+                message: `Cannot feature more than ${MAX_FEATURED_PRODUCTS} products` 
+            });
+        }
+
+        // Validate all product IDs are valid ObjectIds
+        const validIds = [];
+        for (const id of productIds) {
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: `Invalid product ID: ${id}` });
+            }
+            if (!validIds.includes(id.toString())) {
+                validIds.push(id.toString());
+            }
+        }
+
+        // Process and validate layoutConfig if provided
+        const ALLOWED_SLOT_SIZES = ['hero', 'wide', 'tall', 'small'];
+        let cleanLayoutConfig = [];
+
+        if (Array.isArray(layoutConfig) && layoutConfig.length > 0) {
+            cleanLayoutConfig = layoutConfig
+                .filter(cfg => cfg && cfg.productId && validIds.includes(cfg.productId.toString()))
+                .map((cfg, idx) => ({
+                    productId: cfg.productId,
+                    slotSize: ALLOWED_SLOT_SIZES.includes(cfg.slotSize) ? cfg.slotSize : 'small',
+                    order: Number.isInteger(cfg.order) && cfg.order >= 0 ? cfg.order : idx
+                }));
+        } else {
+            // Sensible default: first product = hero, rest = small
+            cleanLayoutConfig = validIds.map((id, idx) => ({
+                productId: id,
+                slotSize: idx === 0 ? 'hero' : 'small',
+                order: idx
+            }));
+        }
+
         let featuredProducts = await FeaturedProducts.findOne();
-        
         if (!featuredProducts) {
             featuredProducts = new FeaturedProducts();
         }
         
-        featuredProducts.products = productIds;
+        featuredProducts.products = validIds;
+        featuredProducts.layoutConfig = cleanLayoutConfig;
         featuredProducts.lastUpdated = Date.now();
         await featuredProducts.save();
         
-        const updatedProducts = await FeaturedProducts.findOne()
-            .populate('products');
+        const updatedDoc = await FeaturedProducts.findOne()
+            .populate({
+                path: 'products',
+                populate: [
+                    { path: 'category' },
+                    { path: 'vendor', select: 'name shopName' }
+                ]
+            });
 
         // Clear server-side cache and purge Cloudflare so homepage shows new products immediately
         await cacheService.del('cache:/api/homepage/all-data');
+        if (cacheService.clearPattern) {
+            await cacheService.clearPattern('homepage');
+        }
         const siteUrl = process.env.SITE_URL || 'https://internationaltijarat.com';
         purgeCloudflareUrls([`${siteUrl}/api/homepage/all-data`, `${siteUrl}/`]);
         
-        res.json(updatedProducts.products);
+        const layoutMap = new Map();
+        if (Array.isArray(updatedDoc.layoutConfig)) {
+            updatedDoc.layoutConfig.forEach(cfg => {
+                if (cfg && cfg.productId) {
+                    layoutMap.set(cfg.productId.toString(), cfg);
+                }
+            });
+        }
+
+        const validProducts = (updatedDoc.products || [])
+            .filter(p => p && p._id)
+            .map(p => {
+                const prodObj = p.toObject ? p.toObject() : { ...p };
+                const cfg = layoutMap.get(prodObj._id.toString());
+                prodObj.slotSize = cfg?.slotSize || 'small';
+                prodObj.order = cfg?.order !== undefined ? cfg.order : 0;
+                return prodObj;
+            });
+
+        if (layoutMap.size > 0) {
+            validProducts.sort((a, b) => a.order - b.order);
+        }
+
+        res.json(validProducts);
     } catch (error) {
+        console.error('Update featured products error:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -697,6 +707,7 @@ app.use('/api/homepage', ensureConnection, require('./routes/homepageOptimized')
 app.use('/api/homepage/categories', ensureConnection, require('./routes/homepageCategoryRoutes'));
 app.use('/api/homepage/static-categories', ensureConnection, require('./routes/homepageStaticCategoryRoutes'));
 app.use('/api/homepage/cards', ensureConnection, homepageCardRoutes);
+app.use('/api/banner', ensureConnection, bannerRoutes);
 app.use('/api/homepage/banners', ensureConnection, bannerRoutes);
 
 // Other API routes
